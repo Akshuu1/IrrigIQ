@@ -198,6 +198,55 @@ export interface Recommendation {
   };
 }
 
+export interface IrrigationLog {
+  id: string;
+  fieldId: string;
+  userId: string;
+  date: string;
+  appliedMm: number;
+  source: 'recommended' | 'manual';
+  note?: string;
+  createdAt: string;
+}
+
+export interface SavingsData {
+  fieldId: string;
+  from: string;
+  to: string;
+  days: number;
+  totals: {
+    baseline: { grossMm: number; litres: number };
+    recommended: { grossMm: number; litres: number };
+    actual: { grossMm: number; litres: number };
+    potentialSaved: { litres: number; pct: number };
+    realisedSaved: { litres: number; pct: number };
+  };
+  assumptions: {
+    method: string;
+    efficiency: number;
+    areaHa: number;
+    baseline: { everyDays: number; depthMm: number };
+    baselineNote: string;
+  };
+}
+
+export interface Sensor {
+  id: string;
+  fieldId: string;
+  userId: string;
+  name: string;
+  isSimulated: boolean;
+  lastSeenAt?: string;
+  createdAt: string;
+}
+
+export interface SensorReading {
+  timestamp: string;
+  moisturePct: number;
+  tempC: number;
+  count?: number;
+}
+
 export const api = {
   // Auth
   async register(data: RegisterInput): Promise<AuthResponse> {
@@ -274,5 +323,68 @@ export const api = {
     return apiFetch<{ success: boolean }>(`/fields/${fieldId}/recommendations/recompute`, {
       method: 'POST',
     });
+  },
+
+  // Irrigation Logs
+  async getLogs(fieldId: string, from?: string, to?: string): Promise<{ logs: IrrigationLog[] }> {
+    const params = new URLSearchParams();
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return apiFetch<{ logs: IrrigationLog[] }>(`/fields/${fieldId}/logs${query}`);
+  },
+
+  async createLog(
+    fieldId: string,
+    data: { date: string; appliedMm: number; source: 'recommended' | 'manual'; note?: string },
+  ): Promise<IrrigationLog> {
+    return apiFetch<IrrigationLog>(`/fields/${fieldId}/logs`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async deleteLog(fieldId: string, logId: string): Promise<void> {
+    await apiFetch<void>(`/fields/${fieldId}/logs/${logId}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Savings
+  async getSavings(fieldId: string, from: string, to: string): Promise<SavingsData> {
+    return apiFetch<SavingsData>(`/fields/${fieldId}/savings?from=${from}&to=${to}`);
+  },
+
+  // Sensors & Moisture
+  async getSensors(fieldId: string): Promise<{ sensors: Sensor[] }> {
+    return apiFetch<{ sensors: Sensor[] }>(`/fields/${fieldId}/sensors`);
+  },
+
+  async createSensor(
+    fieldId: string,
+    data: { name: string; isSimulated?: boolean },
+  ): Promise<{ sensor: Sensor; apiKey: string }> {
+    return apiFetch<{ sensor: Sensor; apiKey: string }>(`/fields/${fieldId}/sensors`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async getMoisture(
+    fieldId: string,
+    from?: string,
+    to?: string,
+  ): Promise<{ readings: SensorReading[] }> {
+    const params = new URLSearchParams();
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return apiFetch<{ readings: SensorReading[] }>(`/fields/${fieldId}/moisture${query}`);
+  },
+
+  getMoistureStreamUrl(fieldId: string): string {
+    const token = getAccessToken();
+    const base = API_BASE.startsWith('http') ? API_BASE : `${window.location.origin}${API_BASE}`;
+    return `${base}/fields/${fieldId}/moisture/stream${token ? `?token=${encodeURIComponent(token)}` : ''}`;
   },
 };

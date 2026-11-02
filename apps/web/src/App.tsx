@@ -10,6 +10,7 @@ import { Register } from './pages/Register.js';
 import { Dashboard } from './pages/Dashboard.js';
 import { Settings } from './pages/Settings.js';
 import { FieldWizard } from './pages/FieldWizard.js';
+import { FieldDetail } from './pages/FieldDetail.js';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,6 +60,14 @@ export function App(): React.JSX.Element {
                 element={
                   <ProtectedRoute>
                     <FieldWizard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/fields/:id"
+                element={
+                  <ProtectedRoute>
+                    <FieldDetail />
                   </ProtectedRoute>
                 }
               />

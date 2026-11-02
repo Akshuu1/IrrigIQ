@@ -16,6 +16,7 @@ import {
   Sparkles,
   Wheat,
   Clock,
+  ArrowRight,
 } from 'lucide-react';
 
 function FieldRecommendationCard({ field }: { field: Field }): React.JSX.Element {
@@ -221,6 +222,17 @@ function FieldRecommendationCard({ field }: { field: Field }): React.JSX.Element
                 {todayRecommendation.dailyNeeds.etcMm} mm
               </span>
             </div>
+          </div>
+
+          {/* View Details Link */}
+          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-end">
+            <Link
+              to={`/fields/${field.id}`}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors cursor-pointer"
+            >
+              <span>{t('dashboard.viewDetails')}</span>
+              <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+            </Link>
           </div>
         </div>
       )}
