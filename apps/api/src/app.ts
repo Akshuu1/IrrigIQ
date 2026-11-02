@@ -9,6 +9,8 @@ import { requestIdMiddleware } from './middleware/requestId.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { healthRouter } from './routes/health.routes.js';
 import { authRouter } from './routes/auth.routes.js';
+import { fieldRouter } from './routes/field.routes.js';
+import { cropRouter } from './routes/crop.routes.js';
 
 export function createApp(): Express {
   const env = getEnv();
@@ -60,6 +62,8 @@ export function createApp(): Express {
   // Mount routes
   app.use('/', healthRouter);
   app.use('/auth', authRouter);
+  app.use('/fields', fieldRouter);
+  app.use('/crops', cropRouter);
 
   // 404 handler
   app.use((_req, res) => {
