@@ -194,3 +194,39 @@ We use the **OpenStreetMap (OSM) Standard Tile Layer**:
   1. **Strictly On-Demand / No Bulk Pre-fetching**: Tiles are requested strictly as the user pans or zooms in their browser. As explicitly prohibited by the OSM Tile Usage Policy, IrrigIQ **does not** scrape, bulk-download, or store tile raster grids in offline caches or databases.
   2. **Offline Graceful Degradation**: When offline in PWA mode, the field boundary polygon and recommendations are rendered directly on an interactive SVG/canvas canvas without requesting background tiles.
   3. **Attribution & Referer**: Every map instance prominently renders standard OpenStreetMap attribution and standard browser referer headers.
+
+---
+
+## ADR 007: Field Detail Page Architecture & Live Telemetry
+
+### Context
+
+Phase 10 provides the primary operational interface for smallholder farmers to inspect 7-day irrigation advisories, monitor live soil moisture from physical/simulated sensors, record executed irrigation events, and view cumulative water savings.
+
+### Decision & Architectural Implementation
+
+1. **7-Day Advisory & Scientific Breakdown**:
+   - Visual dual-bar chart (`apps/web/src/pages/field-detail/PlanForecastSection.tsx`) implemented with Recharts comparing daily crop water demand ($ET_c$) with precipitation forecast.
+   - Irrigation scheduled days (`action === 'irrigate'`) are highlighted with distinct markers and badges.
+   - Accompanying tabular breakdown displays date, $ET_c$, forecast rain, action chip, and scientific justification translated via i18n parameter interpolation (e.g. `reason.deficit_reached`, `reason.rain_expected`).
+
+2. **Today's Actionable Big Answer (`TodayAdvisoryCard.tsx`)**:
+   - Prominently showcases whether to irrigate or skip today, recommended depth in mm, total volume in litres, and best application window (`"before 8:00 AM"` / `"सुबह 8:00 बजे से पहले"`).
+   - Features a primary `"I Irrigated"` action button opening a pre-filled logging modal.
+
+3. **Optimistic Irrigation Logging (`IrrigationLogModal.tsx` & `RecentLogsTable.tsx`)**:
+   - Submitting an irrigation log optimistically updates TanStack Query cache and triggers asynchronous recomputation on the backend (`POST /fields/:id/logs`).
+   - Recomputation resets the cumulative soil moisture deficit, automatically recalculating the 7-day schedule and water savings.
+   - Log entries can be deleted with optimistic removal and subsequent deficit restoration.
+
+4. **Real-time Soil Moisture Telemetry (`SoilMoistureLiveSection.tsx`)**:
+   - Employs native browser `EventSource` connecting to `GET /fields/:id/moisture/stream?token=...`.
+   - Automatic reconnect handler recovers from network disconnects with a 4-second delay.
+   - Moisture readings are categorized into high-contrast status chips: Dry ($\le 40\%$), Optimal ($40\% < \text{moisture} < 80\%$), and Saturated ($\ge 80\%$).
+   - Sensor provisioning allows generating cryptographically secure API keys (`iq_sn_...`) displayed strictly once with one-click clipboard copying.
+
+5. **Transparent Water Savings (`SavingsCard.tsx`)**:
+   - Compares baseline routine water usage against IrrigIQ recommended and farmer actual water applications.
+   - Reports both potential and realised savings in litres and percentage, preserving negative values without artificial clamping.
+   - Includes an assumptions breakdown detailing irrigation method efficiency, farmer baseline interval and depth, and total land area.
+
