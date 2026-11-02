@@ -1,11 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as turf from '@turf/turf';
-import {
-  validatePolygon,
-  polygonAreaHa,
-  polygonCentroid,
-  type GeoJSONPolygon,
-} from './geo.js';
+import { validatePolygon, polygonAreaHa, polygonCentroid, type GeoJSONPolygon } from './geo.js';
 
 describe('Geo helpers', () => {
   // A valid ~1-hectare field near Jaipur, Rajasthan (approx 75.8°E, 26.9°N)

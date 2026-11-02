@@ -33,7 +33,11 @@ const baselineSchema = z.object({
 });
 
 export const createFieldSchema = z.object({
-  name: z.string().trim().min(1, 'Name is required').max(100, 'Name must not exceed 100 characters'),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Name is required')
+    .max(100, 'Name must not exceed 100 characters'),
   geometry: geoJsonPolygonSchema,
   cropKey: cropKeySchema,
   sowingDate: sowingDateSchema,

@@ -99,12 +99,7 @@ export class FieldService {
       }
     }
 
-    const result = await this.repo.updateWithVersion(
-      fieldId,
-      userId,
-      input.version,
-      updateData,
-    );
+    const result = await this.repo.updateWithVersion(fieldId, userId, input.version, updateData);
 
     if (result.status === 'NOT_FOUND') {
       throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');

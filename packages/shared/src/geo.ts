@@ -86,32 +86,55 @@ export function validatePolygon(geometry: GeoJSONPolygon): ValidatedPolygonResul
 
   const ring = geometry.coordinates[0];
   if (!Array.isArray(ring) || ring.length < 4) {
-    throw new Error('Polygon ring must have at least 4 coordinates (3 unique vertices + closing vertex)');
+    throw new Error(
+      'Polygon ring must have at least 4 coordinates (3 unique vertices + closing vertex)',
+    );
   }
 
   // Check ring closure
   const first = ring[0];
   const last = ring[ring.length - 1];
-  if (!Array.isArray(first) || !Array.isArray(last) || first[0] !== last[0] || first[1] !== last[1]) {
+  if (
+    !Array.isArray(first) ||
+    !Array.isArray(last) ||
+    first[0] !== last[0] ||
+    first[1] !== last[1]
+  ) {
     throw new Error('Polygon must be a closed ring (first and last coordinate must be identical)');
   }
 
   const uniqueVerticesCount = ring.length - 1;
   if (uniqueVerticesCount < POLYGON_CONSTRAINTS.minVertices) {
-    throw new Error(`Polygon has too few vertices (${uniqueVerticesCount}). Minimum is ${POLYGON_CONSTRAINTS.minVertices}`);
+    throw new Error(
+      `Polygon has too few vertices (${uniqueVerticesCount}). Minimum is ${POLYGON_CONSTRAINTS.minVertices}`,
+    );
   }
   if (uniqueVerticesCount > POLYGON_CONSTRAINTS.maxVertices) {
-    throw new Error(`Polygon has too many vertices (${uniqueVerticesCount}). Maximum is ${POLYGON_CONSTRAINTS.maxVertices}`);
+    throw new Error(
+      `Polygon has too many vertices (${uniqueVerticesCount}). Maximum is ${POLYGON_CONSTRAINTS.maxVertices}`,
+    );
   }
 
   // Check all coordinates: numbers, within India bounding box
   for (let i = 0; i < ring.length; i++) {
     const pt = ring[i];
-    if (!Array.isArray(pt) || pt.length < 2 || typeof pt[0] !== 'number' || typeof pt[1] !== 'number') {
+    if (
+      !Array.isArray(pt) ||
+      pt.length < 2 ||
+      typeof pt[0] !== 'number' ||
+      typeof pt[1] !== 'number'
+    ) {
       throw new Error(`Invalid coordinate format at index ${i}`);
     }
     const [lng, lat] = pt;
-    if (typeof lng !== 'number' || typeof lat !== 'number' || Number.isNaN(lng) || Number.isNaN(lat) || !Number.isFinite(lng) || !Number.isFinite(lat)) {
+    if (
+      typeof lng !== 'number' ||
+      typeof lat !== 'number' ||
+      Number.isNaN(lng) ||
+      Number.isNaN(lat) ||
+      !Number.isFinite(lng) ||
+      !Number.isFinite(lat)
+    ) {
       throw new Error(`Non-finite coordinate at index ${i}`);
     }
     if (
@@ -121,7 +144,7 @@ export function validatePolygon(geometry: GeoJSONPolygon): ValidatedPolygonResul
       lat > INDIA_BOUNDS.maxLat
     ) {
       throw new Error(
-        `Coordinate [${lng}, ${lat}] is outside India's bounding box [${INDIA_BOUNDS.minLng}, ${INDIA_BOUNDS.minLat}, ${INDIA_BOUNDS.maxLng}, ${INDIA_BOUNDS.maxLat}]`
+        `Coordinate [${lng}, ${lat}] is outside India's bounding box [${INDIA_BOUNDS.minLng}, ${INDIA_BOUNDS.minLat}, ${INDIA_BOUNDS.maxLng}, ${INDIA_BOUNDS.maxLat}]`,
       );
     }
   }
@@ -143,10 +166,14 @@ export function validatePolygon(geometry: GeoJSONPolygon): ValidatedPolygonResul
   // Check area
   const areaHa = polygonAreaHa(geometry);
   if (areaHa < POLYGON_CONSTRAINTS.minAreaHa) {
-    throw new Error(`Polygon area is ${areaHa.toFixed(4)} ha, which is below the minimum allowed ${POLYGON_CONSTRAINTS.minAreaHa} ha`);
+    throw new Error(
+      `Polygon area is ${areaHa.toFixed(4)} ha, which is below the minimum allowed ${POLYGON_CONSTRAINTS.minAreaHa} ha`,
+    );
   }
   if (areaHa > POLYGON_CONSTRAINTS.maxAreaHa) {
-    throw new Error(`Polygon area is ${areaHa.toFixed(2)} ha, which exceeds the maximum allowed ${POLYGON_CONSTRAINTS.maxAreaHa} ha`);
+    throw new Error(
+      `Polygon area is ${areaHa.toFixed(2)} ha, which exceeds the maximum allowed ${POLYGON_CONSTRAINTS.maxAreaHa} ha`,
+    );
   }
 
   const centroid = polygonCentroid(geometry);

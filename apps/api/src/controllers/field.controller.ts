@@ -75,11 +75,7 @@ export class FieldController {
       }
 
       const validated = updateFieldSchema.parse(req.body);
-      const field = await this.service.updateField(
-        req.user.id,
-        req.params.id as string,
-        validated,
-      );
+      const field = await this.service.updateField(req.user.id, req.params.id as string, validated);
 
       res.json({
         status: 'success',

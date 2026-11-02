@@ -38,15 +38,13 @@ describe('Fields and Crops Integration Tests (MongoDB 7+)', () => {
 
   // Helper to register user and obtain bearer token
   async function createTestUser(email = 'farmer@example.com') {
-    const res = await request(app)
-      .post('/auth/register')
-      .send({
-        email,
-        password: 'Password123!',
-        name: 'Test Farmer',
-        language: 'en',
-        areaUnit: 'acre',
-      });
+    const res = await request(app).post('/auth/register').send({
+      email,
+      password: 'Password123!',
+      name: 'Test Farmer',
+      language: 'en',
+      areaUnit: 'acre',
+    });
     return {
       token: res.body.data.accessToken as string,
       user: res.body.data.user,

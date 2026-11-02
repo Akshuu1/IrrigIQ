@@ -21,16 +21,16 @@ describe('IrrigIQ Irrigation Science (FAO-56)', () => {
     it('returns exact expected stage and Kc values across the season', () => {
       // Day 0 and 29 give 0.60
       expect(stageForDay(tomato, 0)).toBe('ini');
-      expect(kcForDay(tomato, 0)).toBe(0.60);
+      expect(kcForDay(tomato, 0)).toBe(0.6);
 
       expect(stageForDay(tomato, 29)).toBe('ini');
-      expect(kcForDay(tomato, 29)).toBe(0.60);
+      expect(kcForDay(tomato, 29)).toBe(0.6);
 
       // Day 30 starts rising (development stage)
       expect(stageForDay(tomato, 30)).toBe('dev');
       const kcDay30 = kcForDay(tomato, 30);
       expect(kcDay30).not.toBeNull();
-      expect(kcDay30!).toBeGreaterThan(0.60);
+      expect(kcDay30!).toBeGreaterThan(0.6);
       expect(kcDay30).toBe(0.613);
 
       // Day 70 gives 1.15 (start of mid-season stage)
@@ -45,7 +45,7 @@ describe('IrrigIQ Irrigation Science (FAO-56)', () => {
       expect(stageForDay(tomato, 134)).toBe('late');
       const kcDay134 = kcForDay(tomato, 134);
       expect(kcDay134).not.toBeNull();
-      expect(kcDay134!).toBeCloseTo(0.80, 1);
+      expect(kcDay134!).toBeCloseTo(0.8, 1);
       expect(kcDay134).toBe(0.813);
 
       // Day 135 returns finished / null
@@ -58,10 +58,7 @@ describe('IrrigIQ Irrigation Science (FAO-56)', () => {
     it('ensures Kc is continuous without jumps and bounded for every crop', () => {
       for (const crop of CROPS) {
         const totalDays =
-          crop.stageDays.ini +
-          crop.stageDays.dev +
-          crop.stageDays.mid +
-          crop.stageDays.late;
+          crop.stageDays.ini + crop.stageDays.dev + crop.stageDays.mid + crop.stageDays.late;
 
         const minAllowedKc = Math.min(crop.kc.ini, crop.kc.mid, crop.kc.end);
         const maxAllowedKc = Math.max(crop.kc.ini, crop.kc.mid, crop.kc.end);
@@ -210,7 +207,9 @@ describe('IrrigIQ Irrigation Science (FAO-56)', () => {
     it('validates Hargreaves inputs and edge cases', () => {
       expect(() => hargreavesEt0(20, 25, 26.9, 150)).toThrow('Tmax cannot be less than Tmin');
       expect(() => hargreavesEt0(30, 20, 95, 150)).toThrow('Latitude must be between -90 and 90');
-      expect(() => hargreavesEt0(30, 20, 26.9, 400)).toThrow('Day of year must be between 1 and 366');
+      expect(() => hargreavesEt0(30, 20, 26.9, 400)).toThrow(
+        'Day of year must be between 1 and 366',
+      );
       expect(hargreavesEt0(25, 25, 26.9, 150)).toBe(0); // zero range
     });
   });
