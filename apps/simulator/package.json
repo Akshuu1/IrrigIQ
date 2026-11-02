@@ -1,0 +1,20 @@
+{
+  "name": "@irrigiq/simulator",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "simulator": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@irrigiq/shared": "*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}
