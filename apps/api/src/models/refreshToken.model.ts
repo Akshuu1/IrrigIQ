@@ -3,6 +3,7 @@ import { Schema, model, Document, Types } from 'mongoose';
 export interface IRefreshToken {
   userId: Types.ObjectId;
   tokenHash: string;
+  hash?: string;
   expiresAt: Date;
   revokedAt: Date | null;
   replacedByTokenHash: string | null;
@@ -27,6 +28,7 @@ const RefreshTokenSchema = new Schema<IRefreshTokenDocument>(
       required: true,
       unique: true,
       index: true,
+      alias: 'hash',
     },
     expiresAt: {
       type: Date,
@@ -47,4 +49,7 @@ const RefreshTokenSchema = new Schema<IRefreshTokenDocument>(
   },
 );
 
-export const RefreshTokenModel = model<IRefreshTokenDocument>('RefreshToken', RefreshTokenSchema);
+export const RefreshTokenModel = model<IRefreshTokenDocument>(
+  'RefreshToken',
+  RefreshTokenSchema,
+);
