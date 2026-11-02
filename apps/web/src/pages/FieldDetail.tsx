@@ -319,3 +319,4 @@ export function FieldDetail(): React.JSX.Element {
     </div>
   );
 }
+
