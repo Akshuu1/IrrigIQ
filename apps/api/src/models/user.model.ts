@@ -60,4 +60,3 @@ const UserSchema = new Schema<IUserDocument>(
 );
 
 export const UserModel = model<IUserDocument>('User', UserSchema);
-

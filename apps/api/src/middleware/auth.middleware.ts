@@ -62,4 +62,3 @@ export async function authMiddleware(
     next(new AppError('Invalid access token', 401, 'INVALID_TOKEN'));
   }
 }
-

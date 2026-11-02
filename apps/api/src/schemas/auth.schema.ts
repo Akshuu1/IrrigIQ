@@ -27,4 +27,3 @@ export const UpdateProfileSchema = z
   .strict('Only name, language, and areaUnit can be updated');
 
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;
-

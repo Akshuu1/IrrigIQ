@@ -49,7 +49,4 @@ const RefreshTokenSchema = new Schema<IRefreshTokenDocument>(
   },
 );
 
-export const RefreshTokenModel = model<IRefreshTokenDocument>(
-  'RefreshToken',
-  RefreshTokenSchema,
-);
+export const RefreshTokenModel = model<IRefreshTokenDocument>('RefreshToken', RefreshTokenSchema);
