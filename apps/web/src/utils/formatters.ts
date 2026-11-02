@@ -55,3 +55,4 @@ export function formatDepthMm(mm: number, lang: string = 'en'): string {
   const unitLabel = lang === 'hi' ? 'मिमी' : 'mm';
   return `${formatNumber(mm, lang, { maximumFractionDigits: 1 })} ${unitLabel}`;
 }
+

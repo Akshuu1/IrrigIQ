@@ -24,3 +24,4 @@ export function ProtectedRoute({ children }: { children: React.JSX.Element }): R
 
   return children;
 }
+
