@@ -10,6 +10,7 @@ import {
   RecommendationModel,
   IRecommendationDocument,
 } from '../models/recommendation.model.js';
+import { IrrigationLogModel } from '../models/irrigation-log.model.js';
 import {
   weatherCellKey,
   getWeatherForCell,
@@ -69,6 +70,19 @@ export async function recomputeField(
     weatherResult.days,
   );
 
+  // Determine latest irrigation date to reset deficit if not explicitly provided
+  let lastIrrigationDate = options?.lastIrrigationDate;
+  if (!lastIrrigationDate) {
+    const latestLog = await IrrigationLogModel.findOne({
+      fieldId: field._id,
+      date: { $lte: today },
+    }).sort({ date: -1 });
+
+    if (latestLog) {
+      lastIrrigationDate = latestLog.date;
+    }
+  }
+
   // Generate irrigation plan using shared pure function
   const plan = planIrrigation(
     {
@@ -77,7 +91,7 @@ export async function recomputeField(
       areaHa: field.areaHa,
     },
     dailyNeeds,
-    options?.lastIrrigationDate,
+    lastIrrigationDate,
     options?.sensorReading,
   );
 

@@ -93,3 +93,37 @@ IrrigIQ must provide daily actionable irrigation advice (e.g. irrigate $X$ mm or
    - Automatic recomputation triggers asynchronously upon field creation and field updates.
    - On-demand recomputation endpoint `POST /fields/:id/recommendations/recompute` is protected by a Redis sliding-window rate limiter (10 requests per 15 minutes per IP/user) with in-memory fallback.
    - Endpoints strictly enforce user ownership checks across all tenants.
+
+---
+
+## ADR 004: Irrigation Logging, Deficit Reset & Honest Savings Accounting
+
+### Context
+
+IrrigIQ must track actual irrigation applications made by the farmer, use them to reset the ongoing soil moisture deficit, and compute transparent water savings compared to the farmer's self-reported baseline routine.
+
+### Decision & Architectural Implementation
+
+1. **Irrigation Log Subsystem**:
+   - The `IrrigationLog` model tracks `{ fieldId, userId, date, appliedMm, source, note }`.
+   - Sources are constrained to `'recommended'` (farmer followed IrrigIQ recommendation) or `'manual'` (farmer made an ad-hoc adjustment).
+   - Logging or deleting an irrigation event automatically triggers `recomputeField(fieldId)`. In `recomputeField`, the most recent irrigation date ($\le \text{today}$) is passed to `planIrrigation`, resetting the deficit counter and recalculating future advice.
+
+2. **Shared Water Accounting (`@irrigiq/shared/src/savings.ts`)**:
+   - **Baseline Water Use**:
+     $$\text{baselineCount} = \lfloor \text{daysInRange} / \text{baseline.everyDays} \rfloor$$
+     $$\text{baselineMm} = \text{baselineCount} \times \text{baseline.depthMm}$$
+     $$\text{baselineLitres} = \text{mmToLitres}(\text{baselineMm}, \text{areaHa})$$
+   - **Recommended Total**: Sum of gross mm and litres for all days within the range where `action === 'irrigate'`.
+   - **Actual Total**: Sum of gross mm and litres recorded in the `IrrigationLog` collection for the date range.
+   - **Potential Savings**:
+     $$\text{potentialSavedLitres} = \text{baselineLitres} - \text{recommendedLitres}$$
+   - **Realised Savings**:
+     $$\text{realisedSavedLitres} = \text{baselineLitres} - \text{actualLitres}$$
+
+3. **Honest Reporting of Negative Savings**:
+   - If actual water applied exceeds baseline water use (e.g. over-irrigation or severe drought), realised savings are negative (e.g. $-300,000\text{ litres}$, $-33.33\%$).
+   - Savings are never clamped at 0 or hidden. Farmers and agronomists receive an honest, transparent account of water balance.
+
+4. **Assumptions & Farmer Context Transparency**:
+   - The `GET /fields/:id/savings?from&to` endpoint returns the underlying engineering assumptions (method application efficiency: Drip 0.90, Sprinkler 0.75, Flood 0.60; field area; baseline parameters) and explicitly notes that the baseline is the farmer's self-reported routine prior to using IrrigIQ.

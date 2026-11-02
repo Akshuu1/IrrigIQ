@@ -1,6 +1,7 @@
 import { Router, RequestHandler } from 'express';
 import { fieldController } from '../controllers/field.controller.js';
 import { recommendationController } from '../controllers/recommendation.controller.js';
+import { irrigationLogController } from '../controllers/irrigation-log.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { recomputeRateLimiter } from '../middleware/rateLimiter.js';
 
@@ -23,5 +24,11 @@ router.post(
   recomputeRateLimiter as unknown as RequestHandler,
   recommendationController.recompute,
 );
+
+// Irrigation Log & Savings routes
+router.post('/:id/logs', irrigationLogController.createLog);
+router.get('/:id/logs', irrigationLogController.listLogs);
+router.delete('/:id/logs/:logId', irrigationLogController.deleteLog);
+router.get('/:id/savings', irrigationLogController.getSavings);
 
 export { router as fieldRouter };
