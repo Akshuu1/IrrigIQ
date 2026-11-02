@@ -108,4 +108,3 @@ export const sensorRateLimiter = createRateLimiter({
   prefix: 'ratelimit:sensor',
   message: 'Too many sensor readings sent, please slow down.',
 });
-

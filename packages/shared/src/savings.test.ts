@@ -21,9 +21,7 @@ describe('Savings Pure Science & Helpers', () => {
     });
 
     it('throws error when to is before from', () => {
-      expect(() => calculateDaysInRange('2026-11-10', '2026-11-01')).toThrow(
-        /Invalid date range/i,
-      );
+      expect(() => calculateDaysInRange('2026-11-10', '2026-11-01')).toThrow(/Invalid date range/i);
     });
 
     it('throws error on invalid date strings', () => {
@@ -179,4 +177,3 @@ describe('Savings Pure Science & Helpers', () => {
     });
   });
 });
-

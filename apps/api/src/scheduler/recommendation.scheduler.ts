@@ -58,7 +58,10 @@ export async function processDailyRecommendations(): Promise<{
     try {
       await getWeatherForCell(cellKey);
     } catch (err: unknown) {
-      logger.warn({ err, cellKey }, 'Weather refresh failed for cell, will use fallback during field recompute');
+      logger.warn(
+        { err, cellKey },
+        'Weather refresh failed for cell, will use fallback during field recompute',
+      );
     }
   }
 

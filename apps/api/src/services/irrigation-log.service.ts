@@ -6,10 +6,7 @@ import {
   IrrigationMethod,
 } from '@irrigiq/shared';
 import { FieldModel } from '../models/field.model.js';
-import {
-  IrrigationLogModel,
-  IIrrigationLogDocument,
-} from '../models/irrigation-log.model.js';
+import { IrrigationLogModel, IIrrigationLogDocument } from '../models/irrigation-log.model.js';
 import { RecommendationModel } from '../models/recommendation.model.js';
 import { CreateIrrigationLogInput } from '../schemas/irrigation-log.schema.js';
 import { recomputeField } from './recommendation.service.js';
@@ -232,8 +229,7 @@ export class IrrigationLogService {
       actualGrossMmList,
     });
 
-    const efficiency =
-      IRRIGATION_EFFICIENCY[field.method as IrrigationMethod] ?? 0.75;
+    const efficiency = IRRIGATION_EFFICIENCY[field.method as IrrigationMethod] ?? 0.75;
 
     return {
       fieldId: field._id.toString(),
@@ -263,4 +259,3 @@ export class IrrigationLogService {
 }
 
 export const irrigationLogService = new IrrigationLogService();
-

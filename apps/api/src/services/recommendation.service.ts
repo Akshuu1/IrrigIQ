@@ -1,21 +1,9 @@
 import { Types } from 'mongoose';
-import {
-  buildDailyNeeds,
-  planIrrigation,
-  SoilType,
-  IrrigationMethod,
-} from '@irrigiq/shared';
+import { buildDailyNeeds, planIrrigation, SoilType, IrrigationMethod } from '@irrigiq/shared';
 import { FieldModel } from '../models/field.model.js';
-import {
-  RecommendationModel,
-  IRecommendationDocument,
-} from '../models/recommendation.model.js';
+import { RecommendationModel, IRecommendationDocument } from '../models/recommendation.model.js';
 import { IrrigationLogModel } from '../models/irrigation-log.model.js';
-import {
-  weatherCellKey,
-  getWeatherForCell,
-  GetWeatherOptions,
-} from './weather.service.js';
+import { weatherCellKey, getWeatherForCell, GetWeatherOptions } from './weather.service.js';
 import { AppError } from '../errors/AppError.js';
 import { logger } from '../config/logger.js';
 

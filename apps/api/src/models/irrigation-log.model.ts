@@ -77,4 +77,3 @@ export const IrrigationLogModel = mongoose.model<IIrrigationLogDocument>(
   'IrrigationLog',
   irrigationLogSchema,
 );
-

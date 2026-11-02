@@ -94,11 +94,11 @@ describe('Sensors, Moisture Ingestion, SSE & Downsampling Integration Tests', ()
 
   async function createField(token: string, name = 'Sensor Field') {
     const polyCoords = [
-      [75.8000, 26.9000],
-      [75.8010, 26.9000],
-      [75.8010, 26.9010],
-      [75.8000, 26.9010],
-      [75.8000, 26.9000],
+      [75.8, 26.9],
+      [75.801, 26.9],
+      [75.801, 26.901],
+      [75.8, 26.901],
+      [75.8, 26.9],
     ];
 
     const res = await request(app)
@@ -181,9 +181,7 @@ describe('Sensors, Moisture Ingestion, SSE & Downsampling Integration Tests', ()
   describe('POST /sensor-readings Ingestion & Validation', () => {
     it('rejects wrong or missing API keys with 401', async () => {
       // Missing key
-      const res1 = await request(app)
-        .post('/sensor-readings')
-        .send({ moisturePct: 45, tempC: 25 });
+      const res1 = await request(app).post('/sensor-readings').send({ moisturePct: 45, tempC: 25 });
       expect(res1.status).toBe(401);
       expect(res1.body.code).toBe('INVALID_API_KEY');
 
@@ -284,7 +282,7 @@ describe('Sensors, Moisture Ingestion, SSE & Downsampling Integration Tests', ()
   });
 
   describe('Multi-field Isolation', () => {
-    it("one sensor key cannot write to another field", async () => {
+    it('one sensor key cannot write to another field', async () => {
       const userA = await createTestUser('field_a@example.com');
       const userB = await createTestUser('field_b@example.com');
 
@@ -298,14 +296,11 @@ describe('Sensors, Moisture Ingestion, SSE & Downsampling Integration Tests', ()
       const keyA = sensorARes.body.data.apiKey;
 
       // Sensor A attempts to post reading with spoofed fieldId
-      const postRes = await request(app)
-        .post('/sensor-readings')
-        .set('x-api-key', keyA)
-        .send({
-          moisturePct: 48.0,
-          tempC: 22.0,
-          fieldId: fieldB.id, // spoofed!
-        });
+      const postRes = await request(app).post('/sensor-readings').set('x-api-key', keyA).send({
+        moisturePct: 48.0,
+        tempC: 22.0,
+        fieldId: fieldB.id, // spoofed!
+      });
       expect(postRes.status).toBe(200);
 
       // Check Field B's moisture history -> must be empty
@@ -440,7 +435,9 @@ describe('Sensors, Moisture Ingestion, SSE & Downsampling Integration Tests', ()
       expect(afterCross).toBe(7);
 
       // Verify that day 0 recommendation has reason.sensor_dry (action: irrigate)
-      const todayRec = await RecommendationModel.findOne({ fieldId: field.id }).sort({ forDate: 1 });
+      const todayRec = await RecommendationModel.findOne({ fieldId: field.id }).sort({
+        forDate: 1,
+      });
       expect(todayRec?.action).toBe('irrigate');
       expect(todayRec?.reasonKey).toBe('reason.sensor_dry');
 

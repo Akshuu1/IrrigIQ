@@ -64,11 +64,11 @@ describe('Irrigation Log & Savings Service Integration Tests', () => {
   async function createField(token: string, overrides = {}) {
     // 100m x 100m rectangle in Punjab = ~1.0 ha
     const polyCoords = [
-      [75.8000, 26.9000],
-      [75.8010, 26.9000],
-      [75.8010, 26.9010],
-      [75.8000, 26.9010],
-      [75.8000, 26.9000],
+      [75.8, 26.9],
+      [75.801, 26.9],
+      [75.801, 26.901],
+      [75.8, 26.901],
+      [75.8, 26.9],
     ];
 
     const res = await request(app)

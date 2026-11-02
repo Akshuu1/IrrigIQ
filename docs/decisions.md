@@ -174,3 +174,23 @@ Real-time field monitoring requires ingesting high-frequency soil moisture and t
 6. **Physics-Based CLI Simulator (`apps/simulator`)**:
    - Simulates diurnal evapotranspiration based on FAO-56 crop stage $ET_c$, active root zone holding capacity, sun angle weighting, temperature cycles, rainfall, and farmer irrigation triggers.
    - Speed configuration `--speed 60` simulates 1 farm day per minute.
+
+---
+
+## ADR 006: Map Tile Provider and Usage Policy
+
+### Context
+
+Phase 9 introduces the interactive map wizard for farmers to draw and inspect agricultural field boundaries using Leaflet and `@geoman-io/leaflet-geoman-free`. An underlying raster tile layer is required for spatial orientation across India. We must select a tile provider with clear terms of use that support open-source, non-bulk interactive map rendering.
+
+### Decision
+
+We use the **OpenStreetMap (OSM) Standard Tile Layer**:
+
+- **Tile URL Template**: `https://tile.openstreetmap.org/{z}/{x}/{y}.png`
+- **Attribution**: `&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`
+- **Max Zoom**: 19
+- **Compliance with OSM Tile Usage Policy**:
+  1. **Strictly On-Demand / No Bulk Pre-fetching**: Tiles are requested strictly as the user pans or zooms in their browser. As explicitly prohibited by the OSM Tile Usage Policy, IrrigIQ **does not** scrape, bulk-download, or store tile raster grids in offline caches or databases.
+  2. **Offline Graceful Degradation**: When offline in PWA mode, the field boundary polygon and recommendations are rendered directly on an interactive SVG/canvas canvas without requesting background tiles.
+  3. **Attribution & Referer**: Every map instance prominently renders standard OpenStreetMap attribution and standard browser referer headers.

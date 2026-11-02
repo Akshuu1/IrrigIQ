@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  buildDailyNeeds,
-  planIrrigation,
-  explain,
-  type DailyNeed,
-} from './recommendations.js';
+import { buildDailyNeeds, planIrrigation, explain, type DailyNeed } from './recommendations.js';
 
 describe('Irrigation Planning & Recommendations Pure Functions', () => {
   describe('buildDailyNeeds', () => {
@@ -33,9 +28,7 @@ describe('Irrigation Planning & Recommendations Pure Functions', () => {
       // Day 2: rain 12 -> effective rain = 0.8 * (12 - 5) = 5.6 mm
       expect(needs[1]?.rainMm).toBe(12.0);
       expect(needs[1]?.effectiveRainMm).toBe(5.6);
-      expect(needs[1]?.netNeedMm).toBe(
-        Number(Math.max(0, needs[1]!.etcMm - 5.6).toFixed(2)),
-      );
+      expect(needs[1]?.netNeedMm).toBe(Number(Math.max(0, needs[1]!.etcMm - 5.6).toFixed(2)));
     });
 
     it('matches hand calculation in docs/science.md (Scenario A: Tomato mid-season, dry day)', () => {
@@ -260,4 +253,3 @@ describe('Irrigation Planning & Recommendations Pure Functions', () => {
     });
   });
 });
-

@@ -102,7 +102,9 @@ export async function runSimulator(options?: Partial<SimulatorArgs>): Promise<vo
     let irrigationRise = 0;
     if (currentMoisture <= 35 && (simulatedHour === 7 || simulatedHour === 17)) {
       irrigationRise = 25.0; // +25% jump from irrigation
-      console.log(`💦 [Day ${simulatedDay}, ${simulatedHour}:00] Irrigation detected! Moisture rising.`);
+      console.log(
+        `💦 [Day ${simulatedDay}, ${simulatedHour}:00] Irrigation detected! Moisture rising.`,
+      );
     }
 
     // Random light rain chance (~5% per day)
@@ -117,7 +119,11 @@ export async function runSimulator(options?: Partial<SimulatorArgs>): Promise<vo
 
     // Diurnal temperature: 20°C min (night), 33°C max (afternoon)
     const tempC = Number(
-      (26.5 + 6.5 * Math.sin(((simulatedHour - 9) / 24) * 2 * Math.PI) + (Math.random() - 0.5)).toFixed(1),
+      (
+        26.5 +
+        6.5 * Math.sin(((simulatedHour - 9) / 24) * 2 * Math.PI) +
+        (Math.random() - 0.5)
+      ).toFixed(1),
     );
 
     const now = new Date();
@@ -167,7 +173,10 @@ export async function runSimulator(options?: Partial<SimulatorArgs>): Promise<vo
 }
 
 // Execute CLI when directly run
-if (process.argv[1]?.endsWith('simulator/src/index.ts') || process.argv[1]?.endsWith('simulator/dist/index.js')) {
+if (
+  process.argv[1]?.endsWith('simulator/src/index.ts') ||
+  process.argv[1]?.endsWith('simulator/dist/index.js')
+) {
   runSimulator().catch((err) => {
     console.error('Fatal simulator error:', err);
     process.exit(1);

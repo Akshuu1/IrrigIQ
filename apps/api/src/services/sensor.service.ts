@@ -3,10 +3,7 @@ import { Types } from 'mongoose';
 import { FieldModel } from '../models/field.model.js';
 import { SensorModel, ISensorDocument } from '../models/sensor.model.js';
 import { SensorReadingModel } from '../models/sensor-reading.model.js';
-import {
-  CreateSensorInput,
-  IngestReadingInput,
-} from '../schemas/sensor.schema.js';
+import { CreateSensorInput, IngestReadingInput } from '../schemas/sensor.schema.js';
 import { recomputeField } from './recommendation.service.js';
 import { publishFieldMoisture } from '../infra/event-bus.js';
 import { getRedisClient } from '../infra/redis.js';
@@ -96,7 +93,10 @@ export class SensorService {
   async ingestReadings(
     apiKey: string,
     input: IngestReadingInput,
-  ): Promise<{ ingestedCount: number; lastReading: { timestamp: Date; moisturePct: number; tempC: number } }> {
+  ): Promise<{
+    ingestedCount: number;
+    lastReading: { timestamp: Date; moisturePct: number; tempC: number };
+  }> {
     if (!apiKey) {
       throw new AppError('Sensor API key required', 401, 'INVALID_API_KEY');
     }
@@ -254,7 +254,10 @@ export class SensorService {
           },
         });
       } catch (err: unknown) {
-        logger.error({ err, fieldId: fieldIdStr }, 'Recompute failed after sensor threshold crossing');
+        logger.error(
+          { err, fieldId: fieldIdStr },
+          'Recompute failed after sensor threshold crossing',
+        );
       }
       return true;
     }

@@ -17,14 +17,24 @@ export const createIrrigationLogSchema = z.object({
 export type CreateIrrigationLogInput = z.infer<typeof createIrrigationLogSchema>;
 
 export const listLogsQuerySchema = z.object({
-  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'from must be YYYY-MM-DD').optional(),
-  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'to must be YYYY-MM-DD').optional(),
+  from: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'from must be YYYY-MM-DD')
+    .optional(),
+  to: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'to must be YYYY-MM-DD')
+    .optional(),
 });
 
 export const savingsQuerySchema = z
   .object({
-    from: z.string({ required_error: 'from query parameter is required' }).regex(/^\d{4}-\d{2}-\d{2}$/, 'from must be YYYY-MM-DD'),
-    to: z.string({ required_error: 'to query parameter is required' }).regex(/^\d{4}-\d{2}-\d{2}$/, 'to must be YYYY-MM-DD'),
+    from: z
+      .string({ required_error: 'from query parameter is required' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'from must be YYYY-MM-DD'),
+    to: z
+      .string({ required_error: 'to query parameter is required' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'to must be YYYY-MM-DD'),
   })
   .refine((data) => data.to >= data.from, {
     message: "'to' date must be greater than or equal to 'from' date",
@@ -32,4 +42,3 @@ export const savingsQuerySchema = z
   });
 
 export type SavingsQueryInput = z.infer<typeof savingsQuerySchema>;
-

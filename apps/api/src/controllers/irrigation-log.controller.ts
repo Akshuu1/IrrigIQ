@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-  IrrigationLogService,
-  irrigationLogService,
-} from '../services/irrigation-log.service.js';
+import { IrrigationLogService, irrigationLogService } from '../services/irrigation-log.service.js';
 import {
   createIrrigationLogSchema,
   listLogsQuerySchema,
@@ -20,11 +17,7 @@ export class IrrigationLogController {
       }
 
       const validated = createIrrigationLogSchema.parse(req.body);
-      const log = await this.service.createLog(
-        req.user.id,
-        req.params.id as string,
-        validated,
-      );
+      const log = await this.service.createLog(req.user.id, req.params.id as string, validated);
 
       res.status(201).json({
         status: 'success',
@@ -44,11 +37,7 @@ export class IrrigationLogController {
       }
 
       const query = listLogsQuerySchema.parse(req.query);
-      const logs = await this.service.getLogs(
-        req.user.id,
-        req.params.id as string,
-        query,
-      );
+      const logs = await this.service.getLogs(req.user.id, req.params.id as string, query);
 
       res.json({
         status: 'success',
@@ -107,4 +96,3 @@ export class IrrigationLogController {
 }
 
 export const irrigationLogController = new IrrigationLogController();
-

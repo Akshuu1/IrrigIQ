@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
-import {
-  getRecommendationsForField,
-  recomputeField,
-} from '../services/recommendation.service.js';
+import { getRecommendationsForField, recomputeField } from '../services/recommendation.service.js';
 import { FieldModel } from '../models/field.model.js';
 import { AppError } from '../errors/AppError.js';
 import { Types } from 'mongoose';
@@ -73,4 +70,3 @@ export class RecommendationController {
 }
 
 export const recommendationController = new RecommendationController();
-

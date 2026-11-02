@@ -116,9 +116,7 @@ export function computeSavings(input: ComputeSavingsInput): SavingsTotals {
 
   // 2. Recommended
   const recommendedCount = recommendedGrossMmList.length;
-  const recommendedMm = Number(
-    recommendedGrossMmList.reduce((acc, mm) => acc + mm, 0).toFixed(2),
-  );
+  const recommendedMm = Number(recommendedGrossMmList.reduce((acc, mm) => acc + mm, 0).toFixed(2));
   const recommendedLitres = mmToLitres(recommendedMm, areaHa);
 
   // 3. Actual
@@ -168,4 +166,3 @@ export function computeSavings(input: ComputeSavingsInput): SavingsTotals {
     },
   };
 }
-

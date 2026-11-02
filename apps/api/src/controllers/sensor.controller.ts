@@ -45,10 +45,7 @@ export class SensorController {
         throw new AppError('Authentication required', 401, 'UNAUTHORIZED');
       }
 
-      const sensors = await this.service.getSensors(
-        req.user.id,
-        req.params.id as string,
-      );
+      const sensors = await this.service.getSensors(req.user.id, req.params.id as string);
 
       res.json({
         status: 'success',
@@ -73,7 +70,11 @@ export class SensorController {
       }
 
       if (!apiKey) {
-        throw new AppError('Sensor API key required in x-api-key or Authorization header', 401, 'INVALID_API_KEY');
+        throw new AppError(
+          'Sensor API key required in x-api-key or Authorization header',
+          401,
+          'INVALID_API_KEY',
+        );
       }
 
       const validated = ingestReadingSchema.parse(req.body);
