@@ -101,3 +101,11 @@ export const recomputeRateLimiter = createRateLimiter({
   prefix: 'ratelimit:recompute',
   message: 'Too many recomputation requests, please try again later.',
 });
+
+export const sensorRateLimiter = createRateLimiter({
+  windowSeconds: 60,
+  maxRequests: 120,
+  prefix: 'ratelimit:sensor',
+  message: 'Too many sensor readings sent, please slow down.',
+});
+

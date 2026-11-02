@@ -25,13 +25,15 @@ export async function authMiddleware(
   next: NextFunction,
 ): Promise<void> {
   const authHeader = req.header('authorization');
+  let token: string | undefined;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    next(new AppError('Authentication required', 401, 'UNAUTHORIZED'));
-    return;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.substring(7).trim();
+  } else if (typeof req.query.token === 'string' && req.query.token.trim()) {
+    // Support token query parameter for Server-Sent Events (EventSource)
+    token = req.query.token.trim();
   }
 
-  const token = authHeader.substring(7).trim();
   if (!token) {
     next(new AppError('Authentication required', 401, 'UNAUTHORIZED'));
     return;

@@ -127,3 +127,50 @@ IrrigIQ must track actual irrigation applications made by the farmer, use them t
 
 4. **Assumptions & Farmer Context Transparency**:
    - The `GET /fields/:id/savings?from&to` endpoint returns the underlying engineering assumptions (method application efficiency: Drip 0.90, Sprinkler 0.75, Flood 0.60; field area; baseline parameters) and explicitly notes that the baseline is the farmer's self-reported routine prior to using IrrigIQ.
+
+---
+
+## ADR 005: Sensor Integration, Time Series Storage, SSE & Moisture Simulation
+
+### Context
+
+Real-time field monitoring requires ingesting high-frequency soil moisture and temperature readings from physical or simulated probes, streaming live telemetry to the UI, downsampling long histories for charting, and reacting automatically to moisture extremes (water stress $\le 40\%$ or saturation $\ge 80\%$).
+
+### Decision & Architectural Implementation
+
+1. **Sensor Identity & One-Way Key Hashing**:
+   - Sensor identity is tracked in `Sensor` with `{ fieldId, userId, name, apiKeyHash, isSimulated, lastSeenAt }`.
+   - On sensor creation (`POST /fields/:id/sensors`), a cryptographically secure 24-byte hex key (`iq_sn_...`) is generated and presented to the client **once**.
+   - Only its SHA-256 hash is persisted in MongoDB. Incoming telemetry (`POST /sensor-readings`) authenticates via the `x-api-key` header.
+   - Field boundaries are enforced strictly on the server: telemetry metadata (`fieldId`, `sensorId`) is bound directly to the authenticated sensor document, preventing any probe from spoofing or writing data to another field.
+
+2. **MongoDB Time Series Collection**:
+   - Telemetry documents are stored in the `SensorReading` collection configured as a native MongoDB time series collection:
+     ```ts
+     timeseries: {
+       timeField: 'timestamp',
+       metaField: 'metadata',
+       granularity: 'seconds',
+     },
+     expireAfterSeconds: 7776000 // 90 days automatic TTL expiration
+     ```
+   - Eliminates manual index pruning and provides columnar compression optimized for sensor telemetry.
+
+3. **Real-time Server-Sent Events (SSE)**:
+   - `GET /fields/:id/moisture/stream` opens an authenticated persistent event stream (`text/event-stream`).
+   - Supports both `Authorization: Bearer` and `?token=` query authentication (enabling native browser `EventSource` usage).
+   - Keeps connections alive across reverse proxies with a comment heartbeat (`: heartbeat\n\n`) every 25 seconds.
+   - Cleans up subscriptions and timers on client disconnect.
+
+4. **Adaptive Downsampling for Analytics**:
+   - `GET /fields/:id/moisture?from&to` analyzes the requested query span:
+     - For short spans ($\le 24\text{ hours}$), raw sensor points are returned sorted chronologically.
+     - For wide spans ($> 24\text{ hours}$), an aggregation pipeline groups readings using `$dateTrunc` into 1-hour or 1-day buckets (`avgMoisture`, `avgTemp`, `count`), ensuring bounded payload sizes regardless of query length.
+
+5. **Threshold-Crossing Debounced Recomputation**:
+   - When moisture crosses into water stress ($\le 40\%$) or saturation ($\ge 80\%$), an irrigation plan recomputation is triggered.
+   - A Redis distributed lock (`debounce:recompute:${fieldId}`) with a 60-second TTL prevents rapid fluctuations from firing duplicate recomputation jobs.
+
+6. **Physics-Based CLI Simulator (`apps/simulator`)**:
+   - Simulates diurnal evapotranspiration based on FAO-56 crop stage $ET_c$, active root zone holding capacity, sun angle weighting, temperature cycles, rainfall, and farmer irrigation triggers.
+   - Speed configuration `--speed 60` simulates 1 farm day per minute.

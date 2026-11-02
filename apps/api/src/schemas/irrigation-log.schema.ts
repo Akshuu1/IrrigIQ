@@ -32,3 +32,4 @@ export const savingsQuerySchema = z
   });
 
 export type SavingsQueryInput = z.infer<typeof savingsQuerySchema>;
+

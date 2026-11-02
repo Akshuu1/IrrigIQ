@@ -2,6 +2,7 @@ import { Router, RequestHandler } from 'express';
 import { fieldController } from '../controllers/field.controller.js';
 import { recommendationController } from '../controllers/recommendation.controller.js';
 import { irrigationLogController } from '../controllers/irrigation-log.controller.js';
+import { sensorController } from '../controllers/sensor.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { recomputeRateLimiter } from '../middleware/rateLimiter.js';
 
@@ -30,5 +31,11 @@ router.post('/:id/logs', irrigationLogController.createLog);
 router.get('/:id/logs', irrigationLogController.listLogs);
 router.delete('/:id/logs/:logId', irrigationLogController.deleteLog);
 router.get('/:id/savings', irrigationLogController.getSavings);
+
+// Sensor & Moisture routes
+router.post('/:id/sensors', sensorController.createSensor);
+router.get('/:id/sensors', sensorController.getSensors);
+router.get('/:id/moisture', sensorController.getMoisture);
+router.get('/:id/moisture/stream', sensorController.moistureStream);
 
 export { router as fieldRouter };

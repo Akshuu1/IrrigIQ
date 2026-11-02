@@ -11,6 +11,7 @@ import { healthRouter } from './routes/health.routes.js';
 import { authRouter } from './routes/auth.routes.js';
 import { fieldRouter } from './routes/field.routes.js';
 import { cropRouter } from './routes/crop.routes.js';
+import { sensorReadingRouter } from './routes/sensor-reading.routes.js';
 
 export function createApp(): Express {
   const env = getEnv();
@@ -64,6 +65,7 @@ export function createApp(): Express {
   app.use('/auth', authRouter);
   app.use('/fields', fieldRouter);
   app.use('/crops', cropRouter);
+  app.use('/sensor-readings', sensorReadingRouter);
 
   // 404 handler
   app.use((_req, res) => {

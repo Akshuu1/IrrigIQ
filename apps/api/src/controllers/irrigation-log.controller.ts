@@ -107,3 +107,4 @@ export class IrrigationLogController {
 }
 
 export const irrigationLogController = new IrrigationLogController();
+
