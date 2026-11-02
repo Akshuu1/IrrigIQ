@@ -4,6 +4,8 @@ import { AppError } from '../errors/AppError.js';
 import { FieldRepository, fieldRepository } from '../repositories/field.repository.js';
 import { IField, IFieldDocument } from '../models/field.model.js';
 import { CreateFieldInput, UpdateFieldInput } from '../schemas/field.schema.js';
+import { recomputeField } from './recommendation.service.js';
+import { logger } from '../config/logger.js';
 
 export class FieldService {
   constructor(private readonly repo: FieldRepository = fieldRepository) {}
@@ -36,7 +38,16 @@ export class FieldService {
       version: 1,
     };
 
-    return this.repo.create(fieldData);
+    const field = await this.repo.create(fieldData);
+
+    // Recompute recommendations when a field is created
+    try {
+      await recomputeField(field._id);
+    } catch (err: unknown) {
+      logger.warn({ err, fieldId: field._id }, 'Initial recommendation recompute failed on create');
+    }
+
+    return field;
   }
 
   async getFields(userId: string): Promise<IFieldDocument[]> {
@@ -113,7 +124,16 @@ export class FieldService {
       );
     }
 
-    return result.field;
+    const updatedField = result.field;
+
+    // Recompute recommendations when a field is updated
+    try {
+      await recomputeField(updatedField._id);
+    } catch (err: unknown) {
+      logger.warn({ err, fieldId: updatedField._id }, 'Recommendation recompute failed on update');
+    }
+
+    return updatedField;
   }
 
   async deleteField(userId: string, fieldId: string): Promise<void> {

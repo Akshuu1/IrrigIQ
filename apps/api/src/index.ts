@@ -3,6 +3,10 @@ import { getEnv } from './config/env.js';
 import { logger } from './config/logger.js';
 import { connectDb, disconnectDb } from './infra/db.js';
 import { connectRedis, disconnectRedis } from './infra/redis.js';
+import {
+  initRecommendationScheduler,
+  stopRecommendationScheduler,
+} from './scheduler/recommendation.scheduler.js';
 
 const env = getEnv();
 const app = createApp();
@@ -14,9 +18,19 @@ async function startServer(): Promise<void> {
       logger.warn({ err }, 'MongoDB initial connection failed - will retry on demand');
     });
 
-    connectRedis().catch((err) => {
-      logger.warn({ err }, 'Redis initial connection failed - will retry on demand');
-    });
+    connectRedis()
+      .then(async () => {
+        // Initialize BullMQ recommendation scheduler when Redis is connected
+        try {
+          await initRecommendationScheduler();
+          logger.info('BullMQ daily recommendation scheduler initialized (05:00 Asia/Kolkata)');
+        } catch (schedulerErr) {
+          logger.error({ err: schedulerErr }, 'Failed to initialize recommendation scheduler');
+        }
+      })
+      .catch((err) => {
+        logger.warn({ err }, 'Redis initial connection failed - will retry on demand');
+      });
 
     const server = app.listen(env.PORT, () => {
       logger.info(
@@ -28,7 +42,11 @@ async function startServer(): Promise<void> {
     const shutdown = async (signal: string) => {
       logger.info(`${signal} received, shutting down gracefully...`);
       server.close(async () => {
-        await Promise.allSettled([disconnectDb(), disconnectRedis()]);
+        await Promise.allSettled([
+          stopRecommendationScheduler(),
+          disconnectDb(),
+          disconnectRedis(),
+        ]);
         logger.info('Clean shutdown complete');
         process.exit(0);
       });

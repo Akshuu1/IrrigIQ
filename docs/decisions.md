@@ -58,3 +58,38 @@ To guarantee uptime and minimize external dependency risk, the weather subsystem
 
 5. **Hargreaves Fallback for $ET_0$**:
    - If Open-Meteo returns null/missing for `et0_fao_evapotranspiration` on any day, the system computes $ET_0$ locally using the FAO-56 Hargreaves formula from `@irrigiq/shared` (`hargreavesEt0(tmax, tmin, lat, dayOfYear)`) and tags the day's source as `'hargreaves'`.
+
+---
+
+## ADR 003: Irrigation Recommendation Engine & Distributed Scheduler
+
+### Context
+
+IrrigIQ must provide daily actionable irrigation advice (e.g. irrigate $X$ mm or skip) tailored to smallholder farmers in India. The recommendation engine needs to balance scientific rigor (FAO-56 water balance, soil texture triggers, method efficiencies) with reliability, high-throughput daily execution, and offline/resilient scheduling.
+
+### Decision & Architectural Implementation
+
+1. **Pure Shared Science in `@irrigiq/shared`**:
+   - `buildDailyNeeds(field, weatherDays)`: Computes daily crop coefficients ($K_c$), crop evapotranspiration ($ET_c = ET_0 \times K_c$), effective rainfall ($P_{\text{eff}}$), and net crop requirement ($\max(0, ET_c - P_{\text{eff}})$).
+   - `planIrrigation(field, dailyNeeds, lastIrrigationDate?, sensorReading?)`: Simulates cumulative soil moisture deficit. When accumulated deficit reaches or exceeds the soil trigger threshold (`triggerMm`: Sandy 12mm, Loam 20mm, Clay 25mm), an irrigation event is scheduled for $\min(\text{deficit}, \text{maxDepthMm})$.
+   - **Application Efficiency**: The gross water applied adjusts for irrigation method efficiency (Drip 90%, Sprinkler 75%, Flood 60%). Volumetric water requirement is calculated in litres via $\text{litres} = \text{grossMm} \times \text{areaHa} \times 10,000$.
+   - **Sensor Overrides**:
+     - Soil moisture $\ge 80\%$: Farm is waterlogged/sufficient; forces `skip` with key `reason.sensor_wet`.
+     - Soil moisture $\le 40\%$: Farm is experiencing water stress; forces immediate irrigation capped at `maxDepthMm` with key `reason.sensor_dry`.
+   - **Rain Rule**: If forecast precipitation $\ge 5\text{ mm}$, irrigation is skipped with key `reason.rain_expected`.
+   - **Explainability**: `explain(plan)` returns structured translation keys and numeric parameters (e.g., `reason.deficit_reached { mm }`, `reason.not_needed`) ensuring i18n support without dynamic string concatenation.
+
+2. **Idempotent Data Persistence**:
+   - The `Recommendation` collection enforces a unique compound index on `{ fieldId: 1, forDate: 1 }`.
+   - `recomputeField(fieldId)` generates 7 days of recommendations and writes them via MongoDB `bulkWrite` with `updateOne(..., { upsert: true })`. Running recomputation twice produces identical rows without duplicates or race conditions.
+
+3. **Distributed Job Scheduling via BullMQ 6**:
+   - In `apps/api/src/scheduler/recommendation.scheduler.ts`, BullMQ 6's `upsertJobScheduler` configures a repeatable cron job at `05:00` in the `Asia/Kolkata` timezone (`0 5 * * *`).
+   - **Two-phase Batch Pipeline**:
+     - Phase A: Collects all unique grid cells across all fields and refreshes weather forecasts upstream once per cell.
+     - Phase B: Queries fields in memory-efficient batches of 50. Each field recomputation is wrapped in isolated exception handling—a failing or corrupted field is logged with context and skipped without halting or aborting the batch.
+
+4. **Triggers & Rate Limiting**:
+   - Automatic recomputation triggers asynchronously upon field creation and field updates.
+   - On-demand recomputation endpoint `POST /fields/:id/recommendations/recompute` is protected by a Redis sliding-window rate limiter (10 requests per 15 minutes per IP/user) with in-memory fallback.
+   - Endpoints strictly enforce user ownership checks across all tenants.

@@ -7,13 +7,19 @@ interface RateLimitOptions {
   windowSeconds?: number;
   maxRequests?: number;
   prefix?: string;
+  message?: string;
 }
 
 // In-memory fallback if Redis is unavailable or in mock mode
 const memoryStore = new Map<string, { count: number; expiresAt: number }>();
 
-export function createAuthRateLimiter(options: RateLimitOptions = {}) {
-  const { windowSeconds = 60, maxRequests = 20, prefix = 'ratelimit:auth' } = options;
+export function createRateLimiter(options: RateLimitOptions = {}) {
+  const {
+    windowSeconds = 60,
+    maxRequests = 20,
+    prefix = 'ratelimit',
+    message = 'Too many requests, please try again later.',
+  } = options;
 
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const env = getEnv();
@@ -44,7 +50,7 @@ export function createAuthRateLimiter(options: RateLimitOptions = {}) {
           res.status(429).json({
             status: 'error',
             code: 'TOO_MANY_REQUESTS',
-            message: 'Too many authentication attempts, please try again later.',
+            message,
           });
           return;
         }
@@ -71,7 +77,7 @@ export function createAuthRateLimiter(options: RateLimitOptions = {}) {
       res.status(429).json({
         status: 'error',
         code: 'TOO_MANY_REQUESTS',
-        message: 'Too many authentication attempts, please try again later.',
+        message,
       });
       return;
     }
@@ -80,4 +86,18 @@ export function createAuthRateLimiter(options: RateLimitOptions = {}) {
   };
 }
 
+export const createAuthRateLimiter = (options: RateLimitOptions = {}) =>
+  createRateLimiter({
+    prefix: 'ratelimit:auth',
+    message: 'Too many authentication attempts, please try again later.',
+    ...options,
+  });
+
 export const authRateLimiter = createAuthRateLimiter();
+
+export const recomputeRateLimiter = createRateLimiter({
+  windowSeconds: 60,
+  maxRequests: 10,
+  prefix: 'ratelimit:recompute',
+  message: 'Too many recomputation requests, please try again later.',
+});

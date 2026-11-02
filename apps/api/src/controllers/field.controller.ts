@@ -5,6 +5,7 @@ import {
   updateFieldSchema,
   nearbyFieldsQuerySchema,
 } from '../schemas/field.schema.js';
+import { RecommendationModel } from '../models/recommendation.model.js';
 import { AppError } from '../errors/AppError.js';
 
 export class FieldController {
@@ -18,11 +19,13 @@ export class FieldController {
 
       const validated = createFieldSchema.parse(req.body);
       const field = await this.service.createField(req.user.id, validated);
+      const plan = await RecommendationModel.find({ fieldId: field._id }).sort({ forDate: 1 });
 
       res.status(201).json({
         status: 'success',
         data: {
           field,
+          plan,
         },
       });
     } catch (err) {
