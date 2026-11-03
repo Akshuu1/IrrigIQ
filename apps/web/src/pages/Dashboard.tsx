@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { api, type Field, type Recommendation } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
@@ -17,6 +17,7 @@ import {
   Wheat,
   Clock,
   ArrowRight,
+  Loader2,
 } from 'lucide-react';
 
 function FieldRecommendationCard({ field }: { field: Field }): React.JSX.Element {
@@ -243,7 +244,10 @@ function FieldRecommendationCard({ field }: { field: Field }): React.JSX.Element
 }
 
 export function Dashboard(): React.JSX.Element {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const queryClient = useQueryClient();
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [seedError, setSeedError] = useState<string | null>(null);
 
   const {
     data: fields,
@@ -254,6 +258,65 @@ export function Dashboard(): React.JSX.Element {
     queryKey: ['fields'],
     queryFn: api.getFields,
   });
+
+  const handleLoadSampleFields = async () => {
+    setIsSeeding(true);
+    setSeedError(null);
+    try {
+      const now = new Date();
+      const sowing1 = new Date(now.getTime() - 20 * 24 * 60 * 60 * 1000);
+      const sowing2 = new Date(now.getTime() - 35 * 24 * 60 * 60 * 1000);
+
+      await api.createField({
+        name: i18n.language === 'hi' ? 'करनाल गेहूं का खेत (उत्तर)' : 'Karnal Wheat Field (North)',
+        cropKey: 'wheat',
+        soilType: 'loam',
+        method: 'drip',
+        sowingDate: sowing1,
+        baseline: { everyDays: 4, depthMm: 30 },
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [76.985, 29.69],
+              [76.988, 29.69],
+              [76.988, 29.694],
+              [76.985, 29.694],
+              [76.985, 29.69],
+            ],
+          ],
+        },
+      });
+
+      await api.createField({
+        name: i18n.language === 'hi' ? 'लुधियाना मक्का का खेत (दक्षिण)' : 'Ludhiana Maize Field (South)',
+        cropKey: 'maize',
+        soilType: 'clay',
+        method: 'sprinkler',
+        sowingDate: sowing2,
+        baseline: { everyDays: 3, depthMm: 25 },
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [75.85, 30.9],
+              [75.855, 30.9],
+              [75.855, 30.905],
+              [75.85, 30.905],
+              [75.85, 30.9],
+            ],
+          ],
+        },
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['fields'] });
+      await refetch();
+    } catch (err: unknown) {
+      setSeedError(err instanceof Error ? err.message : 'Failed to load sample fields');
+    } finally {
+      setIsSeeding(false);
+    }
+  };
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -322,13 +385,40 @@ export function Dashboard(): React.JSX.Element {
               {t('dashboard.emptySubtitle')}
             </p>
           </div>
-          <Link
-            to="/fields/new"
-            className="inline-flex min-h-[50px] px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base shadow-lg shadow-emerald-500/20 items-center justify-center gap-2 active:scale-95 transition-all"
-          >
-            <PlusCircle className="w-5 h-5 stroke-[2.5]" />
-            <span>{t('dashboard.emptyButton')}</span>
-          </Link>
+          {seedError && (
+            <p className="text-xs text-rose-400 bg-rose-950/50 p-2.5 rounded-xl border border-rose-800">
+              {seedError}
+            </p>
+          )}
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <Link
+              to="/fields/new"
+              className="w-full sm:w-auto inline-flex min-h-[50px] px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base shadow-lg shadow-emerald-500/20 items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+            >
+              <PlusCircle className="w-5 h-5 stroke-[2.5]" />
+              <span>{t('dashboard.emptyButton')}</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleLoadSampleFields}
+              disabled={isSeeding}
+              className="w-full sm:w-auto inline-flex min-h-[50px] px-6 py-3 rounded-2xl border-2 border-emerald-500/50 bg-emerald-950/40 hover:bg-emerald-950 text-emerald-300 font-black text-sm items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
+            >
+              {isSeeding ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Loading Sample Farm Data...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5 text-emerald-400" />
+                  <span>{i18n.language === 'hi' ? 'नमूना खेत लोड करें' : '🌱 Load Sample Fields'}</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       )}
 

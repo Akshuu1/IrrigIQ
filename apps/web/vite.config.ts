@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const API_TARGET =
+  process.env.VITE_PROXY_TARGET ||
+  (process.env.API_PORT ? `http://127.0.0.1:${process.env.API_PORT}` : 'http://127.0.0.1:4001');
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -80,15 +84,15 @@ export default defineConfig({
     port: 3000,
     host: '0.0.0.0',
     proxy: {
-      '/auth': 'http://127.0.0.1:4000',
-      '/fields': 'http://127.0.0.1:4000',
-      '/crops': 'http://127.0.0.1:4000',
-      '/sensor-readings': 'http://127.0.0.1:4000',
-      '/sync': 'http://127.0.0.1:4000',
-      '/reports': 'http://127.0.0.1:4000',
-      '/scheduler': 'http://127.0.0.1:4000',
-      '/health': 'http://127.0.0.1:4000',
-      '/ready': 'http://127.0.0.1:4000',
+      '/auth': API_TARGET,
+      '/fields': API_TARGET,
+      '/crops': API_TARGET,
+      '/sensor-readings': API_TARGET,
+      '/sync': API_TARGET,
+      '/reports': API_TARGET,
+      '/scheduler': API_TARGET,
+      '/health': API_TARGET,
+      '/ready': API_TARGET,
     },
   },
 });

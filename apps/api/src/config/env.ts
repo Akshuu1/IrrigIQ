@@ -11,10 +11,10 @@ if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
 
 export const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  PORT: z.coerce.number().default(4000),
-  MONGODB_URI: z.string().default('mongodb://localhost:27017/irrigiq'),
-  REDIS_URL: z.string().default('redis://localhost:6379'),
-  CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:5173'),
+  PORT: z.coerce.number().default(4001),
+  MONGODB_URI: z.string().default('mongodb://localhost:27018/irrigiq'),
+  REDIS_URL: z.string().default('redis://localhost:6380'),
+  CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:3001,http://localhost:5173'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
   JWT_SECRET: z.string().min(32).default('development-super-secret-jwt-key-min-32-chars-long'),
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),

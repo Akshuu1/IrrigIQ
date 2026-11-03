@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext.js';
 import { LoginSchema } from '@irrigiq/shared';
-import { Droplet, AlertCircle, Loader2 } from 'lucide-react';
+import { Droplet, AlertCircle, Loader2, Sparkles } from 'lucide-react';
 
 export function Login(): React.JSX.Element {
   const { t } = useTranslation();
@@ -34,6 +34,27 @@ export function Login(): React.JSX.Element {
     setIsSubmitting(true);
     try {
       await login(result.data);
+      const locState = location.state as { from?: { pathname?: string } } | null;
+      const destination = locState?.from?.pathname || '/';
+      navigate(destination, { replace: true });
+    } catch (err: unknown) {
+      const is401 = (err as { status?: number })?.status === 401;
+      const message = err instanceof Error ? err.message : t('common.error');
+      setErrors({
+        general: is401 ? t('auth.invalidCredentials') : message,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setEmail('demo@irrigiq.org');
+    setPassword('DemoPassword123!');
+    setErrors({});
+    setIsSubmitting(true);
+    try {
+      await login({ email: 'demo@irrigiq.org', password: 'DemoPassword123!' });
       const locState = location.state as { from?: { pathname?: string } } | null;
       const destination = locState?.from?.pathname || '/';
       navigate(destination, { replace: true });
@@ -138,6 +159,16 @@ export function Login(): React.JSX.Element {
             ) : (
               <span>{t('auth.loginButton')}</span>
             )}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={isSubmitting}
+            className="w-full min-h-[46px] rounded-xl border border-emerald-500/50 bg-emerald-950/40 hover:bg-emerald-950 active:scale-[0.98] disabled:opacity-60 text-emerald-300 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+          >
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <span>One-Click Demo Farmer Login (डेमो लॉगिन)</span>
           </button>
         </form>
 
