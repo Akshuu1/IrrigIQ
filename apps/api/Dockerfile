@@ -57,6 +57,6 @@ USER node
 EXPOSE 4000
 
 HEALTHCHECK --interval=15s --timeout=5s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:4000/health').then(r=>r.ok?process.exit(0):process.exit(1)).catch(()=>process.exit(1))"
+  CMD node -e "const p=process.env.PORT||4000;fetch('http://127.0.0.1:'+p+'/health').then(r=>r.ok?process.exit(0):process.exit(1)).catch(()=>process.exit(1))"
 
 CMD ["node", "apps/api/dist/index.js"]

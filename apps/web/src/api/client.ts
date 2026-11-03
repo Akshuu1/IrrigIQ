@@ -150,6 +150,17 @@ export async function apiFetch<T>(
     return {} as T;
   }
 
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('text/html')) {
+    if (!API_BASE && typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      throw new ApiError(
+        500,
+        'Backend API URL is not connected. In Vercel Project Settings > Environment Variables, set VITE_API_URL=https://your-api.onrender.com and Redeploy.',
+      );
+    }
+    throw new ApiError(500, 'Received unexpected HTML from server instead of API JSON response.');
+  }
+
   return response.json();
 }
 
