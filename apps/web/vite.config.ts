@@ -85,6 +85,8 @@ export default defineConfig({
       '/crops': 'http://127.0.0.1:4000',
       '/sensor-readings': 'http://127.0.0.1:4000',
       '/sync': 'http://127.0.0.1:4000',
+      '/reports': 'http://127.0.0.1:4000',
+      '/scheduler': 'http://127.0.0.1:4000',
       '/health': 'http://127.0.0.1:4000',
       '/ready': 'http://127.0.0.1:4000',
     },

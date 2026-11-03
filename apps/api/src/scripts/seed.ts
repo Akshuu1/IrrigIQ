@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import crypto from 'node:crypto';
+import net from 'node:net';
 import { connectDb, disconnectDb } from '../infra/db.js';
 import { connectRedis, disconnectRedis } from '../infra/redis.js';
 import { UserModel } from '../models/user.model.js';
@@ -17,6 +18,29 @@ function hashApiKey(apiKey: string): string {
 
 export async function runSeed(): Promise<void> {
   console.log('🌱 Starting IrrigIQ Database Seeding...');
+
+  // Auto-detect Docker mapped ports if environment variables are not explicitly overridden
+  if (!process.env.MONGODB_URI) {
+    const isDockerMongoActive = await new Promise<boolean>((resolve) => {
+      const s = net.createConnection({ port: 27018, host: '127.0.0.1', timeout: 600 }, () => {
+        s.end();
+        resolve(true);
+      });
+      s.on('error', () => resolve(false));
+      s.on('timeout', () => {
+        s.destroy();
+        resolve(false);
+      });
+    });
+
+    if (isDockerMongoActive) {
+      process.env.MONGODB_URI = 'mongodb://127.0.0.1:27018/irrigiq';
+      if (!process.env.REDIS_URL) {
+        process.env.REDIS_URL = 'redis://127.0.0.1:6380';
+      }
+      console.log('🐳 Detected Docker IrrigIQ container on ports 27018 (MongoDB) and 6380 (Redis)');
+    }
+  }
 
   await connectDb();
   await connectRedis();

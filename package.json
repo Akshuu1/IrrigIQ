@@ -8,6 +8,9 @@
     "apps/*"
   ],
   "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:api": "npm run dev -w @irrigiq/api",
+    "dev:web": "npm run dev -w @irrigiq/web",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "eslint .",
