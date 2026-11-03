@@ -19,7 +19,18 @@ import {
   type SoilType,
   type IrrigationMethod,
 } from '@irrigiq/shared';
-import { MapPin, AlertCircle, Loader2, Check, Wheat, Ruler, Clock, Sparkles } from 'lucide-react';
+import {
+  MapPin,
+  AlertCircle,
+  Loader2,
+  Check,
+  Wheat,
+  Ruler,
+  Clock,
+  Sparkles,
+  Navigation,
+  Search,
+} from 'lucide-react';
 
 export function FieldWizard(): React.JSX.Element {
   const { t, i18n } = useTranslation();
@@ -37,6 +48,12 @@ export function FieldWizard(): React.JSX.Element {
 
   const [polygon, setPolygon] = useState<GeoJsonPolygon | null>(null);
   const [calculatedAreaHa, setCalculatedAreaHa] = useState<number>(0);
+
+  // Real location & search state
+  const [isLocating, setIsLocating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   // Form state
   const [name, setName] = useState('');
@@ -217,6 +234,123 @@ export function FieldWizard(): React.JSX.Element {
     }
   };
 
+  // HTML5 Geolocation to center on farmer's real farm anywhere in India
+  const handleLocateCurrentPosition = () => {
+    if (!navigator.geolocation) {
+      alert(lang === 'hi' ? 'आपके ब्राउज़र में जीपीएस सुविधा उपलब्ध नहीं है।' : 'Geolocation is not supported by your browser.');
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setIsLocating(false);
+        const { latitude, longitude } = pos.coords;
+        if (mapRef.current) {
+          mapRef.current.setView([latitude, longitude], 17);
+        }
+
+        // Generate ~0.8 ha real-world polygon centered at farmer's GPS coordinates
+        const delta = 0.0008;
+        const coords: [number, number][] = [
+          [Number((longitude - delta).toFixed(6)), Number((latitude - delta).toFixed(6))],
+          [Number((longitude + delta).toFixed(6)), Number((latitude - delta).toFixed(6))],
+          [Number((longitude + delta).toFixed(6)), Number((latitude + delta).toFixed(6))],
+          [Number((longitude - delta).toFixed(6)), Number((latitude + delta).toFixed(6))],
+          [Number((longitude - delta).toFixed(6)), Number((latitude - delta).toFixed(6))],
+        ];
+
+        const geoJson: GeoJsonPolygon = {
+          type: 'Polygon',
+          coordinates: [coords],
+        };
+
+        const area = polygonAreaHa(geoJson);
+        setCalculatedAreaHa(area);
+        setPolygon(geoJson);
+        setName((prev) => prev || (lang === 'hi' ? 'मेरा वास्तविक खेत' : 'My Real Farm Plot'));
+        setErrors((prev) => {
+          const next = { ...prev };
+          delete next.polygon;
+          return next;
+        });
+
+        if (mapRef.current) {
+          const map = mapRef.current;
+          if (drawnLayerRef.current) {
+            map.removeLayer(drawnLayerRef.current);
+          }
+          const latlngs: L.LatLngExpression[] = coords.map((c) => [c[1], c[0]]);
+          const polygonLayer = L.polygon(latlngs, {
+            color: '#10b981',
+            fillColor: '#10b981',
+            fillOpacity: 0.35,
+          }).addTo(map);
+
+          drawnLayerRef.current = polygonLayer;
+          map.fitBounds(polygonLayer.getBounds(), { padding: [40, 40] });
+
+          polygonLayer.on('pm:edit', () => {
+            const editedLatlngs = polygonLayer.getLatLngs();
+            const rings: L.LatLng[] = Array.isArray(editedLatlngs[0])
+              ? (editedLatlngs[0] as L.LatLng[])
+              : (editedLatlngs as L.LatLng[]);
+            const updated: [number, number][] = rings.map((ll) => [ll.lng, ll.lat]);
+            const uFirst = updated[0];
+            const uLast = updated[updated.length - 1];
+            if (uFirst && uLast && (uFirst[0] !== uLast[0] || uFirst[1] !== uLast[1])) {
+              updated.push([uFirst[0], uFirst[1]]);
+            }
+            const updatedGeoJson: GeoJsonPolygon = {
+              type: 'Polygon',
+              coordinates: [updated],
+            };
+            setCalculatedAreaHa(polygonAreaHa(updatedGeoJson));
+            setPolygon(updatedGeoJson);
+          });
+        }
+      },
+      (err) => {
+        setIsLocating(false);
+        console.warn('Geolocation error:', err);
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  };
+
+  // OpenStreetMap Nominatim search for any village or district in India
+  const handleSearchLocation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    setIsSearching(true);
+    setSearchError(null);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+          searchQuery.trim() + ', India',
+        )}&format=json&limit=1`,
+        { headers: { 'Accept-Language': lang === 'hi' ? 'hi,en' : 'en' } },
+      );
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0 && data[0]?.lat && data[0]?.lon) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        if (mapRef.current) {
+          mapRef.current.flyTo([lat, lon], 14, { duration: 1.5 });
+        }
+      } else {
+        setSearchError(
+          lang === 'hi'
+            ? 'स्थान नहीं मिला, कृपया गाँव या ज़िला नाम से खोजें।'
+            : 'Location not found. Try searching by village or district name.',
+        );
+      }
+    } catch {
+      setSearchError(lang === 'hi' ? 'खोज में त्रुटि हुई।' : 'Search request failed.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
@@ -313,17 +447,67 @@ export function FieldWizard(): React.JSX.Element {
               <span>{t('fieldWizard.stepMap')}</span>
             </h2>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleLocateCurrentPosition}
+                disabled={isLocating}
+                className="px-3 py-1.5 rounded-xl border border-sky-500/50 bg-sky-950/40 hover:bg-sky-950 text-sky-300 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                {isLocating ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Navigation className="w-3.5 h-3.5 text-sky-400" />
+                )}
+                <span>{lang === 'hi' ? '📍 मेरा स्थान खोजें (GPS)' : '📍 Locate My Farm (GPS)'}</span>
+              </button>
+
               <button
                 type="button"
                 onClick={handleQuickSampleField}
                 className="px-3 py-1.5 rounded-xl border border-emerald-500/50 bg-emerald-950/40 hover:bg-emerald-950 text-emerald-300 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>{lang === 'hi' ? 'नमूना खेत जोड़ें' : 'Use Sample Field'}</span>
+                <span>{lang === 'hi' ? 'नमूना खेत' : 'Sample Field'}</span>
               </button>
             </div>
           </div>
+
+          {/* Quick Village / District Search for real farm location */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    void handleSearchLocation(e);
+                  }
+                }}
+                placeholder={
+                  lang === 'hi'
+                    ? 'गाँव, तहसील या ज़िला खोजें (उदा. करनाल, नासिक, लुधियाना...)'
+                    : 'Search village, taluka, or district in India (e.g. Karnal, Nashik, Ludhiana...)'
+                }
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleSearchLocation}
+              disabled={isSearching}
+              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {isSearching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
+              <span>{lang === 'hi' ? 'खोजें' : 'Search'}</span>
+            </button>
+          </div>
+          {searchError && (
+            <p className="text-xs text-amber-400 font-medium">{searchError}</p>
+          )}
 
           <p className="text-xs sm:text-sm text-slate-300">{t('fieldWizard.mapInstruction')}</p>
 
