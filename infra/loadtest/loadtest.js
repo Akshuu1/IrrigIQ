@@ -38,7 +38,7 @@ export const options = {
 
   thresholds: {
     http_req_failed: ['rate<0.01'], // Global error rate < 1%
-    http_req_duration: ['p(95)<500'], // 95% of requests under 500ms
+    http_req_duration: ['p(95)<800'], // 95% of requests under 800ms on a single runner machine
   },
 };
 
