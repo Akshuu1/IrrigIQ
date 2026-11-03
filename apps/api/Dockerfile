@@ -2,6 +2,7 @@
 FROM node:22-alpine AS builder
 
 WORKDIR /app
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 # Install build dependencies for native compilation (e.g. bcrypt)
 RUN apk add --no-cache python3 make g++
@@ -32,6 +33,11 @@ FROM node:22-alpine AS runner
 
 WORKDIR /app
 ENV NODE_ENV=production
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV CHROMIUM_PATH=/usr/bin/chromium-browser
+
+# Install system Chromium, fonts, and dependencies for PDF generation
+RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefont
 
 # Copy root manifests
 COPY package.json package-lock.json* ./
@@ -41,9 +47,9 @@ COPY apps/api/package.json ./apps/api/
 # Copy pre-compiled production node_modules from builder
 COPY --from=builder /app/node_modules ./node_modules
 
-# Copy built code
+# Copy built code and assets
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api ./apps/api
 
 # Use non-root node user (UID 1000 in official alpine node image)
 USER node

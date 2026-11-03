@@ -293,7 +293,12 @@ export function FieldDetail(): React.JSX.Element {
       <SoilMoistureLiveSection fieldId={field.id} />
 
       {/* 4. Water Savings Card */}
-      <SavingsCard savings={savings} isLoading={isSavingsLoading} />
+      <SavingsCard
+        savings={savings}
+        isLoading={isSavingsLoading}
+        fieldId={field.id}
+        fieldName={field.name}
+      />
 
       {/* 5. Recent Irrigation Logs Table */}
       {!isLogsLoading && (

@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { SyncMutation, SyncResultItem } from '@irrigiq/shared';
+import { SyncMutation, SyncResultItem, SyncMutationType } from '@irrigiq/shared';
 import { SyncRecord } from '../models/sync-record.model.js';
 import { FieldModel } from '../models/field.model.js';
 import { FieldRepository } from '../repositories/field.repository.js';
@@ -35,7 +35,7 @@ export class SyncService {
         if (!Types.ObjectId.isValid(mutation.fieldId)) {
           const item: SyncResultItem = {
             clientId: mutation.clientId,
-            type: mutation.type,
+            type: mutation.type as SyncMutationType,
             status: 'error',
             fieldId: mutation.fieldId,
             error: 'Invalid field ID',
@@ -125,7 +125,7 @@ export class SyncService {
         } else {
           itemResult = {
             clientId: mutation.clientId,
-            type: mutation.type,
+            type: mutation.type as SyncMutationType,
             status: 'error',
             fieldId: mutation.fieldId,
             error: `Unsupported mutation type: ${mutation.type}`,
@@ -149,7 +149,7 @@ export class SyncService {
         logger.error({ mutationErr, clientId: mutation.clientId }, 'Error processing sync mutation');
         results.push({
           clientId: mutation.clientId,
-          type: mutation.type,
+          type: mutation.type as SyncMutationType,
           status: 'error',
           fieldId: mutation.fieldId,
           error: errorMsg,

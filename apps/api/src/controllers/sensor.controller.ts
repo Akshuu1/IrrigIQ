@@ -60,8 +60,8 @@ export class SensorController {
 
   ingestReadings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // Authenticate via x-api-key header or Authorization: Bearer <key>
-      let apiKey = req.header('x-api-key');
+      // Authenticate via x-api-key or x-sensor-api-key header or Authorization: Bearer <key>
+      let apiKey = req.header('x-api-key') || req.header('x-sensor-api-key');
       if (!apiKey) {
         const authHeader = req.header('authorization');
         if (authHeader && authHeader.startsWith('Bearer ')) {

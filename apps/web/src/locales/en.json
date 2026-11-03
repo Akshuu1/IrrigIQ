@@ -248,6 +248,23 @@
     "keep_mine": "Keep My Changes",
     "no_map_geometry": "No geometry available",
     "vector_map_notice": "Offline: Vector outline (no tile download)"
+  },
+  "report": {
+    "modalTitle": "Generate Irrigation & Savings Report",
+    "subtitle": "Export a scientific PDF report detailing water usage, savings, and 7-day advisories",
+    "from": "From Date",
+    "to": "To Date",
+    "language": "Report Language",
+    "langEn": "English",
+    "langHi": "हिंदी (Hindi)",
+    "generateBtn": "Generate PDF Report",
+    "generating": "Generating report...",
+    "polling": "Processing report via background job...",
+    "ready": "Report ready for download!",
+    "downloadBtn": "Download PDF",
+    "openBtn": "Open in New Tab",
+    "failed": "Report generation failed. Please try again.",
+    "close": "Close"
   }
 }
 

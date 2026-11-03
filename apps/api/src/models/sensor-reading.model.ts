@@ -76,6 +76,9 @@ const sensorReadingSchema = new Schema<ISensorReadingDocument>(
   },
 );
 
+sensorReadingSchema.index({ 'metadata.fieldId': 1, timestamp: -1 });
+sensorReadingSchema.index({ 'metadata.sensorId': 1, timestamp: -1 });
+
 export const SensorReadingModel = mongoose.model<ISensorReadingDocument>(
   'SensorReading',
   sensorReadingSchema,

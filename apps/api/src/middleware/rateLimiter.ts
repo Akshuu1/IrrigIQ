@@ -8,6 +8,7 @@ interface RateLimitOptions {
   maxRequests?: number;
   prefix?: string;
   message?: string;
+  keyGenerator?: (req: Request) => string;
 }
 
 // In-memory fallback if Redis is unavailable or in mock mode
@@ -19,6 +20,7 @@ export function createRateLimiter(options: RateLimitOptions = {}) {
     maxRequests = 20,
     prefix = 'ratelimit',
     message = 'Too many requests, please try again later.',
+    keyGenerator,
   } = options;
 
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -29,8 +31,10 @@ export function createRateLimiter(options: RateLimitOptions = {}) {
       return next();
     }
 
-    const ip = req.ip || req.socket.remoteAddress || 'unknown';
-    const key = `${prefix}:${ip}`;
+    const identifier = keyGenerator
+      ? keyGenerator(req)
+      : req.ip || req.socket.remoteAddress || 'unknown';
+    const key = `${prefix}:${identifier}`;
 
     try {
       const redis = getRedisClient();
@@ -107,4 +111,13 @@ export const sensorRateLimiter = createRateLimiter({
   maxRequests: 120,
   prefix: 'ratelimit:sensor',
   message: 'Too many sensor readings sent, please slow down.',
+  keyGenerator: (req: Request) => {
+    const sensorKey = (
+      (req.headers['x-api-key'] as string) ||
+      (req.headers['x-sensor-api-key'] as string) ||
+      (req.headers['authorization'] as string)?.replace(/^Bearer\s+/i, '')
+    )?.trim();
+    if (sensorKey) return sensorKey;
+    return req.ip || req.socket.remoteAddress || 'unknown';
+  },
 });

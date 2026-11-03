@@ -3,6 +3,7 @@ import { fieldController } from '../controllers/field.controller.js';
 import { recommendationController } from '../controllers/recommendation.controller.js';
 import { irrigationLogController } from '../controllers/irrigation-log.controller.js';
 import { sensorController } from '../controllers/sensor.controller.js';
+import { reportController } from '../controllers/report.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { recomputeRateLimiter } from '../middleware/rateLimiter.js';
 
@@ -37,5 +38,9 @@ router.post('/:id/sensors', sensorController.createSensor);
 router.get('/:id/sensors', sensorController.getSensors);
 router.get('/:id/moisture', sensorController.getMoisture);
 router.get('/:id/moisture/stream', sensorController.moistureStream);
+
+// Report routes
+router.post('/:id/reports', reportController.createReport);
+router.get('/:id/reports', reportController.listFieldReports);
 
 export { router as fieldRouter };

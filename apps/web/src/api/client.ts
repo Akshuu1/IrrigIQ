@@ -669,4 +669,45 @@ export const api = {
     const base = API_BASE.startsWith('http') ? API_BASE : `${window.location.origin}${API_BASE}`;
     return `${base}/fields/${fieldId}/moisture/stream${token ? `?token=${encodeURIComponent(token)}` : ''}`;
   },
+
+  // Reports (Phase 12)
+  async createReport(
+    fieldId: string,
+    options?: { from?: string; to?: string; language?: 'en' | 'hi' },
+  ): Promise<{ id: string; status: 'completed' | 'processing'; report?: any; message?: string }> {
+    return apiFetch<{ id: string; status: 'completed' | 'processing'; report?: any; message?: string }>(
+      `/fields/${fieldId}/reports`,
+      {
+        method: 'POST',
+        body: JSON.stringify(options || {}),
+      },
+    );
+  },
+
+  async getReport(
+    reportId: string,
+  ): Promise<{ id: string; status: 'completed' | 'processing' | 'failed'; data?: any; error?: string }> {
+    return apiFetch<{ id: string; status: 'completed' | 'processing' | 'failed'; data?: any; error?: string }>(
+      `/reports/${reportId}`,
+    );
+  },
+
+  async getReportPdfBlob(reportId: string): Promise<Blob> {
+    const url = `${API_BASE}/reports/${reportId}/pdf`;
+    const headers = new Headers();
+    if (accessToken) {
+      headers.set('Authorization', `Bearer ${accessToken}`);
+    }
+    const response = await fetch(url, { headers, credentials: 'include' });
+    if (!response.ok) {
+      throw new ApiError(response.status, 'Failed to download report PDF');
+    }
+    return response.blob();
+  },
+
+  getReportPdfUrl(reportId: string): string {
+    const token = getAccessToken();
+    const base = API_BASE.startsWith('http') ? API_BASE : `${window.location.origin}${API_BASE}`;
+    return `${base}/reports/${reportId}/pdf${token ? `?token=${encodeURIComponent(token)}` : ''}`;
+  },
 };

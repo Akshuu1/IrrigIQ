@@ -210,7 +210,32 @@ describe('IrrigIQ Irrigation Science (FAO-56)', () => {
       expect(() => hargreavesEt0(30, 20, 26.9, 400)).toThrow(
         'Day of year must be between 1 and 366',
       );
+      expect(() => hargreavesEt0(NaN, 20, 26.9, 150)).toThrow('All Hargreaves parameters must be valid numbers');
+      expect(() => hargreavesEt0(30, NaN, 26.9, 150)).toThrow('All Hargreaves parameters must be valid numbers');
+      expect(() => hargreavesEt0(30, 20, NaN, 150)).toThrow('All Hargreaves parameters must be valid numbers');
+      expect(() => hargreavesEt0(30, 20, 26.9, NaN)).toThrow('All Hargreaves parameters must be valid numbers');
       expect(hargreavesEt0(25, 25, 26.9, 150)).toBe(0); // zero range
+    });
+
+    it('validates grossNeed inputs and invalid methods', () => {
+      expect(() => grossNeed(NaN, 'drip')).toThrow('Net irrigation need must be a valid number');
+      expect(() => grossNeed(-5, 'drip')).toThrow('Net irrigation need cannot be negative');
+      expect(() => grossNeed(10, 'invalid_method' as any)).toThrow('Unsupported irrigation method');
+    });
+
+    it('validates netNeed, computeEtc, and effectiveRain edge cases and errors', () => {
+      expect(() => netNeed(NaN, 5)).toThrow('ETc and effective rainfall must be valid numbers');
+      expect(() => netNeed(5, NaN)).toThrow('ETc and effective rainfall must be valid numbers');
+      expect(() => netNeed(-1, 5)).toThrow('ETc and effective rainfall cannot be negative');
+      expect(() => netNeed(5, -1)).toThrow('ETc and effective rainfall cannot be negative');
+
+      expect(() => computeEtc(NaN, 1)).toThrow('ET0 and Kc must be valid numbers');
+      expect(() => computeEtc(5, NaN)).toThrow('ET0 and Kc must be valid numbers');
+      expect(() => computeEtc(-1, 1)).toThrow('ET0 and Kc must be non-negative');
+      expect(() => computeEtc(5, -1)).toThrow('ET0 and Kc must be non-negative');
+
+      expect(() => effectiveRain(NaN)).toThrow('Rainfall must be a valid number');
+      expect(() => effectiveRain(-1)).toThrow('Rainfall cannot be negative');
     });
   });
 

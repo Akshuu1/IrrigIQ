@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type SavingsData } from '../../api/client.js';
 import { formatNumber } from '../../utils/formatters.js';
+import { ReportModal } from '../../components/ReportModal.js';
 import {
   TrendingUp,
   FileText,
@@ -15,17 +16,21 @@ import {
 interface SavingsCardProps {
   savings?: SavingsData;
   isLoading: boolean;
+  fieldId?: string;
+  fieldName?: string;
 }
 
 export function SavingsCard({
   savings,
   isLoading,
+  fieldId = '',
+  fieldName = '',
 }: SavingsCardProps): React.JSX.Element {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || 'en') as 'en' | 'hi';
 
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const [reportNotice, setReportNotice] = useState<string | null>(null);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -66,8 +71,7 @@ export function SavingsCard({
   const isRealisedNegative = realisedLitres < 0;
 
   const handleCreateReportClick = () => {
-    setReportNotice(t('fieldDetail.reportPhase12Notice'));
-    setTimeout(() => setReportNotice(null), 5000);
+    setIsReportModalOpen(true);
   };
 
   return (
@@ -102,16 +106,6 @@ export function SavingsCard({
           <span>{t('fieldDetail.createReport')}</span>
         </button>
       </div>
-
-      {reportNotice && (
-        <div
-          className="p-3.5 rounded-xl bg-emerald-950/70 border border-emerald-600 text-emerald-200 text-xs sm:text-sm flex items-center gap-2.5 animate-fade-in"
-          role="status"
-        >
-          <Info className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-          <span>{reportNotice}</span>
-        </div>
-      )}
 
       {/* Savings Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -237,6 +231,14 @@ export function SavingsCard({
           </div>
         </div>
       )}
+
+      {/* Phase 12 Report Modal */}
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        fieldId={fieldId}
+        fieldName={fieldName}
+      />
     </div>
   );
 }
