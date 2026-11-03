@@ -12,6 +12,7 @@ import { SoilMoistureLiveSection } from './field-detail/SoilMoistureLiveSection.
 import { SavingsCard } from './field-detail/SavingsCard.js';
 import { IrrigationLogModal } from './field-detail/IrrigationLogModal.js';
 import { RecentLogsTable } from './field-detail/RecentLogsTable.js';
+import { OfflineFieldMap } from '../components/OfflineFieldMap.js';
 import {
   ArrowLeft,
   Wheat,
@@ -88,6 +89,7 @@ export function FieldDetail(): React.JSX.Element {
 
   // Mutation: Log Irrigation with Optimistic Updates
   const createLogMutation = useMutation({
+    networkMode: 'always',
     mutationFn: (data: {
       date: string;
       appliedMm: number;
@@ -304,6 +306,14 @@ export function FieldDetail(): React.JSX.Element {
           isDeletingId={deletingLogId}
         />
       )}
+
+      {/* 6. Vector Field Boundary (Safe Offline Rendering) */}
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-3">
+        <h3 className="text-base sm:text-lg font-bold text-white">
+          {t('fieldDetail.fieldMapOutline', 'Field Boundary & Vector Outline')}
+        </h3>
+        <OfflineFieldMap geometry={field.geometry} areaHa={field.areaHa} fieldName={field.name} />
+      </div>
 
       {/* "I Irrigated" Modal */}
       <IrrigationLogModal

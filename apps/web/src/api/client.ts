@@ -6,7 +6,22 @@ import type {
   Language,
   AreaUnit,
   Crop,
+  SyncMutation,
+  SyncResultItem,
 } from '@irrigiq/shared';
+import { CROPS } from '@irrigiq/shared';
+import {
+  getCachedFields,
+  setCachedFields,
+  getCachedField,
+  setCachedField,
+  getCachedCrops,
+  setCachedCrops,
+  getCachedPlan,
+  setCachedPlan,
+  clearAllUserData,
+} from '../offline/db.js';
+import { enqueueMutation } from '../offline/queue.js';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -48,29 +63,25 @@ export async function apiFetch<T>(
   options: RequestInit = {},
   isRetry = false,
 ): Promise<T> {
-  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
+  const url = `${API_BASE}${endpoint}`;
   const headers = new Headers(options.headers || {});
+
+  if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  }
 
   if (accessToken && !headers.has('Authorization')) {
     headers.set('Authorization', `Bearer ${accessToken}`);
   }
 
-  if (options.body && !(options.body instanceof FormData) && !headers.has('Content-Type')) {
-    headers.set('Content-Type', 'application/json');
-  }
-
   const response = await fetch(url, {
     ...options,
     headers,
-    credentials: 'include', // Include httpOnly refresh cookie
+    credentials: 'include', // sends refresh token cookie
   });
 
-  if (
-    response.status === 401 &&
-    !isRetry &&
-    !endpoint.includes('/auth/login') &&
-    !endpoint.includes('/auth/register')
-  ) {
+  // Handle 401 Unauthorized -> try refresh token rotation once
+  if (response.status === 401 && !isRetry && !endpoint.startsWith('/auth/login') && !endpoint.startsWith('/auth/register')) {
     if (!isRefreshing) {
       isRefreshing = true;
       try {
@@ -78,24 +89,35 @@ export async function apiFetch<T>(
           method: 'POST',
           credentials: 'include',
         });
+
         if (refreshResponse.ok) {
-          const data = await refreshResponse.json();
-          accessToken = data.accessToken;
-          onRefreshed(data.accessToken);
-          isRefreshing = false;
-          return apiFetch<T>(endpoint, options, true);
-        } else {
-          accessToken = null;
-          isRefreshing = false;
-          window.dispatchEvent(new CustomEvent('auth:expired'));
+          const data = (await refreshResponse.json()) as {
+            accessToken?: string;
+            data?: { accessToken: string };
+          };
+          const newToken = data.data?.accessToken || data.accessToken;
+          if (newToken) {
+            setAccessToken(newToken);
+            onRefreshed(newToken);
+            isRefreshing = false;
+
+            // Retry original request with new token
+            headers.set('Authorization', `Bearer ${newToken}`);
+            return apiFetch<T>(endpoint, { ...options, headers }, true);
+          }
         }
       } catch {
-        accessToken = null;
-        isRefreshing = false;
+        // Refresh failed entirely
+      }
+
+      isRefreshing = false;
+      setAccessToken(null);
+      // Trigger logout event or redirect if in browser
+      if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('auth:expired'));
       }
     } else {
-      // Wait for refresh to complete
+      // Another request is already refreshing, wait for it
       return new Promise<T>((resolve, reject) => {
         addRefreshSubscriber((token) => {
           const retryHeaders = new Headers(options.headers || {});
@@ -250,62 +272,178 @@ export interface SensorReading {
 export const api = {
   // Auth
   async register(data: RegisterInput): Promise<AuthResponse> {
-    return apiFetch<AuthResponse>('/auth/register', {
+    const res = await apiFetch<{ data?: AuthResponse } & AuthResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     });
+    return res.data || res;
   },
 
   async login(data: LoginInput): Promise<AuthResponse> {
-    return apiFetch<AuthResponse>('/auth/login', {
+    const res = await apiFetch<{ data?: AuthResponse } & AuthResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(data),
     });
+    return res.data || res;
   },
 
   async refresh(): Promise<{ accessToken: string }> {
-    return apiFetch<{ accessToken: string }>('/auth/refresh', {
+    const res = await apiFetch<{ data?: { accessToken: string }; accessToken?: string }>('/auth/refresh', {
       method: 'POST',
     });
+    return {
+      accessToken: res.data?.accessToken || res.accessToken || '',
+    };
   },
 
   async logout(): Promise<void> {
-    await apiFetch<void>('/auth/logout', {
-      method: 'POST',
-    });
+    try {
+      await apiFetch<void>('/auth/logout', {
+        method: 'POST',
+      });
+    } catch {
+      // offline logout still proceeds
+    }
     setAccessToken(null);
+
+    // Clear all IndexedDB user data
+    try {
+      await clearAllUserData();
+    } catch {
+      // ignore
+    }
+
+    // Never keep one user's cached responses for another user (clear caches on logout)
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      try {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
+      } catch {
+        // ignore
+      }
+    }
   },
 
   async getMe(): Promise<{ user: User }> {
-    return apiFetch<{ user: User }>('/auth/me');
+    const res = await apiFetch<{ data?: { user: User }; user?: User }>('/auth/me');
+    return {
+      user: res.data?.user || res.user!,
+    };
   },
 
   async updateMe(data: UpdateProfileInput): Promise<{ user: User }> {
-    return apiFetch<{ user: User }>('/auth/me', {
+    const res = await apiFetch<{ data?: { user: User }; user?: User }>('/auth/me', {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
+    return {
+      user: res.data?.user || res.user!,
+    };
   },
 
   // Crops
   async getCrops(): Promise<Crop[]> {
-    return apiFetch<Crop[]>('/crops');
+    try {
+      const res = await apiFetch<{ data?: { crops: Crop[] }; crops?: Crop[] } | Crop[]>('/crops');
+      const crops = Array.isArray(res) ? res : res.data?.crops || res.crops || [];
+      setCachedCrops(crops).catch(() => {});
+      return crops;
+    } catch {
+      const cached = await getCachedCrops();
+      if (cached && cached.length > 0) {
+        return cached;
+      }
+      return [...CROPS];
+    }
   },
 
   // Fields
   async getFields(): Promise<Field[]> {
-    return apiFetch<Field[]>('/fields');
+    try {
+      const res = await apiFetch<{ data?: { fields: Field[] }; fields?: Field[] } | Field[]>('/fields');
+      const fields = Array.isArray(res) ? res : res.data?.fields || res.fields || [];
+      setCachedFields(fields).catch(() => {});
+      return fields;
+    } catch (err) {
+      const cached = await getCachedFields();
+      if (cached && cached.length > 0) {
+        return cached;
+      }
+      throw err;
+    }
   },
 
   async getField(id: string): Promise<Field> {
-    return apiFetch<Field>(`/fields/${id}`);
+    try {
+      const res = await apiFetch<{ data?: { field: Field }; field?: Field } | Field>(`/fields/${id}`);
+      const field =
+        'data' in res && res.data?.field
+          ? res.data.field
+          : 'field' in res && res.field
+            ? res.field
+            : (res as Field);
+      setCachedField(field).catch(() => {});
+      return field;
+    } catch (err) {
+      const cached = await getCachedField(id);
+      if (cached) {
+        return cached;
+      }
+      throw err;
+    }
+  },
+
+  async updateField(id: string, data: Partial<Field> & { version: number }): Promise<Field> {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      await enqueueMutation({
+        type: 'update_field',
+        fieldId: id,
+        baseVersion: data.version,
+        payload: data,
+      });
+      const cached = await getCachedField(id);
+      return {
+        ...(cached || ({} as Field)),
+        ...data,
+      } as Field;
+    }
+
+    try {
+      const res = await apiFetch<{ data?: { field: Field }; field?: Field }>(`/fields/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      });
+      const updated = res.data?.field || res.field || (res as unknown as Field);
+      setCachedField(updated).catch(() => {});
+      return updated;
+    } catch (err) {
+      if (err instanceof TypeError || (err instanceof ApiError && err.status >= 500)) {
+        await enqueueMutation({
+          type: 'update_field',
+          fieldId: id,
+          baseVersion: data.version,
+          payload: data,
+        });
+        const cached = await getCachedField(id);
+        return {
+          ...(cached || ({} as Field)),
+          ...data,
+        } as Field;
+      }
+      throw err;
+    }
   },
 
   async createField(data: CreateFieldInput): Promise<Field> {
-    return apiFetch<Field>('/fields', {
+    const res = await apiFetch<{ data?: { field: Field }; field?: Field } | Field>('/fields', {
       method: 'POST',
       body: JSON.stringify(data),
     });
+    return 'data' in res && res.data?.field
+      ? res.data.field
+      : 'field' in res && res.field
+        ? res.field
+        : (res as Field);
   },
 
   async deleteField(id: string): Promise<void> {
@@ -316,7 +454,58 @@ export const api = {
 
   // Recommendations
   async getRecommendations(fieldId: string, days = 7): Promise<Recommendation[]> {
-    return apiFetch<Recommendation[]>(`/fields/${fieldId}/recommendations?days=${days}`);
+    try {
+      const res = await apiFetch<
+        | { data?: { recommendations: Recommendation[] }; recommendations?: Recommendation[] }
+        | Recommendation[]
+      >(`/fields/${fieldId}/recommendations?days=${days}`);
+      const rawRecs = Array.isArray(res) ? res : res.data?.recommendations || res.recommendations || [];
+      const recs: Recommendation[] = (rawRecs as any[]).map((r) => {
+        const action = r.plan?.action || r.action || 'skip';
+        const grossMm = r.plan?.grossMm ?? r.grossMm ?? 0;
+        const litres = r.plan?.litres ?? r.litres ?? 0;
+        const reasonKey = r.plan?.reasonKey || r.reasonKey || 'reason.not_needed';
+        const reasonParams = r.plan?.reasonParams || r.params || {};
+        const deficitMm = r.plan?.deficitMm ?? r.deficitMm ?? 0;
+        const et0Mm = r.dailyNeeds?.et0Mm ?? r.et0Mm ?? 0;
+        const rainMm = r.dailyNeeds?.rainMm ?? r.rainMm ?? 0;
+        const etcMm = r.dailyNeeds?.etcMm ?? r.etcMm ?? 0;
+        const weatherStale = Boolean(r.weatherStale ?? r.staleWeather ?? false);
+
+        return {
+          id: String(r.id || r._id || ''),
+          fieldId: String(r.fieldId || ''),
+          forDate: String(r.forDate || ''),
+          weatherStale,
+          dailyNeeds: {
+            date: String(r.forDate || ''),
+            et0Mm,
+            stage: r.dailyNeeds?.stage || '',
+            kc: r.kc ?? 1,
+            etcMm,
+            rainMm,
+            effectiveRainMm: r.effectiveRainMm ?? 0,
+            netNeedMm: r.netMm ?? 0,
+          },
+          plan: {
+            action,
+            grossMm,
+            litres,
+            reasonKey,
+            reasonParams,
+            deficitMm,
+          },
+        };
+      });
+      setCachedPlan(fieldId, { days: recs, summary: null }).catch(() => {});
+      return recs;
+    } catch (err) {
+      const cached = await getCachedPlan(fieldId);
+      if (cached && cached.days && cached.days.length > 0) {
+        return cached.days as Recommendation[];
+      }
+      throw err;
+    }
   },
 
   async recomputeRecommendations(fieldId: string): Promise<{ success: boolean }> {
@@ -331,17 +520,82 @@ export const api = {
     if (from) params.set('from', from);
     if (to) params.set('to', to);
     const query = params.toString() ? `?${params.toString()}` : '';
-    return apiFetch<{ logs: IrrigationLog[] }>(`/fields/${fieldId}/logs${query}`);
+    const res = await apiFetch<{ data?: { logs: IrrigationLog[] }; logs?: IrrigationLog[] }>(
+      `/fields/${fieldId}/logs${query}`,
+    );
+    return {
+      logs: res.data?.logs || res.logs || [],
+    };
   },
 
   async createLog(
     fieldId: string,
     data: { date: string; appliedMm: number; source: 'recommended' | 'manual'; note?: string },
   ): Promise<IrrigationLog> {
-    return apiFetch<IrrigationLog>(`/fields/${fieldId}/logs`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      await enqueueMutation({
+        type: 'create_irrigation_log',
+        fieldId,
+        payload: data,
+      });
+      return {
+        id: 'offline-' + Date.now(),
+        fieldId,
+        userId: '',
+        date: data.date,
+        appliedMm: data.appliedMm,
+        source: data.source,
+        note: data.note,
+        createdAt: new Date().toISOString(),
+      };
+    }
+
+    try {
+      const res = await apiFetch<
+        { data?: { log: IrrigationLog }; log?: IrrigationLog } | IrrigationLog
+      >(`/fields/${fieldId}/logs`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      return 'data' in res && res.data?.log
+        ? res.data.log
+        : 'log' in res && res.log
+          ? res.log
+          : (res as IrrigationLog);
+    } catch (err) {
+      if (err instanceof TypeError || (err instanceof ApiError && err.status >= 500)) {
+        await enqueueMutation({
+          type: 'create_irrigation_log',
+          fieldId,
+          payload: data,
+        });
+        return {
+          id: 'offline-' + Date.now(),
+          fieldId,
+          userId: '',
+          date: data.date,
+          appliedMm: data.appliedMm,
+          source: data.source,
+          note: data.note,
+          createdAt: new Date().toISOString(),
+        };
+      }
+      throw err;
+    }
+  },
+
+  // Batch Sync
+  async batchSync(mutations: SyncMutation[]): Promise<{ results: SyncResultItem[] }> {
+    const res = await apiFetch<{ results?: SyncResultItem[]; data?: { results: SyncResultItem[] } }>(
+      '/sync',
+      {
+        method: 'POST',
+        body: JSON.stringify({ mutations }),
+      },
+    );
+    return {
+      results: res.results || res.data?.results || [],
+    };
   },
 
   async deleteLog(fieldId: string, logId: string): Promise<void> {
@@ -352,22 +606,45 @@ export const api = {
 
   // Savings
   async getSavings(fieldId: string, from: string, to: string): Promise<SavingsData> {
-    return apiFetch<SavingsData>(`/fields/${fieldId}/savings?from=${from}&to=${to}`);
+    const res = await apiFetch<any>(`/fields/${fieldId}/savings?from=${from}&to=${to}`);
+    if (res?.data?.totals) {
+      return res.data as SavingsData;
+    }
+    if (res?.data?.savings) {
+      return res.data.savings as SavingsData;
+    }
+    if (res?.savings) {
+      return res.savings as SavingsData;
+    }
+    return res as SavingsData;
   },
 
   // Sensors & Moisture
   async getSensors(fieldId: string): Promise<{ sensors: Sensor[] }> {
-    return apiFetch<{ sensors: Sensor[] }>(`/fields/${fieldId}/sensors`);
+    const res = await apiFetch<{ data?: { sensors: Sensor[] }; sensors?: Sensor[] }>(
+      `/fields/${fieldId}/sensors`,
+    );
+    return {
+      sensors: res.data?.sensors || res.sensors || [],
+    };
   },
 
   async createSensor(
     fieldId: string,
     data: { name: string; isSimulated?: boolean },
   ): Promise<{ sensor: Sensor; apiKey: string }> {
-    return apiFetch<{ sensor: Sensor; apiKey: string }>(`/fields/${fieldId}/sensors`, {
+    const res = await apiFetch<{
+      data?: { sensor: Sensor; apiKey: string };
+      sensor?: Sensor;
+      apiKey?: string;
+    }>(`/fields/${fieldId}/sensors`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
+    return {
+      sensor: res.data?.sensor || res.sensor!,
+      apiKey: res.data?.apiKey || res.apiKey!,
+    };
   },
 
   async getMoisture(
@@ -379,7 +656,12 @@ export const api = {
     if (from) params.set('from', from);
     if (to) params.set('to', to);
     const query = params.toString() ? `?${params.toString()}` : '';
-    return apiFetch<{ readings: SensorReading[] }>(`/fields/${fieldId}/moisture${query}`);
+    const res = await apiFetch<{ data?: { readings: SensorReading[] }; readings?: SensorReading[] }>(
+      `/fields/${fieldId}/moisture${query}`,
+    );
+    return {
+      readings: res.data?.readings || res.readings || [],
+    };
   },
 
   getMoistureStreamUrl(fieldId: string): string {

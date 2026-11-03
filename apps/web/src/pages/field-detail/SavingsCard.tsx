@@ -47,11 +47,21 @@ export function SavingsCard({
     );
   }
 
-  const { totals, assumptions } = savings;
-  const potentialLitres = totals.potentialSaved.litres;
-  const potentialPct = totals.potentialSaved.pct;
-  const realisedLitres = totals.realisedSaved.litres;
-  const realisedPct = totals.realisedSaved.pct;
+  const totals = savings?.totals;
+  const assumptions = savings?.assumptions;
+
+  if (!totals || !assumptions) {
+    return (
+      <div className="bg-slate-900 border-2 border-slate-800 rounded-3xl p-6 text-center text-slate-400 text-sm">
+        {t('common.loading')}
+      </div>
+    );
+  }
+
+  const potentialLitres = totals.potentialSaved?.litres ?? 0;
+  const potentialPct = totals.potentialSaved?.pct ?? 0;
+  const realisedLitres = totals.realisedSaved?.litres ?? 0;
+  const realisedPct = totals.realisedSaved?.pct ?? 0;
 
   const isRealisedNegative = realisedLitres < 0;
 

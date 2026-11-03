@@ -219,7 +219,35 @@
     "createReport": "Create PDF Report",
     "reportPhase12Notice": "Water-saved PDF report export will be generated in Phase 12.",
     "baselineFarmerNote": "Baseline consumption reflects your stated pre-IrrigIQ routine.",
-    "runSimulatorHint": "Tip: Run 'npm run simulate -- --api <url> --key <sensorKey> --speed 60' to simulate live telemetry."
+    "runSimulatorHint": "Tip: Run 'npm run simulate -- --api <url> --key <sensorKey> --speed 60' to simulate live telemetry.",
+    "fieldMapOutline": "Field Boundary & Vector Outline"
+  },
+  "offline": {
+    "banner_offline": "You are currently offline. Changes are saved locally on this device.",
+    "banner_pending": "You are back online with changes waiting to sync.",
+    "pending_badge": "pending",
+    "syncing": "Syncing...",
+    "sync_now": "Sync now",
+    "sync_status_title": "Offline Sync Status",
+    "network_status": "Connection",
+    "status_online": "Online",
+    "status_offline": "Offline",
+    "status_synced": "Synced",
+    "last_synced": "Last synced",
+    "never_synced": "Never synced",
+    "mutation_queue": "Pending Changes",
+    "all_changes_synced": "All changes are synced with server",
+    "type_log": "Irrigation Log",
+    "type_edit_field": "Edit Field",
+    "retry": "Retry",
+    "conflict_title": "Update Conflict Detected",
+    "conflict_desc": "This field was updated on the server while you were working offline. Please choose which version to keep.",
+    "your_edit": "Your Offline Edit",
+    "server_version": "Server Version",
+    "use_server": "Use Server Version",
+    "keep_mine": "Keep My Changes",
+    "no_map_geometry": "No geometry available",
+    "vector_map_notice": "Offline: Vector outline (no tile download)"
   }
 }
 

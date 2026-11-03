@@ -4,11 +4,12 @@ import { RegisterSchema, LoginSchema, UpdateProfileSchema } from '../schemas/aut
 import { authService } from '../services/auth.service.js';
 import { AppError } from '../errors/AppError.js';
 
-function getRefreshTokenCookieOptions() {
+function getRefreshTokenCookieOptions(req: Request) {
   const isProd = getEnv().NODE_ENV === 'production';
+  const isLocalhost = req.hostname === 'localhost' || req.hostname === '127.0.0.1';
   return {
     httpOnly: true,
-    secure: isProd,
+    secure: isProd && !isLocalhost,
     sameSite: 'strict' as const,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/auth',
@@ -21,7 +22,7 @@ export class AuthController {
       const validated = RegisterSchema.parse(req.body);
       const result = await authService.register(validated);
 
-      res.cookie('refreshToken', result.refreshToken, getRefreshTokenCookieOptions());
+      res.cookie('refreshToken', result.refreshToken, getRefreshTokenCookieOptions(req));
       res.status(201).json({
         status: 'success',
         data: {
@@ -39,7 +40,7 @@ export class AuthController {
       const validated = LoginSchema.parse(req.body);
       const result = await authService.login(validated);
 
-      res.cookie('refreshToken', result.refreshToken, getRefreshTokenCookieOptions());
+      res.cookie('refreshToken', result.refreshToken, getRefreshTokenCookieOptions(req));
       res.status(200).json({
         status: 'success',
         data: {
@@ -61,7 +62,7 @@ export class AuthController {
 
       const result = await authService.rotateRefreshToken(token);
 
-      res.cookie('refreshToken', result.refreshToken, getRefreshTokenCookieOptions());
+      res.cookie('refreshToken', result.refreshToken, getRefreshTokenCookieOptions(req));
       res.status(200).json({
         status: 'success',
         data: {

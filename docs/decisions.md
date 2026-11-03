@@ -230,3 +230,48 @@ Phase 10 provides the primary operational interface for smallholder farmers to i
    - Reports both potential and realised savings in litres and percentage, preserving negative values without artificial clamping.
    - Includes an assumptions breakdown detailing irrigation method efficiency, farmer baseline interval and depth, and total land area.
 
+---
+
+## ADR 008: Offline-First Architecture, Workbox PWA, IndexedDB & Idempotent Sync Queue
+
+### Context
+
+Indian smallholder farmers frequently experience intermittent, low-bandwidth, or completely absent cellular connectivity while in the field. The application must function offline reliably: allowing farmers to review cached field advisories, inspect crop requirements, log irrigation events locally, and make field boundary or parameter edits. Once connectivity returns, changes must synchronize seamlessly with optimistic conflict resolution, zero data duplication, and strict multi-tenant privacy.
+
+### Decision & Architectural Implementation
+
+1. **Progressive Web App (PWA) & Workbox Service Worker**:
+   - Configured via `vite-plugin-pwa` with Google Workbox.
+   - App shell (HTML, CSS, JS bundles, and static assets) is precached for instantaneous offline loading.
+   - Runtime caching policies:
+     - `StaleWhileRevalidate` with a 24-hour expiration for read-heavy domain endpoints: `/fields`, `/crops`, and recommendations.
+     - `NetworkFirst` (3s timeout) for session validation endpoints (`/auth/me`).
+   - Compliant with ADR 006: Map raster tiles are never precached or bulk-downloaded; offline map views render field boundaries using standalone vector SVG geometry (`OfflineFieldMap.tsx`).
+
+2. **Client-Side Storage with IndexedDB (`idb`)**:
+   - Structured IndexedDB database (`irrigiq-offline-db`) managing dedicated stores:
+     - `fields`: Cached field metadata, geometry, and version numbers.
+     - `plans`: Cached 7-day irrigation recommendations.
+     - `crops`: Crop agronomic profiles and coefficients.
+     - `preferences`: User settings (language, preferred units).
+     - `mutationQueue`: FIFO queue of offline operations.
+     - `fieldDrafts`: Conflict staging store for divergent field edits.
+   - **Multi-Tenant Cache Clearing**: On logout, `clearAllUserData()` purges all IndexedDB stores and purges all CacheStorage entries (`caches.delete`), preventing cross-account data leakage on shared devices.
+
+3. **Offline Mutation Queue & TanStack Query Configuration**:
+   - When offline, irrigation logs and field edits assign a client-generated UUID (`clientId`) and enter `mutationQueue`.
+   - TanStack Query v5 `networkMode` is configured to `'always'` across default query/mutation options, preventing mutations from being paused when the browser detects `navigator.onLine === false`.
+   - `flushQueue()` runs automatically on browser `online` events, application initialization, and explicit farmer-triggered "Sync now" buttons.
+
+4. **Idempotent Backend Batch Sync (`POST /sync`)**:
+   - Accepts a batch of pending client mutations `{ clientId, type, entityId, payload, timestamp }`.
+   - Backed by the `SyncRecord` collection with a unique compound index `{ userId: 1, clientId: 1 }` and a 30-day automatic TTL expiration.
+   - Resubmitted requests return stored results, ensuring network retries never generate duplicate irrigation logs or corrupted field versions.
+   - Successful irrigation logs reset cumulative deficit and trigger asynchronous recomputation.
+
+5. **Version-Based Concurrency & Visual Conflict Resolution**:
+   - Every `Field` document maintains an integer `version` incremented on every update.
+   - If a client mutation sends a stale version, `apps/api` rejects the update with `status: 'conflict'`.
+   - The web app persists the conflicting modification in `fieldDrafts` and prompts the user via `ConflictResolutionModal`, comparing local drafts with current server values so the farmer can consciously choose "Keep mine" or "Use server".
+
+

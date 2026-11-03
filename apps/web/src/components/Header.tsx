@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext.js';
 import { setAppLanguage, type SupportedLanguage } from '../locales/i18n.js';
+import { useSyncStatus } from '../offline/sync-manager.js';
+import { SyncStatusModal } from './SyncStatusModal.js';
 import {
   Droplet,
   Globe,
@@ -10,12 +12,16 @@ import {
   LogOut,
   PlusCircle,
   LayoutDashboard,
+  WifiOff,
+  RefreshCw,
 } from 'lucide-react';
 
 export function Header(): React.JSX.Element {
   const { t, i18n } = useTranslation();
   const { user, isAuthenticated, logout, updateUser } = useAuth();
   const navigate = useNavigate();
+  const [showSyncModal, setShowSyncModal] = useState(false);
+  const { isOnline, isSyncing, pendingCount } = useSyncStatus();
 
   const currentLang = (i18n.language || 'en') as SupportedLanguage;
 
@@ -63,6 +69,38 @@ export function Header(): React.JSX.Element {
 
         {/* Navigation & Controls */}
         <div className="flex items-center gap-2 sm:gap-4">
+          {/* Sync Status Button */}
+          {isAuthenticated && (
+            <button
+              type="button"
+              onClick={() => setShowSyncModal(true)}
+              className={`min-h-[44px] px-2.5 py-1.5 rounded-xl border flex items-center gap-1.5 text-xs font-semibold shadow-xs transition-all ${
+                !isOnline
+                  ? 'border-amber-500/50 bg-amber-950/40 text-amber-300'
+                  : pendingCount > 0
+                    ? 'border-blue-500/50 bg-blue-950/40 text-blue-300'
+                    : 'border-slate-800 bg-slate-900 text-slate-300 hover:text-white'
+              }`}
+              title={t('offline.sync_status_title', 'Offline Sync Status')}
+              aria-label={t('offline.sync_status_title', 'Offline Sync Status')}
+            >
+              {!isOnline ? (
+                <WifiOff className="w-3.5 h-3.5 text-amber-400" />
+              ) : isSyncing ? (
+                <RefreshCw className="w-3.5 h-3.5 text-emerald-400 animate-spin" />
+              ) : (
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              )}
+              <span className="hidden sm:inline">
+                {!isOnline
+                  ? `${t('offline.status_offline', 'Offline')} (${pendingCount})`
+                  : pendingCount > 0
+                    ? `${pendingCount} ${t('offline.pending_badge', 'pending')}`
+                    : t('offline.status_synced', 'Synced')}
+              </span>
+            </button>
+          )}
+
           {/* Language Switcher Button (Large touch target, high contrast) */}
           <button
             type="button"
@@ -137,6 +175,8 @@ export function Header(): React.JSX.Element {
           )}
         </div>
       </div>
+
+      <SyncStatusModal isOpen={showSyncModal} onClose={() => setShowSyncModal(false)} />
     </header>
   );
 }

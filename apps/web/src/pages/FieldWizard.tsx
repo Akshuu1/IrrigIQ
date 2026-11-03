@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import L from 'leaflet';
 import '@geoman-io/leaflet-geoman-free';
 import 'leaflet/dist/leaflet.css';
@@ -24,6 +25,7 @@ export function FieldWizard(): React.JSX.Element {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const lang = (i18n.language || user?.language || 'en') as 'en' | 'hi';
   const unit = user?.areaUnit || 'acre';
@@ -153,13 +155,6 @@ export function FieldWizard(): React.JSX.Element {
 
   // Quick preset sample field in Haryana/Punjab region (approx 1.2 ha)
   const handleQuickSampleField = () => {
-    if (!mapRef.current) return;
-    const map = mapRef.current;
-
-    if (drawnLayerRef.current) {
-      map.removeLayer(drawnLayerRef.current);
-    }
-
     // Sample coordinates near Karnal, Haryana (lat 29.69, lng 76.99)
     const sampleCoords: [number, number][] = [
       [76.985, 29.69],
@@ -168,15 +163,6 @@ export function FieldWizard(): React.JSX.Element {
       [76.985, 29.694],
       [76.985, 29.69],
     ];
-
-    const latlngs: L.LatLngExpression[] = sampleCoords.map((c) => [c[1], c[0]]);
-    const polygonLayer = L.polygon(latlngs, {
-      color: '#10b981',
-      fillColor: '#10b981',
-      fillOpacity: 0.35,
-    }).addTo(map);
-
-    drawnLayerRef.current = polygonLayer;
 
     const geoJson: GeoJsonPolygon = {
       type: 'Polygon',
@@ -187,28 +173,48 @@ export function FieldWizard(): React.JSX.Element {
     setCalculatedAreaHa(area);
     setPolygon(geoJson);
     setName((prev) => prev || (lang === 'hi' ? 'करनाल गेहूं का खेत' : 'Karnal Wheat Field'));
-
-    map.fitBounds(polygonLayer.getBounds(), { padding: [40, 40] });
-
-    // Enable editing on sample layer
-    polygonLayer.on('pm:edit', () => {
-      const latlngs = polygonLayer.getLatLngs();
-      const rings: L.LatLng[] = Array.isArray(latlngs[0])
-        ? (latlngs[0] as L.LatLng[])
-        : (latlngs as L.LatLng[]);
-      const updated: [number, number][] = rings.map((ll) => [ll.lng, ll.lat]);
-      const uFirst = updated[0];
-      const uLast = updated[updated.length - 1];
-      if (uFirst && uLast && (uFirst[0] !== uLast[0] || uFirst[1] !== uLast[1])) {
-        updated.push([uFirst[0], uFirst[1]]);
-      }
-      const updatedGeoJson: GeoJsonPolygon = {
-        type: 'Polygon',
-        coordinates: [updated],
-      };
-      setCalculatedAreaHa(polygonAreaHa(updatedGeoJson));
-      setPolygon(updatedGeoJson);
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.polygon;
+      return next;
     });
+
+    if (mapRef.current) {
+      const map = mapRef.current;
+      if (drawnLayerRef.current) {
+        map.removeLayer(drawnLayerRef.current);
+      }
+
+      const latlngs: L.LatLngExpression[] = sampleCoords.map((c) => [c[1], c[0]]);
+      const polygonLayer = L.polygon(latlngs, {
+        color: '#10b981',
+        fillColor: '#10b981',
+        fillOpacity: 0.35,
+      }).addTo(map);
+
+      drawnLayerRef.current = polygonLayer;
+      map.fitBounds(polygonLayer.getBounds(), { padding: [40, 40] });
+
+      // Enable editing on sample layer
+      polygonLayer.on('pm:edit', () => {
+        const editedLatlngs = polygonLayer.getLatLngs();
+        const rings: L.LatLng[] = Array.isArray(editedLatlngs[0])
+          ? (editedLatlngs[0] as L.LatLng[])
+          : (editedLatlngs as L.LatLng[]);
+        const updated: [number, number][] = rings.map((ll) => [ll.lng, ll.lat]);
+        const uFirst = updated[0];
+        const uLast = updated[updated.length - 1];
+        if (uFirst && uLast && (uFirst[0] !== uLast[0] || uFirst[1] !== uLast[1])) {
+          updated.push([uFirst[0], uFirst[1]]);
+        }
+        const updatedGeoJson: GeoJsonPolygon = {
+          type: 'Polygon',
+          coordinates: [updated],
+        };
+        setCalculatedAreaHa(polygonAreaHa(updatedGeoJson));
+        setPolygon(updatedGeoJson);
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -254,7 +260,16 @@ export function FieldWizard(): React.JSX.Element {
 
     setIsSubmitting(true);
     try {
-      await api.createField(result.data);
+      const newField = await api.createField(result.data);
+      queryClient.setQueryData<any[]>(['fields'], (old) => {
+        if (!old) return [newField];
+        return [newField, ...old.filter((f) => f.id !== newField.id)];
+      });
+      if (typeof window !== 'undefined' && 'caches' in window) {
+        caches.open('irrigiq-api-cache').then((cache) => {
+          cache.delete('/fields');
+        }).catch(() => {});
+      }
       navigate('/', { replace: true });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : t('fieldWizard.validationError');

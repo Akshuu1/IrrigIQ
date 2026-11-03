@@ -219,7 +219,35 @@
     "createReport": "PDF रिपोर्ट बनाएं",
     "reportPhase12Notice": "जल-बचत PDF रिपोर्ट जनरेशन Phase 12 में सक्रिय किया जाएगा।",
     "baselineFarmerNote": "आधारभूत खपत IrrigIQ शुरू करने से पहले की आपकी बताई गई दिनचर्या पर आधारित है।",
-    "runSimulatorHint": "सुझाव: लाइव डेटा देखने के लिए चलाएं: 'npm run simulate -- --api <url> --key <sensorKey> --speed 60'"
+    "runSimulatorHint": "सुझाव: लाइव डेटा देखने के लिए चलाएं: 'npm run simulate -- --api <url> --key <sensorKey> --speed 60'",
+    "fieldMapOutline": "खेत की सीमा और वेक्टर रूपरेखा"
+  },
+  "offline": {
+    "banner_offline": "आप वर्तमान में ऑफ़लाइन हैं। बदलाव इस डिवाइस पर स्थानीय रूप से सहेजे गए हैं।",
+    "banner_pending": "आप वापस ऑनलाइन हैं और सिंक के लिए बदलाव प्रतीक्षारत हैं।",
+    "pending_badge": "लंबित",
+    "syncing": "सिंक हो रहा है...",
+    "sync_now": "अभी सिंक करें",
+    "sync_status_title": "ऑफ़लाइन सिंक स्थिति",
+    "network_status": "कनेक्शन",
+    "status_online": "ऑनलाइन",
+    "status_offline": "ऑफ़लाइन",
+    "status_synced": "सिंक किया हुआ",
+    "last_synced": "अंतिम सिंक",
+    "never_synced": "कभी सिंक नहीं हुआ",
+    "mutation_queue": "लंबित बदलाव",
+    "all_changes_synced": "सभी बदलाव सर्वर के साथ सिंक हैं",
+    "type_log": "सिंचाई लॉग",
+    "type_edit_field": "खेत संपादन",
+    "retry": "पुनः प्रयास करें",
+    "conflict_title": "अपडेट टकराव का पता चला",
+    "conflict_desc": "जब आप ऑफ़लाइन काम कर रहे थे तब सर्वर पर यह खेत अपडेट हो गया था। कृपया चुनें कि कौन सा संस्करण रखना है।",
+    "your_edit": "आपका ऑफ़लाइन संपादन",
+    "server_version": "सर्वर संस्करण",
+    "use_server": "सर्वर संस्करण का उपयोग करें",
+    "keep_mine": "मेरे बदलाव रखें",
+    "no_map_geometry": "कोई ज्यामिति उपलब्ध नहीं है",
+    "vector_map_notice": "ऑफ़लाइन: वेक्टर रूपरेखा (कोई टाइल डाउनलोड नहीं)"
   }
 }
 
