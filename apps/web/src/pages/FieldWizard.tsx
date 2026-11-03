@@ -12,6 +12,7 @@ import { useAuth } from '../context/AuthContext.js';
 import { formatArea } from '../utils/formatters.js';
 import {
   CROPS,
+  type Crop,
   polygonAreaHa,
   validatePolygon,
   createFieldSchema,
@@ -586,7 +587,7 @@ export function FieldWizard(): React.JSX.Element {
                 onChange={(e) => setCropKey(e.target.value)}
                 className="w-full min-h-[48px] bg-slate-950 border border-slate-700 focus:border-emerald-400 rounded-xl px-4 py-3 text-base text-white focus:outline-none"
               >
-                {CROPS.map((c) => (
+                {CROPS.map((c: Crop) => (
                   <option key={c.key} value={c.key}>
                     {lang === 'hi' ? `${c.nameHi} (${c.nameEn})` : `${c.nameEn} (${c.nameHi})`}
                   </option>

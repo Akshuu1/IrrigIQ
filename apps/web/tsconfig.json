@@ -5,7 +5,11 @@
     "moduleResolution": "Bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@irrigiq/shared": ["../../packages/shared/src/index.ts"]
+    }
   },
   "include": ["src/**/*"]
 }

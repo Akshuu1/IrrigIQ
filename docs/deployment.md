@@ -117,3 +117,4 @@ This immediately initializes:
 - [x] HTTPS cookies configured with `SameSite=None; Secure=true` for cross-origin hosting.
 - [x] GitHub Actions automated daily cron ping configured (`.github/workflows/daily-cron.yml`) to wake free-tier services before 05:00 AM IST.
 - [x] PWA offline caching enabled for app shell and field plans.
+
