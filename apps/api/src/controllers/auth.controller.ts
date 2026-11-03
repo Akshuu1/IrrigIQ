@@ -5,12 +5,15 @@ import { authService } from '../services/auth.service.js';
 import { AppError } from '../errors/AppError.js';
 
 function getRefreshTokenCookieOptions(req: Request) {
-  const isProd = getEnv().NODE_ENV === 'production';
+  const env = getEnv();
+  const isProd = env.NODE_ENV === 'production';
   const isLocalhost = req.hostname === 'localhost' || req.hostname === '127.0.0.1';
+  const sameSite = env.COOKIE_SAME_SITE;
+
   return {
     httpOnly: true,
     secure: isProd && !isLocalhost,
-    sameSite: 'strict' as const,
+    sameSite,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/auth',
   };

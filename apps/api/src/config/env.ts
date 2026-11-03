@@ -19,6 +19,8 @@ export const EnvSchema = z.object({
   JWT_SECRET: z.string().min(32).default('development-super-secret-jwt-key-min-32-chars-long'),
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   REFRESH_TOKEN_EXPIRES_DAYS: z.coerce.number().default(7),
+  CRON_SECRET: z.string().default('development-cron-secret-key-min-16-chars'),
+  COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('strict'),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

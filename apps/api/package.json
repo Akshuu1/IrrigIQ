@@ -6,6 +6,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "seed": "tsx src/scripts/seed.ts",
     "forecast": "tsx src/scripts/printForecast.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

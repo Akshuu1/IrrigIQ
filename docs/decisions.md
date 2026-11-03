@@ -317,5 +317,64 @@ During prototype profiling on a macOS/Linux container runtime:
    - Report documents and binaries are strictly scoped to `userId` and `fieldId`.
    - `GET /reports/:id/pdf` validates ownership before streaming the PDF binary with `Content-Type: application/pdf` and `Content-Disposition: inline`.
 
+---
+
+## ADR 010: Production Deployment Architecture, Hosting Limits & 05:00 AM Scheduler Reliability
+
+### Context
+
+Deploying IrrigIQ to production requires coordinating five core components:
+1. **Frontend**: Offline-first progressive web app (React 19, Tailwind CSS v4, Workbox PWA).
+2. **Backend API**: Node.js/Express service with geospatial queries and PDF report streaming via headless Chromium.
+3. **Background Scheduler**: BullMQ job scheduler running the daily advisory at 05:00 AM IST (Asia/Kolkata).
+4. **Primary Database**: MongoDB 7.0+ for multi-tenant users, fields, recommendations, reports, and time-series sensor data.
+5. **Cache & Queue**: Redis 7 for weather caching, distributed locking, and BullMQ worker queues.
+
+### Hosting Provider Limits & Sleeping Behaviour Analysis
+
+| Service | Provider | Free-Tier Specs & Limits | Sleep / Spindown Behaviour | Architectural Trade-offs & Handling |
+| :--- | :--- | :--- | :--- | :--- |
+| **Web Frontend** | **Vercel** | • 100 GB bandwidth/mo<br>• Unlimited serverless deployments<br>• Edge CDN routing | **No sleeping** (static edge CDN is always available). | Pre-compiled PWA shell, assets cached for 1 year immutable (`assets/*`), service worker `sw.js` set to `must-revalidate`. SPA routes rewritten to `/index.html`. |
+| **API & Scheduler** | **Render** | • 512 MB RAM<br>• 0.1 shared vCPU<br>• 750 free instance hrs/mo | **Spins down after 15 minutes** of HTTP inactivity. Cold start takes ~50 seconds. | **Critical Risk**: Internal timers and BullMQ schedulers in sleeping containers **will not trigger** at 05:00 AM IST.<br>**Mitigation**: External cron ping or always-on instance (see below). |
+| **API Alternative** | **Railway** | • 8 GB RAM shared<br>• $5 one-time free credit<br>• Configurable container sizing | **No auto-sleep** while credits remain active. | Excellent for running always-on BullMQ workers and API without sleep latency. |
+| **API Alternative** | **Fly.io** | • Up to 3 shared-cpu-1x 256MB VMs<br>• 3 GB persistent storage | Can disable auto-stop (`auto_stop_machines = false`). | Low-latency container hosting; 256MB requires careful Chromium memory bounding during PDF generation. |
+| **Database** | **MongoDB Atlas** | • M0 Shared Sandbox<br>• 512 MB storage<br>• 500 connections limit | **No sleeping** (24/7 replica set availability). | Supports geospatial `2dsphere` indexes and native time-series collections (`SensorReading`). |
+| **Cache & Queue** | **Upstash / Hosted Redis** | • 10,000 commands/day free<br>• TLS encryption (`rediss://`)<br>• 256 MB data limit | **Serverless (always ready)**. | Fully supports standard Redis 7 commands and persistent connections required by BullMQ. |
+
+### Solving the 05:00 AM Daily Scheduler Dilemma
+
+A core requirement of IrrigIQ is generating daily irrigation recommendations at **05:00 AM Asia/Kolkata (23:30 UTC)** before farmers begin morning irrigation. Free container hosting tiers (such as Render) sleep after 15 minutes of zero inbound HTTP traffic, suspending the Node event loop and causing the in-process cron timer to be missed.
+
+To guarantee that daily recommendations are executed without requiring expensive dedicated infrastructure, we adopted a **Dual-Trigger Execution Architecture**:
+
+```
++-------------------------------------------------------------+
+| PATH 1: Internal Scheduler (Always-on / Paid / Local Dev)   |
+| BullMQ Repeatable Job -> 0 5 * * * Asia/Kolkata             |
++-------------------------------------------------------------+
+
++-------------------------------------------------------------+
+| PATH 2: External Ping (Free-Tier Sleep Survival)            |
+| GitHub Actions Scheduled Cron (23:30 UTC / 05:00 IST)       |
+|    OR cron-job.org / Upstash QStash                         |
+|         │                                                   |
+|         ▼ HTTP POST with x-cron-secret                      |
+| https://irrigiq-api.onrender.com/scheduler/trigger-daily    |
+|         │                                                   |
+|         ▼ (Container Wakes Up within 50s)                   |
+| processDailyRecommendations() executes in batches of 50     |
++-------------------------------------------------------------+
+```
+
+1. **In-Process BullMQ Schedule**:
+   - `initRecommendationScheduler()` registers an internal cron job (`0 5 * * *` with timezone `Asia/Kolkata`).
+   - If deployed on Railway, Fly.io, or an always-on Render instance, this worker executes natively inside the cluster.
+2. **Authenticated External Cron Endpoint (`/scheduler/trigger-daily-recommendations`)**:
+   - Exposed on the Express server: `POST /scheduler/trigger-daily-recommendations`.
+   - Protected by `CRON_SECRET` header validation (`x-cron-secret` or `Authorization: Bearer <CRON_SECRET>`).
+   - An external cron runner (e.g. GitHub Actions `.github/workflows/daily-cron.yml` firing at `30 23 * * *`, or cron-job.org) sends a ping every morning.
+   - The inbound HTTP request wakes the sleeping Render instance, executes `processDailyRecommendations()`, logs results, and returns HTTP 200 with the execution summary (`{ distinctCells, processedFields, failedFields }`).
+
+
 
 

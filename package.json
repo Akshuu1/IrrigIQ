@@ -19,6 +19,7 @@
     "test:e2e": "playwright test",
     "e2e": "playwright test",
     "loadtest": "k6 run infra/loadtest/loadtest.js",
+    "seed": "npm run seed -w @irrigiq/api",
     "simulate": "npm run simulate -w @irrigiq/simulator --",
     "prepare": "husky || true"
   },

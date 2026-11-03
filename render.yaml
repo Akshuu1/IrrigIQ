@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: irrigiq-api
+    runtime: docker
+    dockerfilePath: apps/api/Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://irrigiq.vercel.app,http://localhost:3000
+      - key: CRON_SECRET
+        generateValue: true
+      - key: COOKIE_SAME_SITE
+        value: none
+
