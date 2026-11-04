@@ -8,6 +8,9 @@ export interface IReportData {
     cropKey: string;
     cropNameEn: string;
     cropNameHi: string;
+    cropNameMr?: string;
+    cropNamePa?: string;
+    cropNameTe?: string;
     cropName: string;
     sowingDate: string;
     soilType: string;
@@ -81,7 +84,7 @@ export interface IReportDocument extends Document {
   status: 'pending' | 'processing' | 'completed' | 'failed';
   from: string;
   to: string;
-  language: 'en' | 'hi';
+  language: 'en' | 'hi' | 'mr' | 'pa' | 'te';
   data: IReportData;
   pdfBuffer?: Buffer;
   error?: string;
@@ -101,7 +104,7 @@ const reportSchema = new Schema<IReportDocument>(
     },
     from: { type: String, required: true },
     to: { type: String, required: true },
-    language: { type: String, enum: ['en', 'hi'], default: 'en', required: true },
+    language: { type: String, enum: ['en', 'hi', 'mr', 'pa', 'te'], default: 'en', required: true },
     data: { type: Schema.Types.Mixed, default: {} },
     pdfBuffer: { type: Buffer },
     error: { type: String },

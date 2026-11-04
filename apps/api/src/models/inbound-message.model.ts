@@ -53,3 +53,4 @@ export const InboundMessageModel = mongoose.model<IInboundMessageDocument>(
   'InboundMessage',
   inboundMessageSchema,
 );
+

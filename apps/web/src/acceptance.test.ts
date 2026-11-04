@@ -22,6 +22,8 @@ import {
   createFieldSchema,
   getCalendarForState,
   planRainfed,
+  getCropName,
+  pseudoLocalize,
 } from '@irrigiq/shared';
 import { formatArea, formatNumber, formatDepthMm } from './utils/formatters.js';
 
@@ -531,6 +533,121 @@ describe('Phase 9 Acceptance: Draw a field, save it, and see recommendations in 
         return map[d] || d;
       });
       expect(normalized).toBe('3 07:30');
+    });
+  });
+
+  describe('Phase 22 Acceptance: More languages (Marathi, Punjabi, Telugu)', () => {
+    it('switches between all 5 languages and translates core UI strings', async () => {
+      // 1. English
+      await setAppLanguage('en');
+      expect(i18n.t('nav.brand')).toBe('IrrigIQ');
+      expect(i18n.t('dashboard.todayAdvice')).toBe("Today's Action");
+      expect(i18n.t('settings.title')).toBe('User Settings & Preferences');
+
+      // 2. Hindi
+      await setAppLanguage('hi');
+      expect(i18n.t('dashboard.todayAdvice')).toBe('आज की सलाह');
+      expect(i18n.t('settings.title')).toBe('उपयोगकर्ता सेटिंग्स और प्राथमिकताएं');
+
+      // 3. Marathi
+      await setAppLanguage('mr');
+      expect(i18n.t('dashboard.todayAdvice')).toBe('आजचा सल्ला');
+      expect(i18n.t('settings.title')).toBe('खाते आणि प्राधान्ये');
+
+      // 4. Punjabi
+      await setAppLanguage('pa');
+      expect(i18n.t('dashboard.todayAdvice')).toBe('ਅੱਜ ਦੀ ਸਲਾਹ');
+      expect(i18n.t('settings.title')).toBe('ਖਾਤਾ ਅਤੇ ਤਰਜੀਹਾਂ');
+
+      // 5. Telugu
+      await setAppLanguage('te');
+      expect(i18n.t('dashboard.todayAdvice')).toBe('నేటి సలహా');
+      expect(i18n.t('settings.title')).toBe('ఖాతా మరియు ప్రాధాన్యతలు');
+    });
+
+    it('verifies regional fallback chains', async () => {
+      await setAppLanguage('mr');
+      expect(i18n.t('non_existent_key', { defaultValue: 'fallback' })).toBe('fallback');
+
+      await setAppLanguage('pa');
+      expect(i18n.t('non_existent_key', { defaultValue: 'fallback' })).toBe('fallback');
+
+      await setAppLanguage('te');
+      expect(i18n.t('non_existent_key', { defaultValue: 'fallback' })).toBe('fallback');
+    });
+
+    it('verifies crop name localization across all 5 languages', () => {
+      const wheat = CROPS_MAP.get('wheat')!;
+      const rice = CROPS_MAP.get('rice')!;
+      const tomato = CROPS_MAP.get('tomato')!;
+
+      expect(getCropName(wheat, 'en')).toBe('Wheat');
+      expect(getCropName(wheat, 'hi')).toBe('गेहूं');
+      expect(getCropName(wheat, 'mr')).toBe('गहू');
+      expect(getCropName(wheat, 'pa')).toBe('ਕਣਕ');
+      expect(getCropName(wheat, 'te')).toBe('గోధుమ');
+
+      expect(getCropName(rice, 'mr')).toBe('भात (तांदूळ)');
+      expect(getCropName(rice, 'pa')).toBe('ਝੋਨਾ (ਚਾਵਲ)');
+      expect(getCropName(rice, 'te')).toBe('వరి (వరి ధాన్యం)');
+
+      expect(getCropName(tomato, 'mr')).toBe('टोमॅटो');
+      expect(getCropName(tomato, 'pa')).toBe('ਟਮਾਟਰ');
+      expect(getCropName(tomato, 'te')).toBe('టమోటా');
+    });
+
+    it('verifies duration formatting across all 5 languages', () => {
+      const minutes = 107; // 1 h 47 min
+      expect(formatDuration(minutes, 'en')).toBe('1 h 47 min');
+      expect(formatDuration(minutes, 'hi')).toBe('1 घंटा 47 मिनट');
+      expect(formatDuration(minutes, 'mr')).toBe('1 तास 47 मिनिटे');
+      expect(formatDuration(minutes, 'pa')).toBe('1 ਘੰਟੇ 47 ਮਿੰਟ');
+      expect(formatDuration(minutes, 'te')).toBe('1 గంటల 47 నిమిషాలు');
+    });
+
+    it('verifies power window range formatting across all 5 languages', () => {
+      expect(formatTimeRange('22:00', '06:00', 'en')).toBe('between 10 pm and 6 am');
+      expect(formatTimeRange('22:00', '06:00', 'hi')).toBe('रात 10 बजे से सुबह 6 बजे के बीच');
+      expect(formatTimeRange('22:00', '06:00', 'mr')).toBe('रात्री 10 वाजता ते सकाळी 6 वाजता दरम्यान');
+      expect(formatTimeRange('22:00', '06:00', 'pa')).toBe('ਰਾਤ 10 ਵਜੇ ਤੋਂ ਸਵੇਰੇ 6 ਵਜੇ ਵਿਚਕਾਰ');
+      expect(formatTimeRange('22:00', '06:00', 'te')).toBe('రాత్రి 10 గంటలకు నుండి ఉదయం 6 గంటలకు మధ్య');
+    });
+
+    it('supports native script digits versus Latin digits', () => {
+      const num = 125000;
+      // Latin digits
+      expect(formatNumber(num, 'mr', { useNativeDigits: false })).toBe('1,25,000');
+      expect(formatNumber(num, 'pa', { useNativeDigits: false })).toBe('1,25,000');
+      expect(formatNumber(num, 'te', { useNativeDigits: false })).toBe('1,25,000');
+
+      // Native digits
+      expect(formatNumber(num, 'mr', { useNativeDigits: true })).toBe('१,२५,०००');
+      expect(formatNumber(num, 'pa', { useNativeDigits: true })).toBe('੧,੨੫,੦੦੦');
+      expect(formatNumber(num, 'te', { useNativeDigits: true })).toBe('౧౨౫,౦౦౦');
+    });
+
+    it('verifies pseudo-localisation mode expands text and preserves variables', async () => {
+      const sample = 'Irrigate {{depthMm}} mm (about {{litres}} litres) today';
+      const pseudo = pseudoLocalize(sample);
+      expect(pseudo).toContain('{{depthMm}}');
+      expect(pseudo).toContain('{{litres}}');
+      expect(pseudo.startsWith('[!!! ')).toBe(true);
+      expect(pseudo.endsWith(' !!!]')).toBe(true);
+      expect(pseudo.length).toBeGreaterThan(sample.length * 1.2);
+
+      await setAppLanguage('pseudo');
+      const brand = i18n.t('nav.brand');
+      expect(brand).toContain('!!!');
+      await setAppLanguage('en');
+    });
+
+    it('verifies state detection language suggestion', () => {
+      expect(suggestLanguageForState('Maharashtra')).toBe('mr');
+      expect(suggestLanguageForState('Punjab')).toBe('pa');
+      expect(suggestLanguageForState('Telangana')).toBe('te');
+      expect(suggestLanguageForState('Andhra Pradesh')).toBe('te');
+      expect(suggestLanguageForState('Rajasthan')).toBe('hi');
+      expect(suggestLanguageForState('Unknown')).toBe('en');
     });
   });
 });

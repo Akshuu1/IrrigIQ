@@ -164,11 +164,49 @@ describe('Geo helpers', () => {
 
   describe('Phase 18 State Lookup & Language Suggestion', () => {
     const cityCases = [
-      { name: 'Delhi', lng: 77.2090, lat: 28.6139, expectedState: 'Delhi', expectedLang: 'hi' },
-      { name: 'Mumbai', lng: 72.8777, lat: 19.0760, expectedState: 'Maharashtra', expectedLang: 'en' },
-      { name: 'Bengaluru', lng: 77.5946, lat: 12.9716, expectedState: 'Karnataka', expectedLang: 'en' },
-      { name: 'Chandigarh', lng: 76.7794, lat: 30.7333, expectedState: 'Chandigarh', expectedLang: 'hi' },
-      { name: 'Chennai', lng: 80.2707, lat: 13.0827, expectedState: 'Tamil Nadu', expectedLang: 'en' },
+      { name: 'Delhi', lng: 77.209, lat: 28.6139, expectedState: 'Delhi', expectedLang: 'hi' },
+      {
+        name: 'Mumbai',
+        lng: 72.8777,
+        lat: 19.076,
+        expectedState: 'Maharashtra',
+        expectedLang: 'mr',
+      },
+      {
+        name: 'Bengaluru',
+        lng: 77.5946,
+        lat: 12.9716,
+        expectedState: 'Karnataka',
+        expectedLang: 'en',
+      },
+      {
+        name: 'Chandigarh',
+        lng: 76.7794,
+        lat: 30.7333,
+        expectedState: 'Chandigarh',
+        expectedLang: 'hi',
+      },
+      {
+        name: 'Chennai',
+        lng: 80.2707,
+        lat: 13.0827,
+        expectedState: 'Tamil Nadu',
+        expectedLang: 'en',
+      },
+      {
+        name: 'Ludhiana',
+        lng: 75.8573,
+        lat: 30.901,
+        expectedState: 'Punjab',
+        expectedLang: 'pa',
+      },
+      {
+        name: 'Hyderabad',
+        lng: 78.4867,
+        lat: 17.385,
+        expectedState: 'Telangana',
+        expectedLang: 'te',
+      },
     ];
 
     it.each(cityCases)(

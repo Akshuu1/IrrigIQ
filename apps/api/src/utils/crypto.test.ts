@@ -66,3 +66,4 @@ describe('AES-256-GCM Crypto and Personal Data Utilities', () => {
     expect(hash1).toMatch(/^[0-9a-f]{64}$/);
   });
 });
+

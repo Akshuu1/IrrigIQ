@@ -5,6 +5,8 @@ import { Types } from 'mongoose';
 import { chromium, type Browser } from 'playwright';
 import {
   CROPS,
+  getCropName,
+  type SupportedLanguage,
   computeSavings,
   calculateDaysInRange,
   IRRIGATION_EFFICIENCY,
@@ -23,31 +25,32 @@ import { logger } from '../config/logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Cache base64 font in memory
-let cachedFontBase64: string | null = null;
+// Cache base64 fonts in memory
+const fontBase64Cache = new Map<string, string>();
 
-function getDevanagariFontBase64(): string {
-  if (cachedFontBase64) return cachedFontBase64;
+function getFontBase64(fontName: string): string {
+  if (fontBase64Cache.has(fontName)) return fontBase64Cache.get(fontName)!;
   const candidates = [
-    path.resolve(process.cwd(), 'apps/api/assets/fonts/NotoSansDevanagari-Regular.ttf'),
-    path.resolve(__dirname, '../../assets/fonts/NotoSansDevanagari-Regular.ttf'),
-    path.resolve(__dirname, '../assets/fonts/NotoSansDevanagari-Regular.ttf'),
-    path.resolve(__dirname, '../../../apps/api/assets/fonts/NotoSansDevanagari-Regular.ttf'),
+    path.resolve(process.cwd(), `apps/api/assets/fonts/${fontName}`),
+    path.resolve(__dirname, `../../assets/fonts/${fontName}`),
+    path.resolve(__dirname, `../assets/fonts/${fontName}`),
+    path.resolve(__dirname, `../../../apps/api/assets/fonts/${fontName}`),
   ];
 
   for (const candidate of candidates) {
     if (fs.existsSync(candidate)) {
       try {
         const buf = fs.readFileSync(candidate);
-        cachedFontBase64 = buf.toString('base64');
-        return cachedFontBase64;
+        const b64 = buf.toString('base64');
+        fontBase64Cache.set(fontName, b64);
+        return b64;
       } catch (err) {
         logger.warn({ err, candidate }, 'Failed to read font file candidate');
       }
     }
   }
 
-  logger.warn('Noto Sans Devanagari font file not found on disk, continuing without embedded font');
+  logger.warn({ fontName }, 'Font file not found on disk, continuing without embedded font');
   return '';
 }
 
@@ -59,7 +62,7 @@ export async function buildReportData(
   fieldId: string,
   from: string,
   to: string,
-  language: 'en' | 'hi' = 'en',
+  language: SupportedLanguage = 'en',
 ): Promise<IReportData> {
   if (!Types.ObjectId.isValid(fieldId)) {
     throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
@@ -71,12 +74,22 @@ export async function buildReportData(
   }
 
   const user = await UserModel.findById(field.userId);
-  const farmerName = user?.name || (language === 'hi' ? 'किसान' : 'Farmer');
+  const farmerFallback: Record<SupportedLanguage, string> = {
+    en: 'Farmer',
+    hi: 'किसान',
+    mr: 'शेतकरी',
+    pa: 'ਕਿਸਾਨ',
+    te: 'రైతు',
+  };
+  const farmerName = user?.name || farmerFallback[language] || 'Farmer';
 
   const crop = CROPS.find((c) => c.key === field.cropKey);
   const cropNameEn = crop?.nameEn || field.cropKey;
   const cropNameHi = crop?.nameHi || field.cropKey;
-  const cropName = language === 'hi' ? cropNameHi : cropNameEn;
+  const cropNameMr = crop?.nameMr || field.cropKey;
+  const cropNamePa = crop?.namePa || field.cropKey;
+  const cropNameTe = crop?.nameTe || field.cropKey;
+  const cropName = crop ? getCropName(crop, language) : field.cropKey;
 
   // 1. Calculate days and date list
   const daysInRange = calculateDaysInRange(from, to);
@@ -180,20 +193,32 @@ export async function buildReportData(
     });
   }
 
-  const baselineNote =
-    language === 'hi'
-      ? 'आधारभूत पानी का उपयोग किसान द्वारा IrrigIQ का उपयोग करने से पहले बताई गई दिनचर्या पर आधारित है।'
-      : "Baseline water use is based on the farmer's own stated routine prior to using IrrigIQ.";
+  const baselineNotes: Record<SupportedLanguage, string> = {
+    en: "Baseline water use is based on the farmer's own stated routine prior to using IrrigIQ.",
+    hi: 'आधारभूत पानी का उपयोग किसान द्वारा IrrigIQ का उपयोग करने से पहले बताई गई दिनचर्या पर आधारित है।',
+    mr: 'पारंपरिक पाणी वापर शेतकऱ्याने IrrigIQ वापरण्यापूर्वी नोंदवलेल्या सरासरी पद्धतीवर आधारित आहे.',
+    pa: 'ਰਵਾਇਤੀ ਪਾਣੀ ਦੀ ਵਰਤੋਂ ਕਿਸਾਨ ਦੁਆਰਾ IrrigIQ ਵਰਤਣ ਤੋਂ ਪਹਿਲਾਂ ਦੱਸੀ ਗਈ ਆਦਤ ਤੇ ਆਧਾਰਿਤ ਹੈ।',
+    te: 'సాంప్రదాయ నీటి వాడకం రైతు IrrigIQ వాడకముందు నమోదు చేసిన సాధారణ అలవాటుపై ఆధారపడి ఉంటుంది.',
+  };
+  const baselineNote = baselineNotes[language] || baselineNotes.en;
 
-  const disclaimer =
-    language === 'hi'
-      ? 'बचत के आंकड़े किसान द्वारा दर्ज की गई आधारभूत दिनचर्या के विरुद्ध अनुमान हैं।'
-      : 'Savings are estimates against the baseline the farmer entered.';
+  const disclaimers: Record<SupportedLanguage, string> = {
+    en: 'Savings are estimates against the baseline the farmer entered.',
+    hi: 'बचत के आंकड़े किसान द्वारा दर्ज की गई आधारभूत दिनचर्या के विरुद्ध अनुमान हैं।',
+    mr: 'पाणी बचतीचे आकडे शेतकऱ्याने नोंदवलेल्या पारंपरिक पद्धतीशी तुलनात्मक अंदाज आहेत.',
+    pa: 'ਪਾਣੀ ਬੱਚਤ ਦੇ ਅੰਕੜੇ ਕਿਸਾਨ ਵੱਲੋਂ ਦਰਜ ਕੀਤੀ ਰਵਾਇਤੀ ਵਿਧੀ ਵਿਰੁੱਧ ਅੰਦਾਜ਼ਨ ਹਨ।',
+    te: 'నీటి ఆదా గణాంకాలు రైతు నమోదు చేసిన సాధారణ అలవాటుతో పోల్చిన అంచనాలు మాత్రమే.',
+  };
+  const disclaimer = disclaimers[language] || disclaimers.en;
 
-  const dataSources =
-    language === 'hi'
-      ? 'Open-Meteo मौसम पूर्वानुमान API (FAO-56 पेनमैन-मोंटेइथ), ICAR/FAO-56 सिंचाई विज्ञान मॉडल, और स्थानीय मृदा मापदंड।'
-      : 'Open-Meteo Forecast API (ET0 FAO-56 Penman-Monteith, precipitation), FAO-56 irrigation science model, and local soil parameters.';
+  const dataSourcesMap: Record<SupportedLanguage, string> = {
+    en: 'Open-Meteo Forecast API (ET0 FAO-56 Penman-Monteith, precipitation), FAO-56 irrigation science model, and local soil parameters.',
+    hi: 'Open-Meteo मौसम पूर्वानुमान API (FAO-56 पेनमैन-मोंटेइथ), ICAR/FAO-56 सिंचाई विज्ञान मॉडल, और स्थानीय मृदा मापदंड।',
+    mr: 'Open-Meteo हवामान अंदाज API (FAO-56 पेनमन-माँटिथ), ICAR/FAO-56 सिंचन विज्ञान मॉडेल आणि स्थानिक माती मापदंड.',
+    pa: 'Open-Meteo ਮੌਸਮ ਪੂਰਵ-ਅਨੁਮਾਨ API (FAO-56 ਪੈਨਮੈਨ-ਮੌਂਟੀਥ), ICAR/FAO-56 ਸਿੰਚਾਈ ਵਿਗਿਆਨ ਮਾਡਲ ਅਤੇ ਸਥਾਨਕ ਮਿੱਟੀ ਮਾਪਦੰਡ।',
+    te: 'Open-Meteo వాతావరణ అంచనా API (FAO-56 పెన్‌మ్యాన్-మోంటెయిత్), ICAR/FAO-56 సాగునీటి శాస్త్రీయ మోడల్ మరియు స్థానిక నేల పారామితులు.',
+  };
+  const dataSources = dataSourcesMap[language] || dataSourcesMap.en;
 
   return {
     field: {
@@ -203,6 +228,9 @@ export async function buildReportData(
       cropKey: field.cropKey,
       cropNameEn,
       cropNameHi,
+      cropNameMr,
+      cropNamePa,
+      cropNameTe,
       cropName,
       sowingDate:
         field.sowingDate instanceof Date
@@ -237,7 +265,7 @@ export async function buildReportData(
 function formatReasonText(
   key: string,
   params: Record<string, unknown> | undefined,
-  language: 'en' | 'hi',
+  language: SupportedLanguage = 'en',
 ): string {
   if (language === 'hi') {
     switch (key) {
@@ -251,6 +279,57 @@ function formatReasonText(
         return `मृदा सेंसर द्वारा अत्यधिक नमी दर्ज (${params?.pct ?? 0}% नमी) — खेत में पानी पर्याप्त है`;
       case 'reason.not_needed':
         return 'फसल की जल आवश्यकता पूरी है। आज सिंचाई की आवश्यकता नहीं है।';
+      default:
+        return key;
+    }
+  }
+
+  if (language === 'mr') {
+    switch (key) {
+      case 'reason.rain_expected':
+        return `पाऊस पडण्याची शक्यता (${params?.mm ?? 0} मिमी) — नैसर्गिक ओलावा पुरेसा राहील`;
+      case 'reason.deficit_reached':
+        return `मातीतील ओलाव्याची कमतरता ${params?.mm ?? 0} मिमी मर्यादेवर पोहोचली आहे`;
+      case 'reason.sensor_dry':
+        return `माती सेन्सरनुसार कोरडेपणा (${params?.pct ?? 0}% ओलावा) — त्वरित पाणी द्या`;
+      case 'reason.sensor_wet':
+        return `माती सेन्सरनुसार जास्त ओलावा (${params?.pct ?? 0}% ओलावा) — शेतात पुरेसे पाणी आहे`;
+      case 'reason.not_needed':
+        return 'पिकाची पाण्याची गरज पूर्ण झाली आहे. आज सिंचनाची गरज नाही.';
+      default:
+        return key;
+    }
+  }
+
+  if (language === 'pa') {
+    switch (key) {
+      case 'reason.rain_expected':
+        return `ਮੀਂਹ ਪੈਣ ਦੀ ਸੰਭਾਵਨਾ (${params?.mm ?? 0} ਮਿ.ਮੀ.) — ਕੁਦਰਤੀ ਨਮੀ ਕਾਫ਼ੀ ਰਹੇਗੀ`;
+      case 'reason.deficit_reached':
+        return `ਮਿੱਟੀ ਵਿੱਚ ਨਮੀ ਦੀ ਘਾਟ ${params?.mm ?? 0} ਮਿ.ਮੀ. ਤੱਕ ਪਹੁੰਚ ਗਈ ਹੈ`;
+      case 'reason.sensor_dry':
+        return `ਮਿੱਟੀ ਸੈਂਸਰ ਅਨੁਸਾਰ ਸੁੱਕੀ (${params?.pct ?? 0}% ਨਮੀ) — ਤੁਰੰਤ ਪਾਣੀ ਲਗਾਓ`;
+      case 'reason.sensor_wet':
+        return `ਮਿੱਟੀ ਸੈਂਸਰ ਅਨੁਸਾਰ ਵੱਧ ਨਮੀ (${params?.pct ?? 0}% ਨਮੀ) — ਖੇਤ ਵਿੱਚ ਪਾਣੀ ਕਾਫ਼ੀ ਹੈ`;
+      case 'reason.not_needed':
+        return 'ਫ਼ਸਲ ਦੀ ਪਾਣੀ ਦੀ ਲੋੜ ਪੂਰੀ ਹੈ। ਅੱਜ ਸਿੰਚਾਈ ਦੀ ਲੋੜ ਨਹੀਂ।';
+      default:
+        return key;
+    }
+  }
+
+  if (language === 'te') {
+    switch (key) {
+      case 'reason.rain_expected':
+        return `వర్ష సూచన (${params?.mm ?? 0} మిమీ) — సహజ తేమ సరిపోతుంది`;
+      case 'reason.deficit_reached':
+        return `నేల తేమ లోటు ${params?.mm ?? 0} మిమీ స్థాయికి చేరింది`;
+      case 'reason.sensor_dry':
+        return `నేల సెన్సార్ పొడిబారినట్లు చూపుతోంది (${params?.pct ?? 0}% తేమ) — వెంటనే నీరు పెట్టండి`;
+      case 'reason.sensor_wet':
+        return `నేల సెన్సార్ అధిక తేమ చూపుతోంది (${params?.pct ?? 0}% తేమ) — సరిపడా నీరు ఉంది`;
+      case 'reason.not_needed':
+        return 'పంట నీటి అవసరం తీరింది. ఈరోజు సాగునీరు అవసరం లేదు.';
       default:
         return key;
     }
@@ -275,11 +354,16 @@ function formatReasonText(
 /**
  * Generates an SVG bar chart for daily crop need, rain, recommended and actual water.
  */
-function renderSvgChart(chartData: IReportData['chartData'], language: 'en' | 'hi'): string {
+function renderSvgChart(chartData: IReportData['chartData'], language: SupportedLanguage = 'en'): string {
   if (chartData.length === 0) {
-    return `<div style="text-align:center; padding:20px; color:#64748b;">${
-      language === 'hi' ? 'इस अवधि के लिए कोई चार्ट डेटा उपलब्ध नहीं है' : 'No chart data available for this range'
-    }</div>`;
+    const emptyMsg = {
+      en: 'No chart data available for this range',
+      hi: 'इस अवधि के लिए कोई चार्ट डेटा उपलब्ध नहीं है',
+      mr: 'या कालावधीसाठी कोणताही चार्ट डेटा उपलब्ध नाही',
+      pa: 'ਇਸ ਸਮੇਂ ਲਈ ਕੋਈ ਚਾਰਟ ਡੇਟਾ ਉਪਲਬਧ ਨਹੀਂ ਹੈ',
+      te: 'ఈ కాలానికి చార్ట్ డేటా అందుబాటులో లేదు',
+    }[language] || 'No chart data available for this range';
+    return `<div style="text-align:center; padding:20px; color:#64748b;">${emptyMsg}</div>`;
   }
 
   const width = 760;
@@ -344,23 +428,42 @@ function renderSvgChart(chartData: IReportData['chartData'], language: 'en' | 'h
     })
     .join('');
 
-  const legendText =
-    language === 'hi'
-      ? {
-          etc: 'फसल आवश्यकता (ETc)',
-          rain: 'बारिश (वर्षा)',
-          rec: 'अनुशंसित सिंचाई',
-          act: 'वास्तविक दी गई सिंचाई',
-        }
-      : {
-          etc: 'Crop Need (ETc)',
-          rain: 'Rainfall',
-          rec: 'Recommended Irrigation',
-          act: 'Actual Applied',
-        };
+  const legendMap: Record<SupportedLanguage, { etc: string; rain: string; rec: string; act: string }> = {
+    hi: {
+      etc: 'फसल आवश्यकता (ETc)',
+      rain: 'बारिश (वर्षा)',
+      rec: 'अनुशंसित सिंचाई',
+      act: 'वास्तविक दी गई सिंचाई',
+    },
+    mr: {
+      etc: 'पिकाची गरज (ETc)',
+      rain: 'पाऊस',
+      rec: 'शिफारस केलेले सिंचन',
+      act: 'प्रत्यक्ष दिलेले पाणी',
+    },
+    pa: {
+      etc: 'ਫ਼ਸਲ ਦੀ ਲੋੜ (ETc)',
+      rain: 'ਮੀਂਹ',
+      rec: 'ਸਿਫਾਰਸ਼ ਕੀਤੀ ਸਿੰਚਾਈ',
+      act: 'ਅਸਲ ਲਗਾਇਆ ਪਾਣੀ',
+    },
+    te: {
+      etc: 'పంట నీటి అవసరం (ETc)',
+      rain: 'వర్షం',
+      rec: 'సిఫార్సు చేసిన సాగునీరు',
+      act: 'వాస్తవంగా ఇచ్చిన నీరు',
+    },
+    en: {
+      etc: 'Crop Need (ETc)',
+      rain: 'Rainfall',
+      rec: 'Recommended Irrigation',
+      act: 'Actual Applied',
+    },
+  };
+  const legendText = legendMap[language] || legendMap.en;
 
   return `
-    <svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" style="background:#ffffff; border-radius:12px; font-family:'Noto Sans Devanagari',sans-serif;">
+    <svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" style="background:#ffffff; border-radius:12px; font-family:'Noto Sans Devanagari','Noto Sans Gurmukhi','Noto Sans Telugu',sans-serif;">
       <!-- Legend -->
       <g transform="translate(${padLeft}, 15)">
         <rect x="0" y="0" width="10" height="10" fill="#38bdf8" rx="2"/>
@@ -391,67 +494,220 @@ function formatNum(val: number): string {
 }
 
 /**
- * Renders the HTML template containing all report sections.
+ * Renders the HTML template containing all report sections across all 5 languages.
  */
-export function renderReportHtml(data: IReportData, language: 'en' | 'hi'): string {
-  const fontBase64 = getDevanagariFontBase64();
-  const fontFaceCss = fontBase64
-    ? `
-      @font-face {
-        font-family: 'Noto Sans Devanagari';
-        src: url('data:font/ttf;base64,${fontBase64}') format('truetype');
-        font-weight: 100 900;
-        font-style: normal;
-      }
-    `
-    : '';
+export function renderReportHtml(data: IReportData, language: SupportedLanguage = 'en'): string {
+  const fontDeva = getFontBase64('NotoSansDevanagari-Regular.ttf');
+  const fontGuru = getFontBase64('NotoSansGurmukhi-Regular.ttf');
+  const fontTelu = getFontBase64('NotoSansTelugu-Regular.ttf');
 
-  const isHi = language === 'hi';
+  const fontFaceCss = `
+    ${fontDeva ? `@font-face { font-family: 'Noto Sans Devanagari'; src: url('data:font/ttf;base64,${fontDeva}') format('truetype'); font-weight: 100 900; font-style: normal; }` : ''}
+    ${fontGuru ? `@font-face { font-family: 'Noto Sans Gurmukhi'; src: url('data:font/ttf;base64,${fontGuru}') format('truetype'); font-weight: 100 900; font-style: normal; }` : ''}
+    ${fontTelu ? `@font-face { font-family: 'Noto Sans Telugu'; src: url('data:font/ttf;base64,${fontTelu}') format('truetype'); font-weight: 100 900; font-style: normal; }` : ''}
+  `;
+
+  const REPORT_I18N: Record<SupportedLanguage, Record<string, string>> = {
+    en: {
+      title: 'Irrigation Advisory & Water Savings Report',
+      subtitle: 'IrrigIQ Smart Water Management System',
+      generatedOn: 'Generated On',
+      period: 'Period',
+      days: 'days',
+      farmer: 'Farmer Name',
+      field: 'Field Name',
+      crop: 'Crop',
+      area: 'Field Area',
+      soil: 'Soil Type',
+      method: 'Irrigation Method',
+      sowing: 'Sowing Date',
+      summaryTitle: 'Water Accounting & Savings Summary',
+      baselineUse: 'Baseline Routine Water',
+      recUse: 'Recommended Water',
+      actUse: 'Actual Water Applied',
+      potSavings: 'Potential Savings',
+      realSavings: 'Realised Savings',
+      chartTitle: 'Daily Water Requirement & Irrigation Schedule',
+      tableTitle: 'Daily Breakdown Table',
+      date: 'Date',
+      et0: 'ET0 (mm)',
+      etc: 'ETc (mm)',
+      rain: 'Rain (mm)',
+      advisory: 'Advisory',
+      recGross: 'Rec. Water (L)',
+      reason: 'Advisory Reason',
+      actualWater: 'Actual (L)',
+      source: 'Source',
+      assumptionsTitle: 'Methodology & Engineering Assumptions',
+      dataSources: 'Data Sources',
+      disclaimerTitle: 'Important Disclaimer',
+      irrigateAction: 'Irrigate',
+      skipAction: 'Skip',
+    },
+    hi: {
+      title: 'सिंचाई सलाहकार एवं जल बचत रिपोर्ट',
+      subtitle: 'IrrigIQ स्मार्ट जल प्रबंधन प्रणाली',
+      generatedOn: 'रिपोर्ट दिनांक',
+      period: 'अवधि',
+      days: 'दिन',
+      farmer: 'किसान का नाम',
+      field: 'खेत का नाम',
+      crop: 'फसल',
+      area: 'क्षेत्रफल',
+      soil: 'मृदा का प्रकार',
+      method: 'सिंचाई विधि',
+      sowing: 'बुवाई तिथि',
+      summaryTitle: 'जल बचत एवं उपयोग सारांश',
+      baselineUse: 'पारंपरिक आधारभूत उपयोग',
+      recUse: 'IrrigIQ अनुशंसित उपयोग',
+      actUse: 'वास्तविक दिया गया पानी',
+      potSavings: 'संभावित जल बचत',
+      realSavings: 'वास्तविक जल बचत',
+      chartTitle: 'दैनिक जल मांग एवं सिंचाई चार्ट',
+      tableTitle: 'दैनिक विस्तृत विवरण',
+      date: 'दिनांक',
+      et0: 'ET0 (मिमी)',
+      etc: 'ETc (मिमी)',
+      rain: 'बारिश (मिमी)',
+      advisory: 'सलाह',
+      recGross: 'अनुशंसित (लीटर)',
+      reason: 'वैज्ञानिक कारण',
+      actualWater: 'वास्तविक (लीटर)',
+      source: 'स्रोत',
+      assumptionsTitle: 'मॉडल मान्यताएं एवं इंजीनियरिंग मापदंड',
+      dataSources: 'डेटा स्रोत',
+      disclaimerTitle: 'महत्वपूर्ण सूचना (अनिवार्य घोषणा)',
+      irrigateAction: 'सिंचाई करें',
+      skipAction: 'रोकें',
+    },
+    mr: {
+      title: 'सिंचन सल्ला आणि पाणी बचत अहवाल',
+      subtitle: 'IrrigIQ स्मार्ट जल व्यवस्थापन प्रणाली',
+      generatedOn: 'अहवाल दिनांक',
+      period: 'कालावधी',
+      days: 'दिवस',
+      farmer: 'शेतकऱ्याचे नाव',
+      field: 'शेताचे नाव',
+      crop: 'पीक',
+      area: 'क्षेत्रफळ',
+      soil: 'मातीचा प्रकार',
+      method: 'सिंचन पद्धत',
+      sowing: 'पेरणी दिनांक',
+      summaryTitle: 'पाणी वापर आणि बचत सारांश',
+      baselineUse: 'पारंपरिक सरासरी वापर',
+      recUse: 'IrrigIQ शिफारस वापर',
+      actUse: 'प्रत्यक्ष दिलेले पाणी',
+      potSavings: 'संभाव्य पाणी बचत',
+      realSavings: 'प्रत्यक्ष पाणी बचत',
+      chartTitle: 'दैनिक पाणी गरज आणि सिंचन आलेख',
+      tableTitle: 'दैनिक तपशील तक्ता',
+      date: 'दिनांक',
+      et0: 'ET0 (मिमी)',
+      etc: 'ETc (मिमी)',
+      rain: 'पाऊस (मिमी)',
+      advisory: 'सल्ला',
+      recGross: 'शिफारस पाणी (लिटर)',
+      reason: 'वैज्ञानिक कारण',
+      actualWater: 'प्रत्यक्ष (लिटर)',
+      source: 'स्रोत',
+      assumptionsTitle: 'मॉडेल गृहितके आणि अभियांत्रिकी निकष',
+      dataSources: 'डेटा स्रोत',
+      disclaimerTitle: 'महत्त्वाची सूचना (अस्वीकरण)',
+      irrigateAction: 'पाणी द्या',
+      skipAction: 'थांबवा',
+    },
+    pa: {
+      title: 'ਸਿੰਚਾਈ ਸਲਾਹ ਅਤੇ ਪਾਣੀ ਬੱਚਤ ਰਿਪੋਰਟ',
+      subtitle: 'IrrigIQ ਸਮਾਰਟ ਪਾਣੀ ਪ੍ਰਬੰਧਨ ਪ੍ਰਣਾਲੀ',
+      generatedOn: 'ਰਿਪੋਰਟ ਮਿਤੀ',
+      period: 'ਸਮਾਂ',
+      days: 'ਦਿਨ',
+      farmer: 'ਕਿਸਾਨ ਦਾ ਨਾਮ',
+      field: 'ਖੇਤ ਦਾ ਨਾਮ',
+      crop: 'ਫ਼ਸਲ',
+      area: 'ਰਕਬਾ',
+      soil: 'ਮਿੱਟੀ ਦੀ ਕਿਸਮ',
+      method: 'ਸਿੰਚਾਈ ਵਿਧੀ',
+      sowing: 'ਬਿਜਾਈ ਦੀ ਮਿਤੀ',
+      summaryTitle: 'ਪਾਣੀ ਵਰਤੋਂ ਅਤੇ ਬੱਚਤ ਸਾਰ',
+      baselineUse: 'ਰਵਾਇਤੀ ਪਾਣੀ ਵਰਤੋਂ',
+      recUse: 'IrrigIQ ਸਿਫਾਰਸ਼ ਕੀਤੀ ਵਰਤੋਂ',
+      actUse: 'ਅਸਲ ਲਗਾਇਆ ਪਾਣੀ',
+      potSavings: 'ਸੰਭਾਵਿਤ ਪਾਣੀ ਬੱਚਤ',
+      realSavings: 'ਅਸਲ ਪਾਣੀ ਬੱਚਤ',
+      chartTitle: 'ਰੋਜ਼ਾਨਾ ਪਾਣੀ ਲੋੜ ਅਤੇ ਸਿੰਚਾਈ ਚਾਰਟ',
+      tableTitle: 'ਰੋਜ਼ਾਨਾ ਵੇਰਵਾ ਸਾਰਣੀ',
+      date: 'ਮਿਤੀ',
+      et0: 'ET0 (ਮਿਮੀ)',
+      etc: 'ETc (ਮਿਮੀ)',
+      rain: 'ਮੀਂਹ (ਮਿਮੀ)',
+      advisory: 'ਸਲਾਹ',
+      recGross: 'ਸਿਫਾਰਸ਼ ਪਾਣੀ (ਲੀਟਰ)',
+      reason: 'ਵਿਗਿਆਨਕ ਕਾਰਨ',
+      actualWater: 'ਅਸਲ (ਲੀਟਰ)',
+      source: 'ਸਰੋਤ',
+      assumptionsTitle: 'ਮਾਡਲ ਮਾਨਤਾਵਾਂ ਅਤੇ ਇੰਜੀਨੀਅਰਿੰਗ ਮਾਪਦੰਡ',
+      dataSources: 'ਡੇਟਾ ਸਰੋਤ',
+      disclaimerTitle: 'ਮਹੱਤਵਪੂਰਨ ਸੂਚਨਾ (ਘੋਸ਼ਣਾ)',
+      irrigateAction: 'ਪਾਣੀ ਲਗਾਓ',
+      skipAction: 'ਰੋਕੋ',
+    },
+    te: {
+      title: 'సాగునీటి సలహా మరియు నీటి ఆదా నివేదిక',
+      subtitle: 'IrrigIQ స్మార్ట్ వాటర్ మేనేజ్‌మెంట్ సిస్టమ్',
+      generatedOn: 'నివేదిక తేదీ',
+      period: 'వ్యవధి',
+      days: 'రోజులు',
+      farmer: 'రైతు పేరు',
+      field: 'పొలం పేరు',
+      crop: 'పంట',
+      area: 'విస్తీర్ణం',
+      soil: 'నేల రకం',
+      method: 'సాగునీటి పద్ధతి',
+      sowing: 'విత్తిన తేదీ',
+      summaryTitle: 'నీటి లెక్కింపు మరియు ఆదా సారాంశం',
+      baselineUse: 'సాధారణ పద్ధతి నీటి వాడకం',
+      recUse: 'IrrigIQ సిఫార్సు చేసిన నీరు',
+      actUse: 'వాస్తవంగా ఇచ్చిన నీరు',
+      potSavings: 'సాధ్యమైన నీటి ఆదా',
+      realSavings: 'వాస్తవ నీటి ఆదా',
+      chartTitle: 'రోజువారీ నీటి అవసరం మరియు సాగునీటి చార్ట్',
+      tableTitle: 'రోజువారీ వివరాల పట్టిక',
+      date: 'తేదీ',
+      et0: 'ET0 (మి.మీ)',
+      etc: 'ETc (మి.మీ)',
+      rain: 'వర్షం (మి.మీ)',
+      advisory: 'సలహా',
+      recGross: 'సిఫార్సు నీరు (లీటర్లు)',
+      reason: 'శాస్త్రీయ కారణం',
+      actualWater: 'వాస్తవం (లీటర్లు)',
+      source: 'మూలం',
+      assumptionsTitle: 'మోడల్ అంచనాలు మరియు ఇంజనీరింగ్ ప్రమాణాలు',
+      dataSources: 'డేటా వనరులు',
+      disclaimerTitle: 'ముఖ్యమైన గమనిక (డిస్క్లైమర్)',
+      irrigateAction: 'నీరు పెట్టండి',
+      skipAction: 'వాయిదా',
+    },
+  };
+
+  const t = REPORT_I18N[language] || REPORT_I18N.en;
   const totals = data.totals;
 
-  const t = {
-    title: isHi ? 'सिंचाई सलाहकार एवं जल बचत रिपोर्ट' : 'Irrigation Advisory & Water Savings Report',
-    subtitle: isHi ? 'IrrigIQ स्मार्ट जल प्रबंधन प्रणाली' : 'IrrigIQ Smart Water Management System',
-    generatedOn: isHi ? 'रिपोर्ट दिनांक' : 'Generated On',
-    period: isHi ? 'अवधि' : 'Period',
-    days: isHi ? 'दिन' : 'days',
-    farmer: isHi ? 'किसान का नाम' : 'Farmer Name',
-    field: isHi ? 'खेत का नाम' : 'Field Name',
-    crop: isHi ? 'फसल' : 'Crop',
-    area: isHi ? 'क्षेत्रफल' : 'Field Area',
-    soil: isHi ? 'मृदा का प्रकार' : 'Soil Type',
-    method: isHi ? 'सिंचाई विधि' : 'Irrigation Method',
-    sowing: isHi ? 'बुवाई तिथि' : 'Sowing Date',
+  const baselineDetails = {
+    en: `Baseline Routine: ${data.assumptions.baselineDepthMm} mm depth every ${data.assumptions.baselineEveryDays} days.`,
+    hi: `आधारभूत सिंचाई: हर ${data.assumptions.baselineEveryDays} दिन में ${data.assumptions.baselineDepthMm} मिमी गहराई।`,
+    mr: `पारंपरिक सिंचन: दर ${data.assumptions.baselineEveryDays} दिवसांनी ${data.assumptions.baselineDepthMm} मिमी पाणी.`,
+    pa: `ਰਵਾਇਤੀ ਸਿੰਚਾਈ: ਹਰ ${data.assumptions.baselineEveryDays} ਦਿਨਾਂ ਬਾਅਦ ${data.assumptions.baselineDepthMm} ਮਿਮੀ ਪਾਣੀ।`,
+    te: `సాధారణ పద్ధతి: ప్రతి ${data.assumptions.baselineEveryDays} రోజులకు ${data.assumptions.baselineDepthMm} మి.మీ నీరు.`,
+  }[language] || `Baseline Routine: ${data.assumptions.baselineDepthMm} mm depth every ${data.assumptions.baselineEveryDays} days.`;
 
-    summaryTitle: isHi ? 'जल बचत एवं उपयोग सारांश' : 'Water Accounting & Savings Summary',
-    baselineUse: isHi ? 'पारंपरिक आधारभूत उपयोग' : 'Baseline Routine Water',
-    recUse: isHi ? 'IrrigIQ अनुशंसित उपयोग' : 'Recommended Water',
-    actUse: isHi ? 'वास्तविक दिया गया पानी' : 'Actual Water Applied',
-    potSavings: isHi ? 'संभावित जल बचत' : 'Potential Savings',
-    realSavings: isHi ? 'वास्तविक जल बचत' : 'Realised Savings',
-
-    chartTitle: isHi ? 'दैनिक जल मांग एवं सिंचाई चार्ट' : 'Daily Water Requirement & Irrigation Schedule',
-    tableTitle: isHi ? 'दैनिक विस्तृत विवरण' : 'Daily Breakdown Table',
-    date: isHi ? 'दिनांक' : 'Date',
-    et0: isHi ? 'ET0 (मिमी)' : 'ET0 (mm)',
-    etc: isHi ? 'ETc (मिमी)' : 'ETc (mm)',
-    rain: isHi ? 'बारिश (मिमी)' : 'Rain (mm)',
-    advisory: isHi ? 'सलाह' : 'Advisory',
-    recGross: isHi ? 'अनुशंसित (लीटर)' : 'Rec. Water (L)',
-    reason: isHi ? 'वैज्ञानिक कारण' : 'Advisory Reason',
-    actualWater: isHi ? 'वास्तविक (लीटर)' : 'Actual (L)',
-    source: isHi ? 'स्रोत' : 'Source',
-
-    assumptionsTitle: isHi ? 'मॉडल मान्यताएं एवं इंजीनियरिंग मापदंड' : 'Methodology & Engineering Assumptions',
-    baselineDetails: isHi
-      ? `आधारभूत सिंचाई: हर ${data.assumptions.baselineEveryDays} दिन में ${data.assumptions.baselineDepthMm} मिमी गहराई।`
-      : `Baseline Routine: ${data.assumptions.baselineDepthMm} mm depth every ${data.assumptions.baselineEveryDays} days.`,
-    efficiencyDetails: isHi
-      ? `सिंचाई दक्षता: ${data.assumptions.method} (${Math.round(data.assumptions.efficiency * 100)}% दक्षता कारक)।`
-      : `Application Efficiency: ${data.assumptions.method} (${Math.round(data.assumptions.efficiency * 100)}% efficiency factor).`,
-    dataSources: isHi ? 'डेटा स्रोत' : 'Data Sources',
-    disclaimerTitle: isHi ? 'महत्वपूर्ण सूचना (अनिवार्य घोषणा)' : 'Important Disclaimer',
-  };
+  const efficiencyDetails = {
+    en: `Application Efficiency: ${data.assumptions.method} (${Math.round(data.assumptions.efficiency * 100)}% efficiency factor).`,
+    hi: `सिंचाई दक्षता: ${data.assumptions.method} (${Math.round(data.assumptions.efficiency * 100)}% दक्षता कारक)।`,
+    mr: `सिंचन कार्यक्षमता: ${data.assumptions.method} (${Math.round(data.assumptions.efficiency * 100)}% कार्यक्षमता घटक).`,
+    pa: `ਸਿੰਚਾਈ ਸਮਰੱਥਾ: ${data.assumptions.method} (${Math.round(data.assumptions.efficiency * 100)}% ਸਮਰੱਥਾ ਗੁਣਾਂਕ)।`,
+    te: `సాగునీటి సామర్థ్యం: ${data.assumptions.method} (${Math.round(data.assumptions.efficiency * 100)}% సామర్థ్యం).`,
+  }[language] || `Application Efficiency: ${data.assumptions.method} (${Math.round(data.assumptions.efficiency * 100)}% efficiency factor).`;
 
   const svgChart = renderSvgChart(data.chartData, language);
 
@@ -459,9 +715,9 @@ export function renderReportHtml(data: IReportData, language: 'en' | 'hi'): stri
     .map((row) => {
       const actionBadge =
         row.recommendedAction === 'irrigate'
-          ? `<span style="background:#dcfce7; color:#15803d; font-weight:bold; padding:2px 8px; border-radius:12px; font-size:11px;">${isHi ? 'सिंचाई करें' : 'Irrigate'}</span>`
+          ? `<span style="background:#dcfce7; color:#15803d; font-weight:bold; padding:2px 8px; border-radius:12px; font-size:11px;">${t.irrigateAction}</span>`
           : row.recommendedAction === 'skip'
-            ? `<span style="background:#f1f5f9; color:#475569; font-weight:bold; padding:2px 8px; border-radius:12px; font-size:11px;">${isHi ? 'रोकें' : 'Skip'}</span>`
+            ? `<span style="background:#f1f5f9; color:#475569; font-weight:bold; padding:2px 8px; border-radius:12px; font-size:11px;">${t.skipAction}</span>`
             : '-';
 
       return `
@@ -490,7 +746,7 @@ export function renderReportHtml(data: IReportData, language: 'en' | 'hi'): stri
         ${fontFaceCss}
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-          font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          font-family: 'Noto Sans Devanagari', 'Noto Sans Gurmukhi', 'Noto Sans Telugu', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
           color: #0f172a;
           background: #ffffff;
           line-height: 1.4;
@@ -739,8 +995,8 @@ export function renderReportHtml(data: IReportData, language: 'en' | 'hi'): stri
       <!-- Assumptions Section -->
       <div class="assumptions-box">
         <strong>${t.assumptionsTitle}</strong>
-        <p>• ${t.baselineDetails} ${data.assumptions.baselineNote}</p>
-        <p>• ${t.efficiencyDetails}</p>
+        <p>• ${baselineDetails} ${data.assumptions.baselineNote}</p>
+        <p>• ${efficiencyDetails}</p>
         <p>• ${t.dataSources}: ${data.assumptions.dataSources}</p>
       </div>
 

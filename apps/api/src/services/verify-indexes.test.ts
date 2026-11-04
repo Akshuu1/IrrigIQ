@@ -4,6 +4,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { FieldModel } from '../models/field.model.js';
 import { RecommendationModel } from '../models/recommendation.model.js';
 import { SensorReadingModel } from '../models/sensor-reading.model.js';
+import { PumpModel } from '../models/pump.model.js';
+import { MessageChannelModel } from '../models/message-channel.model.js';
 
 describe('MongoDB Explain Execution Plan & Index Optimization', () => {
   let mongoServer: MongoMemoryServer | null = null;
@@ -23,6 +25,8 @@ describe('MongoDB Explain Execution Plan & Index Optimization', () => {
     await FieldModel.syncIndexes();
     await RecommendationModel.syncIndexes();
     await SensorReadingModel.syncIndexes();
+    await PumpModel.syncIndexes();
+    await MessageChannelModel.syncIndexes();
   }, 30000);
 
   afterAll(async () => {
@@ -207,5 +211,60 @@ describe('MongoDB Explain Execution Plan & Index Optimization', () => {
     const indexStages = findIndexScanStages(rootStage);
     expect(indexStages.length).toBeGreaterThan(0);
     expect(indexStages).toContain('IXSCAN');
+  });
+
+  it('Pump queries on PumpModel use { userId: 1, createdAt: -1 } index without COLLSCAN', async () => {
+    const userId = new Types.ObjectId();
+    await PumpModel.create({
+      userId,
+      name: 'Test Submersible Pump',
+      dischargeLph: 18000,
+      measuredOn: new Date(),
+    });
+
+    const explainResult = (await PumpModel.find({ userId })
+      .sort({ createdAt: -1 })
+      .explain('executionStats')) as any;
+
+    const stats = explainResult.executionStats || explainResult.queryPlanner;
+    const rootStage = stats.executionStages || explainResult.queryPlanner?.winningPlan;
+
+    expect(rootStage).toBeDefined();
+    expect(hasCollscan(rootStage)).toBe(false);
+    const indexStages = findIndexScanStages(rootStage);
+    expect(indexStages).toContain('IXSCAN');
+  });
+
+  it('Channel lookups on MessageChannelModel use indexes without COLLSCAN', async () => {
+    const userId = new Types.ObjectId();
+    const externalIdHash = new Types.ObjectId().toString();
+
+    await MessageChannelModel.create({
+      userId,
+      provider: 'telegram',
+      externalIdEncrypted: 'iv:tag:data',
+      externalIdHash,
+      status: 'active',
+    });
+
+    // 1. By externalIdHash and provider
+    const hashExplain = (await MessageChannelModel.find({
+      externalIdHash,
+      provider: 'telegram',
+    }).explain('executionStats')) as any;
+
+    const hashStats = hashExplain.executionStats || hashExplain.queryPlanner;
+    const hashStage = hashStats.executionStages || hashExplain.queryPlanner?.winningPlan;
+
+    expect(hasCollscan(hashStage)).toBe(false);
+    expect(findIndexScanStages(hashStage)).toContain('IXSCAN');
+
+    // 2. By userId
+    const userExplain = (await MessageChannelModel.find({ userId }).explain('executionStats')) as any;
+    const userStats = userExplain.executionStats || userExplain.queryPlanner;
+    const userStage = userStats.executionStages || userExplain.queryPlanner?.winningPlan;
+
+    expect(hasCollscan(userStage)).toBe(false);
+    expect(findIndexScanStages(userStage)).toContain('IXSCAN');
   });
 });

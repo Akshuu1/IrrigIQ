@@ -24,6 +24,7 @@
     "loadtest": "k6 run infra/loadtest/loadtest.js",
     "seed": "npm run seed -w @irrigiq/api",
     "simulate": "npm run simulate -w @irrigiq/simulator --",
+    "i18n:report": "node scripts/i18n-report.mjs",
     "prepare": "husky || true"
   },
   "dependencies": {

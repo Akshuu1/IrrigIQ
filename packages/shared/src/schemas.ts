@@ -3,14 +3,21 @@ import { CROPS_MAP } from './crops.js';
 import type { SoilType, IrrigationMethod } from './science.js';
 import { PUMP_CONFIG } from './pump.js';
 
-export const LanguageSchema = z.enum(['en', 'hi']);
+export const SUPPORTED_LANGUAGES = ['en', 'hi', 'mr', 'pa', 'te'] as const;
+export const LanguageSchema = z.enum(['en', 'hi', 'mr', 'pa', 'te']);
 export type Language = z.infer<typeof LanguageSchema>;
+export type SupportedLanguage = Language;
+
+export const NumberingSystemSchema = z.enum(['latn', 'native']).default('latn');
+export type NumberingSystem = z.infer<typeof NumberingSystemSchema>;
 
 export const AreaUnitSchema = z.enum(['acre', 'ha', 'hectare', 'guntha', 'custom']);
 
 export const UserPreferencesSchema = z.object({
   language: LanguageSchema.default('en'),
   areaUnit: AreaUnitSchema.default('acre'),
+  numberingSystem: NumberingSystemSchema.default('latn'),
+  useNativeDigits: z.boolean().default(false),
 });
 export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
 
@@ -27,6 +34,8 @@ export const RegisterSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters long').trim(),
   language: LanguageSchema.default('en'),
   areaUnit: AreaUnitSchema.default('acre'),
+  numberingSystem: NumberingSystemSchema.optional().default('latn'),
+  useNativeDigits: z.boolean().optional().default(false),
 });
 export type RegisterInput = z.infer<typeof RegisterSchema>;
 
@@ -41,8 +50,10 @@ export const UpdateProfileSchema = z
     name: z.string().min(2, 'Name must be at least 2 characters long').trim().optional(),
     language: LanguageSchema.optional(),
     areaUnit: AreaUnitSchema.optional(),
+    numberingSystem: NumberingSystemSchema.optional(),
+    useNativeDigits: z.boolean().optional(),
   })
-  .strict('Only name, language, and areaUnit can be updated');
+  .strict('Only name, language, areaUnit, numberingSystem, and useNativeDigits can be updated');
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;
 
 // Field schemas

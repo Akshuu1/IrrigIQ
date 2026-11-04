@@ -205,6 +205,8 @@ export interface User {
   name: string;
   language: Language;
   areaUnit: AreaUnit;
+  numberingSystem?: 'latn' | 'native';
+  useNativeDigits?: boolean;
   createdAt: string;
 }
 

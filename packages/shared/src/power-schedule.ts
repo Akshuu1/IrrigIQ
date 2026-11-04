@@ -1,3 +1,5 @@
+import type { SupportedLanguage } from './schemas.js';
+
 export const POWER_SCHEDULE_CONFIG = {
   version: '1.0.0',
   windLimitKmh: {
@@ -431,7 +433,7 @@ export function planPumpDay(
  * Formats a 24-hour time string 'HH:MM' into 12-hour am/pm format.
  * Examples: '22:00' -> '10 pm', '06:00' -> '6 am', '14:00' -> '2 pm'.
  */
-export function formatHourAmPm(hhmm: string, lang: 'en' | 'hi' = 'en'): string {
+export function formatHourAmPm(hhmm: string, lang: SupportedLanguage = 'en'): string {
   const [hStr, mStr] = hhmm.split(':');
   let h = Number(hStr);
   const m = Number(mStr);
@@ -453,21 +455,69 @@ export function formatHourAmPm(hhmm: string, lang: 'en' | 'hi' = 'en'): string {
     return `${period} ${h}${minPart} बजे`;
   }
 
+  if (lang === 'mr') {
+    let period = 'रात्री';
+    if (isPm) {
+      period = h === 12 || h < 4 ? 'दुपारी' : h < 8 ? 'संध्याकाळी' : 'रात्री';
+    } else {
+      period = h === 12 || h < 4 ? 'रात्री' : 'सकाळी';
+    }
+    return `${period} ${h}${minPart} वाजता`;
+  }
+
+  if (lang === 'pa') {
+    let period = 'ਰਾਤ';
+    if (isPm) {
+      period = h === 12 || h < 4 ? 'ਦੁਪਹਿਰੇ' : h < 8 ? 'ਸ਼ਾਮ' : 'ਰਾਤ';
+    } else {
+      period = h === 12 || h < 4 ? 'ਰਾਤ' : 'ਸਵੇਰੇ';
+    }
+    return `${period} ${h}${minPart} ਵਜੇ`;
+  }
+
+  if (lang === 'te') {
+    let period = 'రాత్రి';
+    if (isPm) {
+      period = h === 12 || h < 4 ? 'మధ్యాహ్నం' : h < 8 ? 'సాయంత్రం' : 'రాత్రి';
+    } else {
+      period = h === 12 || h < 4 ? 'రాత్రి' : 'ఉదయం';
+    }
+    return `${period} ${h}${minPart} గంటలకు`;
+  }
+
   return `${h}${minPart} ${ampm}`;
 }
 
 /**
- * Formats a power window time range (e.g. 'between 10 pm and 6 am' / 'रात 10 बजे से सुबह 6 बजे के बीच').
+ * Formats a power window time range (e.g. 'between 10 pm and 6 am').
  */
 export function formatTimeRange(
   startHhmm: string,
   endHhmm: string,
-  lang: 'en' | 'hi' = 'en',
+  lang: SupportedLanguage = 'en',
 ): string {
   if (lang === 'hi') {
     const s = formatHourAmPm(startHhmm, 'hi');
     const e = formatHourAmPm(endHhmm, 'hi');
     return `${s} से ${e} के बीच`;
+  }
+
+  if (lang === 'mr') {
+    const s = formatHourAmPm(startHhmm, 'mr');
+    const e = formatHourAmPm(endHhmm, 'mr');
+    return `${s} ते ${e} दरम्यान`;
+  }
+
+  if (lang === 'pa') {
+    const s = formatHourAmPm(startHhmm, 'pa');
+    const e = formatHourAmPm(endHhmm, 'pa');
+    return `${s} ਤੋਂ ${e} ਵਿਚਕਾਰ`;
+  }
+
+  if (lang === 'te') {
+    const s = formatHourAmPm(startHhmm, 'te');
+    const e = formatHourAmPm(endHhmm, 'te');
+    return `${s} నుండి ${e} మధ్య`;
   }
 
   const s = formatHourAmPm(startHhmm, 'en');
@@ -482,20 +532,23 @@ export function formatTimeRange(
 export function formatAdvisoryWithWindow(
   durationFormatted: string,
   schedule: PowerSchedule,
-  lang: 'en' | 'hi' = 'en',
+  lang: SupportedLanguage = 'en',
 ): string {
   const primaryWindow = schedule.windows[0];
   if (!primaryWindow) {
-    return lang === 'hi'
-      ? `आज रात ${durationFormatted} पंप चलाएं`
-      : `Run the pump ${durationFormatted} tonight`;
+    if (lang === 'hi') return `आज रात ${durationFormatted} पंप चलाएं`;
+    if (lang === 'mr') return `आज रात्री ${durationFormatted} पंप चालवा`;
+    if (lang === 'pa') return `ਅੱਜ ਰਾਤ ${durationFormatted} ਪੰਪ ਚਲਾਓ`;
+    if (lang === 'te') return `ఈ రాత్రి ${durationFormatted} పంపును నడపండి`;
+    return `Run the pump ${durationFormatted} tonight`;
   }
 
   const range = formatTimeRange(primaryWindow.start, primaryWindow.end, lang);
 
-  if (lang === 'hi') {
-    return `आज रात ${durationFormatted} पंप चलाएं, ${range}`;
-  }
+  if (lang === 'hi') return `आज रात ${durationFormatted} पंप चलाएं, ${range}`;
+  if (lang === 'mr') return `आज रात्री ${durationFormatted} पंप चालवा, ${range}`;
+  if (lang === 'pa') return `ਅੱਜ ਰਾਤ ${durationFormatted} ਪੰਪ ਚਲਾਓ, ${range}`;
+  if (lang === 'te') return `ఈ రాత్రి ${durationFormatted} పంపును నడపండి, ${range}`;
 
   return `Run the pump ${durationFormatted}, ${range}`;
 }

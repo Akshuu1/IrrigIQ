@@ -54,9 +54,13 @@ test.describe('Phase 13 Acceptance: Comprehensive End-to-End Quality Gate', () =
     await expect(iIrrigatedBtn).toBeVisible();
 
     // 4. Switch to Hindi
-    const langBtn = page.locator('button[aria-label*="भाषा"]').first();
-    await expect(langBtn).toBeVisible();
-    await langBtn.click();
+    const langSelect = page.locator('#header-language-select');
+    if (await langSelect.isVisible()) {
+      await langSelect.selectOption('hi');
+    } else {
+      const langBtn = page.locator('button[aria-label*="भाषा"], button[title*="Language"]').first();
+      await langBtn.click();
+    }
 
     // Verify UI switches to Hindi ('मैंने सिंचाई की' visible on button)
     const hindiIrrigatedBtn = page.getByRole('button', { name: 'मैंने सिंचाई की' }).first();

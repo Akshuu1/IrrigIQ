@@ -599,3 +599,67 @@ Farmers think in pump hours and need actionable daily irrigation advisories push
 
 
 
+
+---
+
+## ADR 015: Multilingual Localization Architecture, Indic Script Shaping, Font Licensing & Mobile Accessibility (Phase 22)
+
+### Context & Problem Statement
+
+Indian agriculture spans diverse linguistic regions where farmers predominantly communicate in their regional language. In Phase 22, IrrigIQ expands its language support beyond English (`en`) and Hindi (`hi`) to include Marathi (`mr`), Punjabi (`pa`), and Telugu (`te`), covering major agricultural hubs across Maharashtra, Punjab, Haryana, Telangana, and Andhra Pradesh.
+
+Key architectural challenges include:
+1. Ensuring 100% string parity across all application screens, reports, and push/chat digests.
+2. Managing script-specific fallback hierarchies when regional translations are missing.
+3. Rendering complex Indic conjuncts in PDFs and web browsers without glyph corruption or letter disjoining.
+4. Supporting farmer preferences for native script numerals (Devanagari, Gurmukhi, Telugu) versus standard Latin digits.
+5. Guaranteeing that expanded Indic strings (typically 20% to 35% longer than English) fit on low-end budget smartphones with screens as narrow as 320 px without text clipping or horizontal overflow.
+
+---
+
+### Key Architectural Decisions
+
+#### 1. Language Fallback Chain Architecture
+Translation fallbacks are configured in `apps/web/src/locales/i18n.ts` based on linguistic proximity and regional lingua franca:
+- **Marathi (`mr`)**: `mr -> hi -> en` (Devanagari script shared; high Hindi comprehension in Maharashtra rural districts).
+- **Punjabi (`pa`)**: `pa -> hi -> en` (Gurmukhi script; strong spoken and written Hindi familiarity in northwestern agricultural belts).
+- **Telugu (`te`)**: `te -> en` (Dravidian language family; falls back cleanly to English to avoid non-cognate Indo-Aryan misinterpretations).
+- **Hindi (`hi`)**: `hi -> en`.
+- **Default**: `en`.
+
+#### 2. Metadata, Translation Review Lifecycle & CI Parity Enforcement
+- **Audit Metadata**: Stored in `apps/web/src/locales/metadata.json`, capturing status (`'draft'` or `'reviewed'`), translation timestamp, and reviewer identity (`reviewedBy`) for each of the 388 message keys per language.
+- **Strict Review Policy**: Algorithmic starter translations are strictly marked `'draft'`. Agronomic advisory keys must receive native-speaker agronomist review before release.
+- **Automated CI Enforcement**: Script `npm run i18n:report` runs on every pull request and pre-commit hook. It fails the build with exit code `1` if any key present in `en.json` is missing from `hi.json`, `mr.json`, `pa.json`, or `te.json`.
+
+#### 3. Font Licensing & Web Typography
+- **Selected Typefaces**: Subsets of Google's **Noto Sans** family:
+  - *Noto Sans Devanagari* (`mr`, `hi`)
+  - *Noto Sans Gurmukhi* (`pa`)
+  - *Noto Sans Telugu* (`te`)
+- **License Compliance**: Published under the **SIL Open Font License (OFL) version 1.1**. The OFL permits free commercial and non-commercial use, bundling, distribution, and web embedding without royalties or restrictive obligations.
+- **Mobile Performance & Web Fonts**:
+  - Fonts are embedded via `@font-face` using `font-display: swap` to prevent Flash of Invisible Text (FOIT) on low-bandwidth 2G/3G rural networks.
+  - WOFF2 subsets are bundled in `apps/web/public/fonts/` and precached via Vite PWA / Workbox with a `CacheFirst` runtime strategy.
+
+#### 4. Native Script Numerals vs Latin Digits (`Intl` Support)
+- Farmers can configure their preferred numbering system under Settings (`numberingSystem: 'latn' | 'native'` / `useNativeDigits: boolean`).
+- Formatting is implemented through pure functions in `packages/shared/src/formatters.ts` utilizing native ECMAScript `Intl.NumberFormat` and `Intl.DateTimeFormat`:
+  - **Marathi/Hindi**: `numberingSystem: 'deva'` (e.g., `१,२५,०००` / `१५ मार्च २०२६`)
+  - **Punjabi**: `numberingSystem: 'guru'` (e.g., `੧,੨੫,੦੦੦` / `੧੫ ਮਾਰਚ ੨੦੨੬`)
+  - **Telugu**: `numberingSystem: 'telu'` (e.g., `౧౨౫,౦౦౦` / `౧౫ మార్చి, ੨੦੨੬`)
+  - **Latin**: `numberingSystem: 'latn'` (e.g., `1,25,000` / `15 Mar 2026`)
+
+#### 5. Complex Indic Script PDF Shaping
+- Generating PDFs using lightweight canvas or legacy PDFKit often fails on Indic scripts, causing broken matras, detached conjuncts, and missing halant joins.
+- **Solution**: IrrigIQ uses headless Chromium with full HarfBuzz OpenType layout engine support. TTF font files are embedded directly in the HTML print template as base64 data URIs (`@font-face { font-family: 'Noto Sans Devanagari'; src: url(data:font/truetype;charset=utf-8;base64,...); }`).
+- Validated with automated rendering tests (`apps/api/src/services/pdf-shaping.test.ts`) covering complex sample sentences in Devanagari, Gurmukhi, and Telugu.
+
+#### 6. Pseudo-localisation & 320 px Responsive Layout
+- To guarantee that Indic language text expansion does not break mobile UI components or cause horizontal scrolling, a pseudo-localisation mode (`pseudoLocalize` in `packages/shared/src/pseudo.ts`) is integrated.
+- It expands strings by ~30% with accented characters (e.g. `[!!! Ḋáśħƀǿářḓ !!!]`) while strictly preserving template parameters (`{{depthMm}}`, `{state}`).
+- All key screens (Dashboard, Field Detail, Field Wizard, Settings) are tested and verified at 320 px width (`document.documentElement.scrollWidth <= 320`) with no text truncation.
+
+#### 7. Regional Language Auto-Suggestion
+- In `FieldWizard.tsx`, dropping a pin or selecting a polygon triggers Turf.js spatial lookup (`stateForPoint`) against the bundled simplified India states GeoJSON.
+- `suggestLanguageForState` automatically detects the state (e.g. Maharashtra -> `mr`, Punjab -> `pa`, Telangana/Andhra Pradesh -> `te`) and surfaces an accessible suggestion pill allowing the farmer to switch with one tap.

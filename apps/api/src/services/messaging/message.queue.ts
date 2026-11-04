@@ -5,7 +5,8 @@ import { MessageChannelModel } from '../../models/message-channel.model.js';
 import { OutboundMessageModel } from '../../models/outbound-message.model.js';
 import { decryptExternalId } from '../../utils/crypto.js';
 import { TelegramProvider } from './telegram.provider.js';
-import type { SendMessageOptions } from './provider.interface.js';
+import { WhatsAppCloudProvider } from './whatsapp.provider.js';
+import type { SendMessageOptions, SendMessageResult } from './provider.interface.js';
 
 export const MESSAGES_QUEUE_NAME = 'messages';
 
@@ -54,6 +55,7 @@ let messagesQueue: Queue<SendMessageJobData> | null = null;
 let messagesWorker: Worker<SendMessageJobData> | null = null;
 
 const telegramProvider = new TelegramProvider();
+const whatsappProvider = new WhatsAppCloudProvider();
 
 /**
  * Core delivery processor: checks channel, quiet hours, daily cap, decrypts chat ID,
@@ -134,8 +136,19 @@ export async function processOutboundMessage(jobData: SendMessageJobData): Promi
     return { success: false, status: 'decryption_error', error: 'Decryption failed' };
   }
 
-  // 4. Send via Provider
-  const sendResult = await telegramProvider.send(externalId, text, options);
+  // 4. Send via configured Provider (WhatsApp or Telegram)
+  let sendResult: SendMessageResult;
+  if (channel.provider === 'whatsapp') {
+    const isInside24hWindow = Boolean(
+      channel.lastInboundAt && Date.now() - channel.lastInboundAt.getTime() < 24 * 3600 * 1000,
+    );
+    sendResult = await whatsappProvider.send(externalId, text, {
+      ...options,
+      isInside24hWindow,
+    });
+  } else {
+    sendResult = await telegramProvider.send(externalId, text, options);
+  }
 
   // 5. Handle Permanent Failures (e.g. 403 Bot Blocked)
   if (sendResult.permanentFailure) {

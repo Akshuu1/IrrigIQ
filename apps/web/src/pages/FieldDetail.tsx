@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { api, type IrrigationLog } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
 import { formatArea } from '../utils/formatters.js';
-import { CROPS_MAP } from '@irrigiq/shared';
+import { CROPS_MAP, getCropName } from '@irrigiq/shared';
 import { TodayAdvisoryCard } from './field-detail/TodayAdvisoryCard.js';
 import { PlanForecastSection } from './field-detail/PlanForecastSection.js';
 import { SoilMoistureLiveSection } from './field-detail/SoilMoistureLiveSection.js';
@@ -206,9 +206,7 @@ export function FieldDetail(): React.JSX.Element {
 
   const crop = CROPS_MAP.get(field.cropKey);
   const localizedCropName = crop
-    ? lang === 'hi'
-      ? crop.nameHi
-      : crop.nameEn
+    ? getCropName(crop, lang)
     : t(`crops.${field.cropKey}`, { defaultValue: field.cropKey });
 
   const soilLabel =

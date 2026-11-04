@@ -372,3 +372,4 @@ export function TelegramConnectCard(): React.JSX.Element {
     </div>
   );
 }
+

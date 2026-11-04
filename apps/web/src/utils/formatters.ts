@@ -1,15 +1,32 @@
-import { haToAcre, type AreaUnit } from '@irrigiq/shared';
+import {
+  type AreaUnit,
+  type SupportedLanguage,
+  formatNumber as sharedFormatNumber,
+  formatDate as sharedFormatDate,
+  formatArea as sharedFormatArea,
+} from '@irrigiq/shared';
+
+export interface FormatOptions extends Intl.NumberFormatOptions {
+  useNativeDigits?: boolean;
+}
 
 /**
- * Format a number using Indian grouping conventions (e.g., 1,00,000).
+ * Format a number using Indian grouping conventions (e.g., 1,25,000 / १२५,०००).
  */
 export function formatNumber(
   value: number,
   lang: string = 'en',
-  options?: Intl.NumberFormatOptions,
+  options?: FormatOptions,
 ): string {
-  const locale = lang === 'hi' ? 'hi-IN' : 'en-IN';
-  return new Intl.NumberFormat(locale, options).format(value);
+  const supportedLang = (['en', 'hi', 'mr', 'pa', 'te'].includes(lang) ? lang : 'en') as SupportedLanguage;
+  const isNative = options?.useNativeDigits === true;
+  
+  return sharedFormatNumber(value, {
+    lang: supportedLang,
+    useNativeDigits: isNative,
+    minDecimals: options?.minimumFractionDigits,
+    maxDecimals: options?.maximumFractionDigits,
+  });
 }
 
 /**
@@ -18,41 +35,61 @@ export function formatNumber(
 export function formatDate(
   dateInput: string | Date,
   lang: string = 'en',
-  options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' },
+  options?: Intl.DateTimeFormatOptions & { useNativeDigits?: boolean },
 ): string {
-  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-  if (isNaN(date.getTime())) return String(dateInput);
-  const locale = lang === 'hi' ? 'hi-IN' : 'en-IN';
-  return new Intl.DateTimeFormat(locale, options).format(date);
+  const supportedLang = (['en', 'hi', 'mr', 'pa', 'te'].includes(lang) ? lang : 'en') as SupportedLanguage;
+  return sharedFormatDate(dateInput, {
+    lang: supportedLang,
+    useNativeDigits: options?.useNativeDigits === true,
+    dateStyle: 'medium',
+  });
 }
 
 /**
  * Format land area according to user preference (acre or ha) and language.
  */
-export function formatArea(areaHa: number, unit: AreaUnit = 'acre', lang: string = 'en'): string {
-  if (unit === 'acre') {
-    const acres = haToAcre(areaHa);
-    const unitLabel = lang === 'hi' ? 'एकड़' : 'acre';
-    return `${formatNumber(acres, lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${unitLabel}`;
-  }
-  const unitLabel = lang === 'hi' ? 'हेक्टेयर' : 'ha';
-  return `${formatNumber(areaHa, lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${unitLabel}`;
+export function formatArea(
+  areaHa: number,
+  unit: AreaUnit = 'acre',
+  lang: string = 'en',
+  options?: { useNativeDigits?: boolean },
+): string {
+  const supportedLang = (['en', 'hi', 'mr', 'pa', 'te'].includes(lang) ? lang : 'en') as SupportedLanguage;
+  return sharedFormatArea(areaHa, unit, {
+    locale: `${supportedLang}-IN`,
+    decimals: 2,
+    useNativeDigits: options?.useNativeDigits === true,
+  });
 }
 
 /**
  * Format water volume in litres.
  */
-export function formatLitres(litres: number, lang: string = 'en'): string {
+export function formatLitres(litres: number, lang: string = 'en', options?: { useNativeDigits?: boolean }): string {
   const rounded = Math.round(litres);
-  const unitLabel = lang === 'hi' ? 'लीटर' : 'litres';
-  return `${formatNumber(rounded, lang)} ${unitLabel}`;
+  const supportedLang = (['en', 'hi', 'mr', 'pa', 'te'].includes(lang) ? lang : 'en') as SupportedLanguage;
+  const numStr = formatNumber(rounded, lang, options);
+
+  let unitLabel = 'litres';
+  if (supportedLang === 'hi') unitLabel = 'लीटर';
+  else if (supportedLang === 'mr') unitLabel = 'लिटर';
+  else if (supportedLang === 'pa') unitLabel = 'ਲੀਟਰ';
+  else if (supportedLang === 'te') unitLabel = 'లీటర్లు';
+
+  return `${numStr} ${unitLabel}`;
 }
 
 /**
  * Format depth in mm.
  */
-export function formatDepthMm(mm: number, lang: string = 'en'): string {
-  const unitLabel = lang === 'hi' ? 'मिमी' : 'mm';
-  return `${formatNumber(mm, lang, { maximumFractionDigits: 1 })} ${unitLabel}`;
-}
+export function formatDepthMm(mm: number, lang: string = 'en', options?: { useNativeDigits?: boolean }): string {
+  const supportedLang = (['en', 'hi', 'mr', 'pa', 'te'].includes(lang) ? lang : 'en') as SupportedLanguage;
+  const numStr = formatNumber(mm, lang, { ...options, maximumFractionDigits: 1 });
 
+  let unitLabel = 'mm';
+  if (supportedLang === 'hi' || supportedLang === 'mr') unitLabel = 'मिमी';
+  else if (supportedLang === 'pa') unitLabel = 'ਮਿ.ਮੀ.';
+  else if (supportedLang === 'te') unitLabel = 'మిమీ';
+
+  return `${numStr} ${unitLabel}`;
+}

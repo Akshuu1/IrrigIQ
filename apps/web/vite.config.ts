@@ -53,8 +53,26 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2,ttf}'],
         runtimeCaching: [
+          {
+            // Cache Noto Sans font families with CacheFirst strategy (Phase 22)
+            urlPattern: ({ url }) =>
+              url.pathname.startsWith('/fonts/') ||
+              url.pathname.endsWith('.woff2') ||
+              url.pathname.endsWith('.ttf'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'irrigiq-fonts-cache',
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+              },
+            },
+          },
           {
             // stale-while-revalidate for GET /fields, /crops and recommendations
             urlPattern: ({ url, request }) =>

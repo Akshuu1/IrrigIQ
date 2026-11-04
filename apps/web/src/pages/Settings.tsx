@@ -2,9 +2,32 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext.js';
 import { type Language, type AreaUnit } from '@irrigiq/shared';
-import { setAppLanguage, type SupportedLanguage } from '../locales/i18n.js';
-import { Settings as SettingsIcon, Check, AlertCircle, Loader2, Globe, Ruler } from 'lucide-react';
+import { setAppLanguage, togglePseudoMode, type SupportedLanguage } from '../locales/i18n.js';
+import {
+  Settings as SettingsIcon,
+  Check,
+  AlertCircle,
+  Loader2,
+  Globe,
+  Ruler,
+  Hash,
+  Sparkles,
+} from 'lucide-react';
 import { TelegramConnectCard } from '../components/TelegramConnectCard.js';
+
+interface LanguageOption {
+  code: Language;
+  labelKey: string;
+  nativeSample: string;
+}
+
+const LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'en', labelKey: 'settings.languageEn', nativeSample: 'English' },
+  { code: 'hi', labelKey: 'settings.languageHi', nativeSample: 'हिन्दी' },
+  { code: 'mr', labelKey: 'settings.languageMr', nativeSample: 'मराठी' },
+  { code: 'pa', labelKey: 'settings.languagePa', nativeSample: 'ਪੰਜਾਬੀ' },
+  { code: 'te', labelKey: 'settings.languageTe', nativeSample: 'తెలుగు' },
+];
 
 export function Settings(): React.JSX.Element {
   const { t, i18n } = useTranslation();
@@ -14,9 +37,21 @@ export function Settings(): React.JSX.Element {
     (user?.language || i18n.language || 'en') as Language,
   );
   const [areaUnit, setAreaUnit] = useState<AreaUnit>(user?.areaUnit || 'acre');
+  const [numberingSystem, setNumberingSystem] = useState<'latn' | 'native'>(
+    user?.numberingSystem || (user?.useNativeDigits ? 'native' : 'latn'),
+  );
+  const [isPseudo, setIsPseudo] = useState<boolean>(() => {
+    return typeof window !== 'undefined' && localStorage.getItem('irrigiq_pseudo') === 'true';
+  });
+
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handlePseudoToggle = (enabled: boolean) => {
+    setIsPseudo(enabled);
+    togglePseudoMode(enabled);
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +60,15 @@ export function Settings(): React.JSX.Element {
     setErrorMessage(null);
 
     try {
-      await updateUser({ language, areaUnit });
-      setAppLanguage(language as SupportedLanguage);
+      await updateUser({
+        language,
+        areaUnit,
+        numberingSystem,
+        useNativeDigits: numberingSystem === 'native',
+      });
+      if (!isPseudo) {
+        setAppLanguage(language as SupportedLanguage);
+      }
       setSuccessMessage(t('settings.saveSuccess'));
       setTimeout(() => setSuccessMessage(null), 4000);
     } catch (err: unknown) {
@@ -92,37 +134,71 @@ export function Settings(): React.JSX.Element {
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-6">
           <h2 className="text-lg font-bold text-white">{t('settings.preferencesSection')}</h2>
 
-          {/* Language Selection */}
+          {/* 5-Language Selection */}
           <div className="space-y-3">
             <label className="text-sm font-semibold text-slate-200 flex items-center gap-2">
               <Globe className="w-4 h-4 text-emerald-400" />
               <span>{t('settings.languageLabel')}</span>
             </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {LANGUAGE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.code}
+                  type="button"
+                  onClick={() => setLanguage(opt.code)}
+                  className={`min-h-[52px] p-3 sm:p-4 rounded-xl border text-left font-semibold text-sm transition-all flex items-center justify-between cursor-pointer ${
+                    language === opt.code
+                      ? 'border-emerald-500 bg-emerald-950/40 text-emerald-300 ring-2 ring-emerald-500/20'
+                      : 'border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex flex-col">
+                    <span className="font-bold">{t(opt.labelKey)}</span>
+                    <span className="text-xs text-slate-400 font-normal">{opt.nativeSample}</span>
+                  </div>
+                  {language === opt.code && <Check className="w-5 h-5 text-emerald-400 shrink-0" />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Number & Date Digits (Latin vs Native) */}
+          <div className="space-y-3">
+            <label className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+              <Hash className="w-4 h-4 text-emerald-400" />
+              <span>{t('settings.digitsLabel')}</span>
+            </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() => setLanguage('en')}
+                onClick={() => setNumberingSystem('latn')}
                 className={`min-h-[52px] p-4 rounded-xl border text-left font-semibold text-sm transition-all flex items-center justify-between cursor-pointer ${
-                  language === 'en'
+                  numberingSystem === 'latn'
                     ? 'border-emerald-500 bg-emerald-950/40 text-emerald-300 ring-2 ring-emerald-500/20'
                     : 'border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700'
                 }`}
               >
-                <span>{t('settings.languageEn')}</span>
-                {language === 'en' && <Check className="w-5 h-5 text-emerald-400" />}
+                <div>
+                  <span className="block font-bold">{t('settings.digitsLatin')}</span>
+                  <span className="text-xs text-slate-400 font-normal">Standard numerals</span>
+                </div>
+                {numberingSystem === 'latn' && <Check className="w-5 h-5 text-emerald-400 shrink-0" />}
               </button>
 
               <button
                 type="button"
-                onClick={() => setLanguage('hi')}
+                onClick={() => setNumberingSystem('native')}
                 className={`min-h-[52px] p-4 rounded-xl border text-left font-semibold text-sm transition-all flex items-center justify-between cursor-pointer ${
-                  language === 'hi'
+                  numberingSystem === 'native'
                     ? 'border-emerald-500 bg-emerald-950/40 text-emerald-300 ring-2 ring-emerald-500/20'
                     : 'border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700'
                 }`}
               >
-                <span>{t('settings.languageHi')}</span>
-                {language === 'hi' && <Check className="w-5 h-5 text-emerald-400" />}
+                <div>
+                  <span className="block font-bold">{t('settings.digitsNative')}</span>
+                  <span className="text-xs text-slate-400 font-normal">Regional Indic script numerals</span>
+                </div>
+                {numberingSystem === 'native' && <Check className="w-5 h-5 text-emerald-400 shrink-0" />}
               </button>
             </div>
           </div>
@@ -159,6 +235,32 @@ export function Settings(): React.JSX.Element {
                 <span>{t('settings.unitHa')}</span>
                 {areaUnit === 'ha' && <Check className="w-5 h-5 text-emerald-400" />}
               </button>
+            </div>
+          </div>
+
+          {/* Pseudo-localisation Layout Testing Mode */}
+          <div className="pt-2 border-t border-slate-800/80">
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1">
+                <label
+                  htmlFor="pseudo-mode-toggle"
+                  className="text-sm font-semibold text-slate-200 flex items-center gap-2 cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>{t('settings.pseudoLabel')}</span>
+                </label>
+                <p className="text-xs text-slate-400">
+                  Expands text ~30% with accented characters to test layout responsiveness and verify
+                  no strings overflow on narrow mobile screens (320px).
+                </p>
+              </div>
+              <input
+                id="pseudo-mode-toggle"
+                type="checkbox"
+                checked={isPseudo}
+                onChange={(e) => handlePseudoToggle(e.target.checked)}
+                className="w-5 h-5 rounded text-emerald-500 bg-slate-950 border-slate-700 focus:ring-emerald-400 cursor-pointer"
+              />
             </div>
           </div>
         </div>

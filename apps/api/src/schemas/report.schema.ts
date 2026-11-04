@@ -9,7 +9,7 @@ export const createReportSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'to date must be in YYYY-MM-DD format')
     .optional(),
-  language: z.enum(['en', 'hi']).default('en').optional(),
+  language: z.enum(['en', 'hi', 'mr', 'pa', 'te']).default('en').optional(),
 });
 
 export type CreateReportInput = z.infer<typeof createReportSchema>;

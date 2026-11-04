@@ -7,6 +7,8 @@ export interface IUser {
   name: string;
   language: Language;
   areaUnit: AreaUnit;
+  useNativeDigits?: boolean;
+  numberingSystem?: 'latn' | 'native';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,13 +38,22 @@ const UserSchema = new Schema<IUserDocument>(
     },
     language: {
       type: String,
-      enum: ['en', 'hi'],
+      enum: ['en', 'hi', 'mr', 'pa', 'te'],
       default: 'en',
     },
     areaUnit: {
       type: String,
       enum: ['acre', 'ha'],
       default: 'acre',
+    },
+    useNativeDigits: {
+      type: Boolean,
+      default: false,
+    },
+    numberingSystem: {
+      type: String,
+      enum: ['latn', 'native'],
+      default: 'latn',
     },
   },
   {

@@ -103,14 +103,17 @@ export function TodayAdvisoryCard({
         }
         detailSentence = `${litresFormatted} L (${depthFormatted})`;
       } else {
-        actionSentence =
-          lang === 'hi'
-            ? `आज ${depthFormatted} (लगभग ${litresFormatted} लीटर) सिंचाई करें`
-            : `Irrigate ${depthFormatted} (about ${litresFormatted} litres) today`;
+        actionSentence = t('dashboard.irrigateSentence', {
+          depthMm: depthFormatted,
+          litres: litresFormatted,
+          defaultValue: `Irrigate ${depthFormatted} (about ${litresFormatted} litres) today`,
+        });
         detailSentence = `${litresFormatted} L (${depthFormatted})`;
       }
     } else {
-      actionSentence = lang === 'hi' ? 'आज सिंचाई छोड़ें' : 'Skip irrigation today';
+      actionSentence = t('dashboard.skipSentence', {
+        defaultValue: 'Skip irrigation today',
+      });
     }
   } else {
     actionSentence = t('common.loading');

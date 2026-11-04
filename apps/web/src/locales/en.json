@@ -77,7 +77,6 @@
     "irrigateSentence": "Irrigate {{depthMm}} mm (about {{litres}} litres) today",
     "runPumpSentence": "Run the pump {{duration}} tonight",
     "runPumpWithWindow": "Run the pump {{duration}}, {{window}}",
-    "runPumpWithWindow": "Run the pump {{duration}}, {{window}}",
     "planWindyWarning": "High winds expected. Sprinkler operation scheduled during calmer night window to minimize spray drift.",
     "missingPowerWarning": "Limited power window: {{missing}} min remaining, carried to next day.",
     "noPowerButton": "No Power Today",
@@ -140,7 +139,14 @@
     "unitHa": "Hectare (हेक्टेयर)",
     "saveButton": "Save Preferences",
     "saveSuccess": "Preferences saved successfully",
-    "saveError": "Failed to update preferences"
+    "saveError": "Failed to update preferences",
+    "languageMr": "मराठी (Marathi)",
+    "languagePa": "ਪੰਜਾਬੀ (Punjabi)",
+    "languageTe": "తెలుగు (Telugu)",
+    "digitsLabel": "Number & Date Digits",
+    "digitsLatin": "Latin Digits (1, 2, 3)",
+    "digitsNative": "Native Script Digits (१, २, ३ / ੧, ੨, ੩ / ౧, ౨, ౩)",
+    "pseudoLabel": "Pseudo-localisation Mode"
   },
   "fieldWizard": {
     "title": "Add New Field",
@@ -348,7 +354,10 @@
     "downloadBtn": "Download PDF",
     "openBtn": "Open in New Tab",
     "failed": "Report generation failed. Please try again.",
-    "close": "Close"
+    "close": "Close",
+    "langMr": "मराठी (Marathi)",
+    "langPa": "ਪੰਜਾਬੀ (Punjabi)",
+    "langTe": "తెలుగు (Telugu)"
   },
   "rainfed": {
     "title": "Rain-fed Crop Advisory",
@@ -417,4 +426,3 @@
     "confirmDisconnect": "Are you sure you want to disconnect Telegram? You will no longer receive daily chat advisories."
   }
 }
-

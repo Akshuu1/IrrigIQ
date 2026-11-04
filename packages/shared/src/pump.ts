@@ -1,3 +1,5 @@
+import type { SupportedLanguage } from './schemas.js';
+
 export const PUMP_CONFIG = {
   version: '1.0.0',
   minDischargeLph: {
@@ -37,9 +39,25 @@ export const DURATION_TEMPLATES = {
     minutesOnly: '{minutes} मिनट',
     zero: '0 मिनट',
   },
+  mr: {
+    hoursAndMinutes: '{hours} तास {minutes} मिनिटे',
+    hoursOnly: '{hours} तास',
+    minutesOnly: '{minutes} मिनिटे',
+    zero: '0 मिनिटे',
+  },
+  pa: {
+    hoursAndMinutes: '{hours} ਘੰਟੇ {minutes} ਮਿੰਟ',
+    hoursOnly: '{hours} ਘੰਟੇ',
+    minutesOnly: '{minutes} ਮਿੰਟ',
+    zero: '0 ਮਿੰਟ',
+  },
+  te: {
+    hoursAndMinutes: '{hours} గంటల {minutes} నిమిషాలు',
+    hoursOnly: '{hours} గంటలు',
+    minutesOnly: '{minutes} నిమిషాలు',
+    zero: '0 నిమిషాలు',
+  },
 } as const;
-
-export type SupportedLanguage = keyof typeof DURATION_TEMPLATES;
 
 /**
  * Calculates pump flow rate (litres per hour) from a bucket test.

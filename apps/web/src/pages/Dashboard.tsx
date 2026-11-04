@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { api, type Field, type Recommendation } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
 import { formatArea, formatNumber, formatDepthMm } from '../utils/formatters.js';
-import { CROPS_MAP, formatDuration, formatTimeRange } from '@irrigiq/shared';
+import { CROPS_MAP, formatDuration, formatTimeRange, getCropName, type SupportedLanguage } from '@irrigiq/shared';
 import { PumpModal } from '../components/PumpModal.js';
 import {
   Droplet,
@@ -33,7 +33,8 @@ function FieldRecommendationCard({
 }): React.JSX.Element {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
-  const lang = (i18n.language || user?.language || 'en') as 'en' | 'hi';
+  const rawLang = i18n.language || user?.language || 'en';
+  const lang = (['en', 'hi', 'mr', 'pa', 'te'].includes(rawLang) ? rawLang : 'en') as SupportedLanguage;
   const unit = user?.areaUnit || 'acre';
 
   const {
@@ -49,9 +50,7 @@ function FieldRecommendationCard({
 
   const crop = CROPS_MAP.get(field.cropKey);
   const localizedCropName = crop
-    ? lang === 'hi'
-      ? crop.nameHi
-      : crop.nameEn
+    ? getCropName(crop, lang)
     : t(`crops.${field.cropKey}`, { defaultValue: field.cropKey });
 
   const todayRecommendation: Recommendation | undefined = recommendations?.[0];
@@ -130,10 +129,11 @@ function FieldRecommendationCard({
           defaultValue: `${litresFormatted} L (${depthFormatted})`,
         });
       } else {
-        actionSentence =
-          lang === 'hi'
-            ? `आज ${depthFormatted} (लगभग ${litresFormatted} लीटर) सिंचाई करें`
-            : `Irrigate ${depthFormatted} (about ${litresFormatted} litres) today`;
+        actionSentence = t('dashboard.irrigateSentence', {
+          depthMm: depthFormatted,
+          litres: litresFormatted,
+          defaultValue: `Irrigate ${depthFormatted} (about ${litresFormatted} litres) today`,
+        });
         detailSentence = t('dashboard.volumeDetail', {
           litres: litresFormatted,
           depthMm: depthFormatted,
@@ -141,7 +141,9 @@ function FieldRecommendationCard({
         });
       }
     } else {
-      actionSentence = lang === 'hi' ? 'आज सिंचाई छोड़ें' : 'Skip irrigation today';
+      actionSentence = t('dashboard.skipSentence', {
+        defaultValue: 'Skip irrigation today',
+      });
     }
   }
 

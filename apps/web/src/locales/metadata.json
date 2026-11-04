@@ -1,0 +1,8538 @@
+{
+  "auth.alreadyHaveAccount": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.email": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.emailPlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.invalidCredentials": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.loggingIn": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.loginButton": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.loginHere": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.loginSubtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.loginSuccess": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.loginTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.name": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.namePlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.noAccount": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.password": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.passwordPlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.registerButton": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.registerHere": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.registerSubtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.registerSuccess": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.registerTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.registering": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.selectLanguage": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "auth.selectUnit": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.areaUnit": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.back": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.cancel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.close": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.delete": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.edit": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.error": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.language": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.loading": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.next": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.no": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.or": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.retry": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.save": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.saving": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.submit": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "common.yes": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "crops.cotton": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "crops.maize": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "crops.onion": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "crops.potato": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "crops.rice": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "crops.sugarcane": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "crops.tomato": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "crops.wheat": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.addField": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.addPump": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.areaLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.daysAfterSowing": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.emptyButton": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.emptySubtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.emptyTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.grossDepth": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.irrigateSentence": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.lastIrrigated": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.lastUpdated": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.litresNeeded": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.methodLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.missingPowerWarning": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.noPowerButton": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.noPowerReportedAlert": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.noPowerSuccess": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.planWindyWarning": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.pumpCostEstimate": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.pumpMissingPrompt": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.reasonLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.recommendation": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.rescheduling": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.runPumpSentence": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.runPumpWithWindow": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.skipSentence": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.soilLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.splitAlert": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.subtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.title": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.todayAdvice": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.viewDetails": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.volumeDetail": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.weatherFresh": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "dashboard.weatherStaleWarning": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.actionIrrigate": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.actionSkip": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.addPump": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.addSensor": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.addingSensor": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.appliedDepthMm": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.appliedDepthMmHelp": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.appliedLitres": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.assumptionsTooltip": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.backToDashboard": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.baselineFarmerNote": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.changePump": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.copyKey": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.createReport": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.currentMoisture": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.deleteLogConfirm": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.fieldMapOutline": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.iIrrigatedButton": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.irrigationDayMarker": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.keyCopied": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.lastMoistureReading": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.linkedPump": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.logDate": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.logModalSubtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.logModalTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.logNote": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.logNotePlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.logSource": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.logSuccess": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.loggingIrrigation": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.moistureDryChip": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.moistureGoodChip": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.moistureLiveChip": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.moistureWetChip": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.noLogsYet": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.noPump": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.noReadingsYet": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.planChartTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.planCropNeedLegend": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.planRainLegend": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.planTableTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.potentialSaved": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.pumpCostEstimate": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.pumpLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.pumpMissingPrompt": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.realisedSaved": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.recentLogsTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.reportPhase12Notice": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.runPumpSentence": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.runPumpWithWindow": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.runSimulatorHint": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.savingsSubtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.savingsTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.sensorHardware": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.sensorKeyModalTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.sensorKeyWarning": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.sensorName": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.sensorNamePlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.sensorSimulated": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.sensorsSection": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.soilMoistureTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.sourceManual": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.sourceRecommended": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.splitAlert": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.tableColAction": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.tableColDate": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.tableColEtc": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.tableColRain": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.tableColReason": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldDetail.todayBestTime": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.areaLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.areaUnitLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.areaWarning": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.changeSoil": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.convertedArea": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.creatingField": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.cropLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.customMultiplierLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.depthMmHelp": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.depthMmLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.detectedState": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.drawPolygonPrompt": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.editPolygonPrompt": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.everyDaysHelp": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.everyDaysLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.fieldName": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.fieldNamePlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.locating": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.mapInstruction": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.methodDrip": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.methodFlood": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.methodLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.methodSprinkler": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.modePin": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.modePolygon": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.pinPrompt": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.pinRequired": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.polygonArea": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.polygonInvalid": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.polygonRequired": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.polygonVertexCount": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.routineSubtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.routineTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.selectCrop": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.soilClay": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.soilLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.soilLoam": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.soilSandy": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.soilSuggested": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.soilSuggestionTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.sowingDate": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.stepDetails": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.stepMap": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.stepRoutine": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.submitButton": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.subtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.successMessage": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.suggestLanguage": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.switchLanguage": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.tapMap": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.title": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.unitAcre": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.unitCustom": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.unitGuntha": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.unitHectare": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.useMyLocation": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.useSuggestedSoil": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.validationError": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "fieldWizard.villageSearchPlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.codeExpires": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.confirmDisconnect": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.connectBtn": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.connecting": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.dailyCap": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.disconnectBtn": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.linkCode": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.linkInstructions": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.openTelegram": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.preferencesSaved": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.preferencesTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.quietFrom": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.quietHours": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.quietTo": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.savePreferences": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.saving": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.sendTime": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.sendingTest": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.status": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.statusActive": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.statusDisconnected": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.statusPending": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.subtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.testBtn": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.testSent": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "messaging.title": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "nav.brand": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "nav.dashboard": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "nav.login": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "nav.logout": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "nav.newField": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "nav.register": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "nav.settings": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "nav.tagline": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.all_changes_synced": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.banner_offline": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.banner_pending": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.conflict_desc": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.conflict_title": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.keep_mine": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.last_synced": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.mutation_queue": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.network_status": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.never_synced": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.no_map_geometry": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.pending_badge": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.retry": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.server_version": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.status_offline": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.status_online": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.status_synced": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.sync_now": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.sync_status_title": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.syncing": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.type_edit_field": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.type_log": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.use_server": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.vector_map_notice": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "offline.your_edit": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.activeDays": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.custom": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.endTime": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.none": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.presetDay": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.presetNight": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.rotationNote": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.selectLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.startTime": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.subtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.title": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "powerSchedule.weeklyView": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.addNewPump": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.bucketLitres": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.bucketSeconds": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.calculatedDischarge": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.costPerHourLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.costPerHourPlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.dischargeHelp": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.dischargeLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.methodBucket": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.methodDirect": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.modalSubtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.modalTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.nameLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.namePlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.noPumpsYet": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.save": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.saving": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.selectPlaceholder": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "pumps.title": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.agronomist_disclaimer": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.contingency_short_duration": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.foliar_spray": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.mulching": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.no_calendar": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.prepare_land": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.protective_irrigation": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.sow_now": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.wait_for_soaking_rain": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.advice.weed_management": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.irrigated": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.metrics.bucketPercent": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.metrics.days": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.metrics.drySpellBar": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.metrics.drySpellDays": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.metrics.of7Days": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.metrics.rainLast7Days": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.modeLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.protectiveWaterDesc": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.protectiveWaterLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.rainfed": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.status.good_to_sow": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.status.no_calendar": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.status.ok": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.status.outside_window": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.status.stress_risk": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.status.wait_to_sow": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.status.watch_dry": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.subtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "rainfed.title": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "reasons.deficit_reached": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "reasons.not_needed": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "reasons.power_cut": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "reasons.rain_expected": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "reasons.sensor_dry": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "reasons.sensor_wet": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.close": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.downloadBtn": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.failed": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.from": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.generateBtn": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.generating": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.langEn": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.langHi": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.langMr": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.langPa": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.langTe": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.language": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.modalTitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.openBtn": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.polling": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.ready": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.subtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "report.to": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.digitsLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.digitsLatin": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.digitsNative": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.emailLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.languageEn": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.languageHi": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.languageLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.languageMr": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.languagePa": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.languageTe": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.nameLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.preferencesSection": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.profileSection": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.pseudoLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.saveButton": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.saveError": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.saveSuccess": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.subtitle": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.title": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.unitAcre": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.unitHa": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "settings.unitLabel": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.acre": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.day": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.dayAfterTomorrow": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.days": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.daysAgo": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.ha": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.litres": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.mm": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.today": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  },
+  "units.tomorrow": {
+    "en": {
+      "status": "reviewed",
+      "reviewedBy": "Core Team / FAO-56 Lead"
+    },
+    "hi": {
+      "status": "reviewed",
+      "reviewedBy": "Agronomy Team (ICAR-CRIDA Hindi Lead)"
+    },
+    "mr": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "pa": {
+      "status": "draft",
+      "reviewedBy": null
+    },
+    "te": {
+      "status": "draft",
+      "reviewedBy": null
+    }
+  }
+}

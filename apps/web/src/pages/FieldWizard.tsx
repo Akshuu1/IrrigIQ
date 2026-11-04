@@ -14,6 +14,7 @@ import { PumpModal } from '../components/PumpModal.js';
 import {
   CROPS,
   type Crop,
+  getCropName,
   polygonAreaHa,
   validatePolygon,
   toHectares,
@@ -24,6 +25,7 @@ import {
   type IrrigationMethod,
   type CreateFieldInput,
 } from '@irrigiq/shared';
+import { setAppLanguage, type SupportedLanguage } from '../locales/i18n.js';
 import {
   MapPin,
   AlertCircle,
@@ -45,7 +47,7 @@ export function FieldWizard(): React.JSX.Element {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const lang = (i18n.language || user?.language || 'en') as 'en' | 'hi';
+  const lang = (i18n.language || user?.language || 'en') as SupportedLanguage;
   const userUnit = user?.areaUnit || 'acre';
 
   // Mode: 'pin' (default for quick onboarding) vs 'polygon' (drawing)
@@ -60,7 +62,7 @@ export function FieldWizard(): React.JSX.Element {
   // Pin state
   const [pinLocation, setPinLocation] = useState<{ lng: number; lat: number } | null>(null);
   const [detectedState, setDetectedState] = useState<string | null>(null);
-  const [suggestedLang, setSuggestedLang] = useState<'en' | 'hi' | null>(null);
+  const [suggestedLang, setSuggestedLang] = useState<SupportedLanguage | null>(null);
   const [soilSuggestion, setSoilSuggestion] = useState<SoilSuggestionResult | null>(null);
   const [isLoadingSoil, setIsLoadingSoil] = useState(false);
 
@@ -617,11 +619,20 @@ export function FieldWizard(): React.JSX.Element {
               {suggestedLang && suggestedLang !== lang && (
                 <button
                   type="button"
-                  onClick={() => i18n.changeLanguage(suggestedLang)}
+                  onClick={() => setAppLanguage(suggestedLang)}
                   className="px-3 py-1.5 rounded-xl bg-sky-950/60 border border-sky-500/60 text-sky-300 font-bold hover:bg-sky-900 transition-colors cursor-pointer"
                 >
                   {t('fieldWizard.switchLanguage', {
-                    lang: suggestedLang === 'hi' ? 'हिंदी' : 'English',
+                    lang:
+                      suggestedLang === 'hi'
+                        ? 'हिन्दी'
+                        : suggestedLang === 'mr'
+                          ? 'मराठी'
+                          : suggestedLang === 'pa'
+                            ? 'ਪੰਜਾਬੀ'
+                            : suggestedLang === 'te'
+                              ? 'తెలుగు'
+                              : 'English',
                   })}
                 </button>
               )}
@@ -814,7 +825,7 @@ export function FieldWizard(): React.JSX.Element {
               >
                 {CROPS.map((c: Crop) => (
                   <option key={c.key} value={c.key}>
-                    {lang === 'hi' ? `${c.nameHi} (${c.nameEn})` : `${c.nameEn} (${c.nameHi})`}
+                    {getCropName(c, lang)}
                   </option>
                 ))}
               </select>

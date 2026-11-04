@@ -43,3 +43,4 @@ const linkCodeSchema = new Schema<ILinkCodeDocument>(
 );
 
 export const LinkCodeModel = mongoose.model<ILinkCodeDocument>('LinkCode', linkCodeSchema);
+

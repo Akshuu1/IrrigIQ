@@ -77,7 +77,6 @@
     "irrigateSentence": "आज {{depthMm}} मिमी (लगभग {{litres}} लीटर) सिंचाई करें",
     "runPumpSentence": "आज रात {{duration}} पंप चलाएं",
     "runPumpWithWindow": "आज रात {{duration}} पंप चलाएं, {{window}}",
-    "runPumpWithWindow": "आज रात {{duration}} पंप चलाएं, {{window}}",
     "planWindyWarning": "तेज हवा चलने की संभावना है। पानी के बहाव से बचाव हेतु शांत रात के समय स्प्रिंकलर चलाने की योजना बनाई गई है।",
     "missingPowerWarning": "बिजली आपूर्ति सीमित: {{missing}} मिनट शेष हैं, जो अगले दिन में जोड़े जाएंगे।",
     "noPowerButton": "आज बिजली नहीं आई",
@@ -140,7 +139,14 @@
     "unitHa": "हेक्टेयर (Hectare)",
     "saveButton": "प्राथमिकताएं सहेजें",
     "saveSuccess": "प्राथमिकताएं सफलतापूर्वक सहेजी गईं",
-    "saveError": "प्राथमिकताएं सहेजने में विफल"
+    "saveError": "प्राथमिकताएं सहेजने में विफल",
+    "languageMr": "मराठी (Marathi)",
+    "languagePa": "ਪੰਜਾਬੀ (Punjabi)",
+    "languageTe": "తెలుగు (Telugu)",
+    "digitsLabel": "संख्या एवं दिनांक अंक",
+    "digitsLatin": "लैटिन अंक (1, 2, 3)",
+    "digitsNative": "स्थानीय देवनागरी अंक (१, २, ३)",
+    "pseudoLabel": "छद्म-स्थानीयकरण मोड (Pseudo-localisation)"
   },
   "fieldWizard": {
     "title": "नया खेत जोड़ें",
@@ -348,7 +354,10 @@
     "downloadBtn": "पीडीएफ डाउनलोड करें",
     "openBtn": "नई टैब में खोलें",
     "failed": "रिपोर्ट तैयार करने में विफल। कृपया पुनः प्रयास करें।",
-    "close": "बंद करें"
+    "close": "बंद करें",
+    "langMr": "मराठी (Marathi)",
+    "langPa": "ਪੰਜਾਬੀ (Punjabi)",
+    "langTe": "తెలుగు (Telugu)"
   },
   "rainfed": {
     "title": "बारानी (वर्षा-आधारित) फसल सलाह",
@@ -417,4 +426,3 @@
     "confirmDisconnect": "क्या आप वाकई टेलीग्राम हटाना चाहते हैं? इसके बाद आपको दैनिक चैट सलाह नहीं मिलेगी।"
   }
 }
-

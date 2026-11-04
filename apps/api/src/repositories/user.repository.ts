@@ -10,6 +10,8 @@ export class UserRepository {
       name: data.name,
       language: data.language,
       areaUnit: data.areaUnit,
+      numberingSystem: data.numberingSystem,
+      useNativeDigits: data.useNativeDigits,
     });
     return await user.save();
   }

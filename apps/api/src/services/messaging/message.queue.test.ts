@@ -35,3 +35,4 @@ describe('Quiet Hours Utility Tests', () => {
     expect(isWithinQuietHours('12:00', { start: '22:00', end: '22:00' })).toBe(false);
   });
 });
+

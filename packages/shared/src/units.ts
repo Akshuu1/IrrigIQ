@@ -158,13 +158,18 @@ export function fromHectares(
   }
 }
 
+import type { SupportedLanguage } from './schemas.js';
+import { formatNumber } from './formatters.js';
+
 /**
- * Formats field area with support for multiple units, language translation, and custom units.
+ * Formats field area with support for multiple units, language translation, native digits, and custom units.
  */
 export function formatArea(
   areaHa: number,
   unit: AreaUnit | string = 'ha',
-  optionsOrLang?: { locale?: string; decimals?: number } | 'en' | 'hi',
+  optionsOrLang?:
+    | { locale?: string; decimals?: number; useNativeDigits?: boolean }
+    | SupportedLanguage,
   customAcresPerUnit?: number,
 ): string {
   if (isNaN(areaHa) || areaHa < 0) {
@@ -172,13 +177,23 @@ export function formatArea(
   }
 
   const isLegacyOptions = typeof optionsOrLang === 'object' && optionsOrLang !== null;
-  const lang: 'en' | 'hi' = typeof optionsOrLang === 'string' ? optionsOrLang : 'en';
+  let lang: SupportedLanguage = 'en';
+  if (typeof optionsOrLang === 'string') {
+    lang = optionsOrLang;
+  } else if (isLegacyOptions && optionsOrLang.locale) {
+    const locPrefix = optionsOrLang.locale.slice(0, 2);
+    if (['hi', 'mr', 'pa', 'te', 'en'].includes(locPrefix)) {
+      lang = locPrefix as SupportedLanguage;
+    }
+  }
   const decimals = isLegacyOptions ? optionsOrLang.decimals ?? 2 : 2;
+  const useNativeDigits = isLegacyOptions ? optionsOrLang.useNativeDigits ?? false : false;
 
   const value = fromHectares(areaHa, unit, customAcresPerUnit);
-  const formattedNum = value.toLocaleString(lang === 'hi' ? 'hi-IN' : 'en-IN', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+  const formattedNum = formatNumber(value, {
+    lang,
+    useNativeDigits,
+    decimals,
   });
 
   const normalized = unit.toLowerCase();
@@ -188,6 +203,21 @@ export function formatArea(
     else if (normalized === 'ha' || normalized === 'hectare') label = 'हेक्टेयर';
     else if (normalized === 'guntha') label = 'गुंठा';
     else if (normalized === 'custom') label = 'बीघा/कस्टम';
+  } else if (lang === 'mr') {
+    if (normalized === 'acre') label = 'एकर';
+    else if (normalized === 'ha' || normalized === 'hectare') label = 'हेक्टर';
+    else if (normalized === 'guntha') label = 'गुंठा';
+    else if (normalized === 'custom') label = 'इतर/बिघा';
+  } else if (lang === 'pa') {
+    if (normalized === 'acre') label = 'ਏਕੜ';
+    else if (normalized === 'ha' || normalized === 'hectare') label = 'ਹੈਕਟੇਅਰ';
+    else if (normalized === 'guntha') label = 'ਗੁੰਠਾ';
+    else if (normalized === 'custom') label = 'ਬਿੱਘਾ/ਹੋਰ';
+  } else if (lang === 'te') {
+    if (normalized === 'acre') label = 'ఎకరాలు';
+    else if (normalized === 'ha' || normalized === 'hectare') label = 'హెక్టార్లు';
+    else if (normalized === 'guntha') label = 'గుంటలు';
+    else if (normalized === 'custom') label = 'బిఘా/ఇతర';
   } else {
     if (normalized === 'ha') label = 'ha';
     else if (normalized === 'hectare') label = 'hectare';

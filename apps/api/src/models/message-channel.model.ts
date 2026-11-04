@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
-export type MessageChannelProvider = 'telegram';
+export type MessageChannelProvider = 'telegram' | 'whatsapp';
 export type MessageChannelStatus = 'active' | 'deactivated' | 'pending_opt_in';
 
 export interface IQuietHours {
@@ -15,12 +15,15 @@ export interface IMessageChannel {
   externalIdHash: string;
   optedIn: boolean;
   optedInAt?: Date;
+  lastInboundAt?: Date; // Phase 21: Tracks Meta 24h customer service window
   status: MessageChannelStatus;
   sendTime: string; // 'HH:MM', default '06:30'
   quietHours: IQuietHours;
   dailyCap: number; // default 3
   messagesSentToday: number;
   lastSentDate?: string; // 'YYYY-MM-DD'
+  planChangeAlertsEnabled: boolean; // Phase 21: Can be turned on/off by user
+  lastPlanChangeNoticeDate?: string; // 'YYYY-MM-DD'
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,7 +40,7 @@ const messageChannelSchema = new Schema<IMessageChannelDocument>(
     },
     provider: {
       type: String,
-      enum: ['telegram'],
+      enum: ['telegram', 'whatsapp'],
       default: 'telegram',
       required: true,
     },
@@ -56,6 +59,9 @@ const messageChannelSchema = new Schema<IMessageChannelDocument>(
       default: false,
     },
     optedInAt: {
+      type: Date,
+    },
+    lastInboundAt: {
       type: Date,
     },
     status: {
@@ -96,6 +102,14 @@ const messageChannelSchema = new Schema<IMessageChannelDocument>(
       type: String,
       match: /^\d{4}-\d{2}-\d{2}$/,
     },
+    planChangeAlertsEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    lastPlanChangeNoticeDate: {
+      type: String,
+      match: /^\d{4}-\d{2}-\d{2}$/,
+    },
   },
   {
     timestamps: true,
@@ -115,3 +129,4 @@ export const MessageChannelModel = mongoose.model<IMessageChannelDocument>(
   'MessageChannel',
   messageChannelSchema,
 );
+

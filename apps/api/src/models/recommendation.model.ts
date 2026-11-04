@@ -31,6 +31,9 @@ export interface IRecommendation {
   etcMm: number;
   rainMm: number;
   effectiveRainMm: number;
+  forecastRain48h?: number;
+  previousAction?: RecommendationAction;
+  previousForecastRain48h?: number;
   staleWeather: boolean;
   computedAt: Date;
   createdAt: Date;
@@ -158,6 +161,16 @@ const recommendationSchema = new Schema<IRecommendationDocument>(
       type: Number,
       required: true,
       min: 0,
+    },
+    forecastRain48h: {
+      type: Number,
+    },
+    previousAction: {
+      type: String,
+      enum: ['irrigate', 'skip'],
+    },
+    previousForecastRain48h: {
+      type: Number,
     },
     staleWeather: {
       type: Boolean,

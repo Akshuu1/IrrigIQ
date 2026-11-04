@@ -70,3 +70,4 @@ export const OutboundMessageModel = mongoose.model<IOutboundMessageDocument>(
   'OutboundMessage',
   outboundMessageSchema,
 );
+

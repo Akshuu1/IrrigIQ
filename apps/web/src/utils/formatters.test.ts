@@ -31,13 +31,25 @@ describe('Localization Formatters', () => {
     expect(hiHa).toBe('1.00 हेक्टेयर');
   });
 
-  it('formats water volume in litres in both languages', () => {
+  it('formats water volume in litres across languages', () => {
     expect(formatLitres(36000, 'en')).toBe('36,000 litres');
     expect(formatLitres(36000, 'hi')).toBe('36,000 लीटर');
+    expect(formatLitres(36000, 'mr')).toBe('36,000 लिटर');
+    expect(formatLitres(36000, 'pa')).toBe('36,000 ਲੀਟਰ');
+    expect(formatLitres(36000, 'te')).toBe('36,000 లీటర్లు');
   });
 
-  it('formats depth in mm in both languages', () => {
+  it('formats depth in mm across languages', () => {
     expect(formatDepthMm(18.5, 'en')).toBe('18.5 mm');
     expect(formatDepthMm(18.5, 'hi')).toBe('18.5 मिमी');
+    expect(formatDepthMm(18.5, 'mr')).toBe('18.5 मिमी');
+    expect(formatDepthMm(18.5, 'pa')).toBe('18.5 ਮਿ.ਮੀ.');
+    expect(formatDepthMm(18.5, 'te')).toBe('18.5 మిమీ');
+  });
+
+  it('supports native digits in Marathi, Punjabi, Telugu', () => {
+    expect(formatNumber(125000, 'mr', { useNativeDigits: true })).toBe('१,२५,०००');
+    expect(formatNumber(125000, 'pa', { useNativeDigits: true })).toBe('੧,੨੫,੦੦੦');
+    expect(formatNumber(125000, 'te', { useNativeDigits: true })).toBe('౧౨౫,౦౦౦');
   });
 });

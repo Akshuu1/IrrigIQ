@@ -230,12 +230,22 @@ export function stateForPoint(lng: number, lat: number): string | null {
   return null;
 }
 
+import type { SupportedLanguage } from './schemas.js';
+
 /**
- * Suggests default user language ('hi' vs 'en') based on the detected Indian state.
- * Hindi-belt states suggest 'hi'; southern and eastern states default to 'en'.
+ * Suggests default user language based on the detected Indian state.
+ * - Maharashtra -> 'mr' (Marathi)
+ * - Punjab -> 'pa' (Punjabi)
+ * - Telangana & Andhra Pradesh -> 'te' (Telugu)
+ * - Hindi-belt states -> 'hi' (Hindi)
+ * - Other states or unknown -> defaults to 'en' (English)
  */
-export function suggestLanguageForState(state: string | null): 'en' | 'hi' {
+export function suggestLanguageForState(state: string | null): SupportedLanguage {
   if (!state) return 'en';
-  return (HINDI_BELT_STATES as readonly string[]).includes(state) ? 'hi' : 'en';
+  if (state === 'Maharashtra') return 'mr';
+  if (state === 'Punjab') return 'pa';
+  if (state === 'Telangana' || state === 'Andhra Pradesh') return 'te';
+  if ((HINDI_BELT_STATES as readonly string[]).includes(state)) return 'hi';
+  return 'en';
 }
 

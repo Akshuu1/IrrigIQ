@@ -1,16 +1,191 @@
-import { CROPS, formatDuration } from '@irrigiq/shared';
+import {
+  CROPS,
+  formatDuration,
+  getCropName,
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage,
+} from '@irrigiq/shared';
 import { FieldModel } from '../../models/field.model.js';
 import { RecommendationModel, IRecommendationDocument } from '../../models/recommendation.model.js';
 import type { InlineButton } from './provider.interface.js';
 
-const RAINFED_STATUS_LABELS: Record<string, { en: string; hi: string }> = {
-  'rainfed.wait_to_sow': { en: 'Wait for Sowing Rains', hi: 'बुवाई की बारिश का इंतज़ार करें' },
-  'rainfed.good_to_sow': { en: 'Good to Sow', hi: 'बुवाई के लिए अनुकूल' },
-  'rainfed.outside_window': { en: 'Outside Sowing Window', hi: 'बुवाई समय सीमा समाप्त' },
-  'rainfed.ok': { en: 'Adequate Moisture', hi: 'पर्याप्त नमी उपलब्ध' },
-  'rainfed.watch_dry': { en: 'Dry Spell Watch', hi: 'शुष्क अवधि चेतावनी' },
-  'rainfed.stress_risk': { en: 'Drought Stress Risk', hi: 'सूखा/तनाव का जोखिम' },
-  'rainfed.no_calendar': { en: 'No Calendar Configured', hi: 'कैलेंडर उपलब्ध नहीं' },
+const RAINFED_STATUS_LABELS: Record<string, Record<SupportedLanguage, string>> = {
+  'rainfed.wait_to_sow': {
+    en: 'Wait for Sowing Rains',
+    hi: 'बुवाई की बारिश का इंतज़ार करें',
+    mr: 'पेरणीयोग्य पावसाची वाट पहा',
+    pa: 'ਬਿਜਾਈ ਯੋਗ ਮੀਂਹ ਦੀ ਉਡੀਕ ਕਰੋ',
+    te: 'విత్తన వర్షం కోసం వేచి ఉండండి',
+  },
+  'rainfed.good_to_sow': {
+    en: 'Good to Sow',
+    hi: 'बुवाई के लिए अनुकूल',
+    mr: 'पेरणीसाठी अनुकूल वेळ',
+    pa: 'ਬਿਜਾਈ ਲਈ ਅਨੁਕੂਲ ਸਮਾਂ',
+    te: 'విత్తడానికి అనుకూల సమయం',
+  },
+  'rainfed.outside_window': {
+    en: 'Outside Sowing Window',
+    hi: 'बुवाई समय सीमा समाप्त',
+    mr: 'पेरणीची वेळ संपली',
+    pa: 'ਬਿਜਾਈ ਦਾ ਸਮਾਂ ਸਮਾਪਤ',
+    te: 'విత్తే కాలం ముగిసింది',
+  },
+  'rainfed.ok': {
+    en: 'Adequate Moisture',
+    hi: 'पर्याप्त नमी उपलब्ध',
+    mr: 'मातीत पुरेसा ओलावा',
+    pa: 'ਲੋੜੀਂਦੀ ਮਿੱਟੀ ਨਮੀ',
+    te: 'తగినంత నేల తేమ',
+  },
+  'rainfed.watch_dry': {
+    en: 'Dry Spell Watch',
+    hi: 'शुष्क अवधि चेतावनी',
+    mr: 'पावसाचा खंड (ड्राई स्पेल) लक्ष ठेवा',
+    pa: 'ਸੁੱਕਾ ਦੌਰ ਚਿਤਾਵਨੀ',
+    te: 'వర్షాభావ కాలం హెచ్చరిక',
+  },
+  'rainfed.stress_risk': {
+    en: 'Drought Stress Risk',
+    hi: 'सूखा/तनाव का जोखिम',
+    mr: 'दुष्काळ / पिकावर ताणाचा धोका',
+    pa: 'ਪਾਣੀ ਤਣਾਅ / ਸੋਕੇ ਦਾ ਖਤਰਾ',
+    te: 'నీటి ఎద్దడి / బెట్ట ప్రమాదం',
+  },
+  'rainfed.no_calendar': {
+    en: 'No Calendar Configured',
+    hi: 'कैलेंडर उपलब्ध नहीं',
+    mr: 'या राज्यासाठी कॅलेंडर उपलब्ध नाही',
+    pa: 'ਇਸ ਸੂਬੇ ਲਈ ਕੈਲੰਡਰ ਉਪਲਬਧ ਨਹੀਂ',
+    te: 'క్యాలెండర్ అందుబాటులో లేదు',
+  },
+};
+
+const MESSAGES_I18N = {
+  empty: {
+    en: (name: string) => `🌾 Hello ${name}! You haven't added any fields in IrrigIQ yet.`,
+    hi: (name: string) => `🌾 नमस्ते ${name}! IrrigIQ में अभी कोई खेत नहीं जुड़ा है।`,
+    mr: (name: string) => `🌾 नमस्कार ${name}! IrrigIQ मध्ये अद्याप कोणतेही शेत जोडलेले नाही.`,
+    pa: (name: string) => `🌾 ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ${name}! IrrigIQ ਵਿੱਚ ਅਜੇ ਕੋਈ ਖੇਤ ਨਹੀਂ ਜੋੜਿਆ ਗਿਆ।`,
+    te: (name: string) => `🌾 నమస్కారం ${name}! IrrigIQ లో ఇంకా పొలాలు జోడించబడలేదు.`,
+  },
+  header: {
+    en: (date: string, name: string) =>
+      `🌾 *IrrigIQ Daily Advisory (${date})*\nHello ${name}, here is your irrigation plan for today:\n`,
+    hi: (date: string, name: string) =>
+      `🌾 *IrrigIQ दैनिक कृषि सलाह (${date})*\nनमस्ते ${name}, आज के लिए आपके खेतों की योजना:\n`,
+    mr: (date: string, name: string) =>
+      `🌾 *IrrigIQ दैनिक शेती सल्ला (${date})*\nनमस्कार ${name}, आजसाठी तुमच्या शेतांची योजना:\n`,
+    pa: (date: string, name: string) =>
+      `🌾 *IrrigIQ ਰੋਜ਼ਾਨਾ ਖੇਤੀ ਸਲਾਹ (${date})*\nਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ${name}, ਅੱਜ ਲਈ ਤੁਹਾਡੇ ਖੇਤਾਂ ਦੀ ਯੋਜਨਾ:\n`,
+    te: (date: string, name: string) =>
+      `🌾 *IrrigIQ రోజువారీ వ్యవసాయ సలహా (${date})*\nనమస్కారం ${name}, నేటి మీ పొలాల సాగునీటి ప్రణాళిక:\n`,
+  },
+  rainfedHeader: {
+    en: 'Rain-fed',
+    hi: 'वर्षा आधारित',
+    mr: 'कोरडवाहू',
+    pa: 'ਮੀਂਹ ਤੇ ਨਿਰਭਰ',
+    te: 'వర్షాధారం',
+  },
+  statusLabel: {
+    en: 'Status',
+    hi: 'स्थिति',
+    mr: 'स्थिती',
+    pa: 'ਸਥਿਤੀ',
+    te: 'పరిస్థితి',
+  },
+  moistureLabel: {
+    en: 'Available Soil Moisture',
+    hi: 'उपलब्ध मृदा नमी',
+    mr: 'उपलब्ध मातीतील ओलावा',
+    pa: 'ਉਪਲਬਧ ਮਿੱਟੀ ਨਮੀ',
+    te: 'అందుబాటులో ఉన్న నేల తేమ',
+  },
+  drySpellLabel: {
+    en: 'Forecast Dry Spell',
+    hi: 'शुष्क अवधि पूर्वानुमान',
+    mr: 'पावसाचा खंड अंदाज',
+    pa: 'ਅੰਦਾਜ਼ਨ ਸੁੱਕਾ ਦੌਰ',
+    te: 'అంచనా వర్షాభావ కాలం',
+  },
+  days: {
+    en: 'days',
+    hi: 'दिन',
+    mr: 'दिवस',
+    pa: 'ਦਿਨ',
+    te: 'రోజులు',
+  },
+  computing: {
+    en: '• Advisory is being computed...',
+    hi: '• सलाह की गणना की जा रही है...',
+    mr: '• सल्ल्याची गणना केली जात आहे...',
+    pa: '• ਸਲਾਹ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...',
+    te: '• సలహా లెక్కించబడుతోంది...',
+  },
+  actionIrrigate: {
+    en: 'Action: *Irrigate*',
+    hi: 'कार्य: *सिंचाई करें*',
+    mr: 'कृती: *पाणी द्या*',
+    pa: 'ਕਾਰਵਾਈ: *ਸਿੰਚਾਈ ਕਰੋ*',
+    te: 'సూచన: *నీరు పెట్టండి*',
+  },
+  runPump: {
+    en: 'Run Pump',
+    hi: 'पंप चलाएं',
+    mr: 'पंप चालवा',
+    pa: 'ਪੰਪ ਚਲਾਓ',
+    te: 'పంపు నడపండి',
+  },
+  addPumpPrompt: {
+    en: '(Add a pump in IrrigIQ to view pump run hours)',
+    hi: '(पंप समय देखने के लिए IrrigIQ में पंप जोड़ें)',
+    mr: '(पंप वेळ पाहण्यासाठी IrrigIQ मध्ये पंप जोडा)',
+    pa: '(ਪੰਪ ਦੇ ਘੰਟੇ ਵੇਖਣ ਲਈ IrrigIQ ਵਿੱਚ ਪੰਪ ਜੋੜੋ)',
+    te: '(పంపు సమయం చూడటానికి IrrigIQ లో పంపును జోడించండి)',
+  },
+  powerWindow: {
+    en: 'Power Window',
+    hi: 'बिजली समय',
+    mr: 'वीज वेळ',
+    pa: 'ਬਿਜਲੀ ਸਮਾਂ',
+    te: 'విద్యుత్ సమయం',
+  },
+  waterVol: {
+    en: 'Water',
+    hi: 'पानी की मात्रा',
+    mr: 'पाणी प्रमाण',
+    pa: 'ਪਾਣੀ ਦੀ ਮਾਤਰਾ',
+    te: 'నీటి పరిమాణం',
+  },
+  estCost: {
+    en: 'Est. Cost',
+    hi: 'अनुमानित लागत',
+    mr: 'अंदाजे खर्च',
+    pa: 'ਅੰਦਾਜ਼ਨ ਖਰਚਾ',
+    te: 'అంచనా ఖర్చు',
+  },
+  actionSkip: {
+    en: 'Action: *Skip* (Adequate soil moisture)',
+    hi: 'कार्य: *सिंचाई न करें* (आज पानी की आवश्यकता नहीं है)',
+    mr: 'कृती: *थांबवा* (मातीत पुरेसा ओलावा आहे)',
+    pa: 'ਕਾਰਵਾਈ: *ਸਿੰਚਾਈ ਰੋਕੋ* (ਮਿੱਟੀ ਵਿੱਚ ਕਾਫ਼ੀ ਨਮੀ ਹੈ)',
+    te: 'సూచన: *వాయిదా వేయండి* (నేలలో తగినంత తేమ ఉంది)',
+  },
+  quickActions: {
+    en: 'Quick Actions:\n• Reply *1* or tap *Done* when finished\n• Reply *2* or tap *Skipped* to skip\n• Reply *4* or tap *No power* to reschedule\n• Type *HELP* for options',
+    hi: 'त्वरित उत्तर विकल्प:\n• सिंचाई पूरी होने पर *1* या *Done* दबाएं\n• छोड़ने के लिए *2* या *Skipped* दबाएं\n• बिजली न होने पर *4* या *No power* दबाएं\n• मदद के लिए *HELP* लिखें',
+    mr: 'त्वरित कृती:\n• पाणी दिल्यावर *1* किंवा *Done* दाबा\n• सिंचन सोडण्यासाठी *2* किंवा *Skipped* दाबा\n• वीज नसल्यास *4* किंवा *No power* दाबा\n• मदतीसाठी *HELP* पाठवा',
+    pa: 'ਤੁਰੰਤ ਜਵਾਬ:\n• ਪਾਣੀ ਲਗਾਉਣ ' + "ਤੇ *1* ਜਾਂ *Done* ਦਬਾਓ\n• ਛੱਡਣ ਲਈ *2* ਜਾਂ *Skipped* ਦਬਾਓ\n• ਬਿਜਲੀ ਨਾ ਹੋਣ 'ਤੇ *4* ਜਾਂ *No power* ਦਬਾਓ\n• ਮਦਦ ਲਈ *HELP* ਲਿਖੋ",
+    te: 'త్వరిత స్పందనలు:\n• నీరు పెట్టడం పూర్తయ్యాక *1* లేదా *Done* నొక్కండి\n• వాయిదా వేయడానికి *2* లేదా *Skipped* నొక్కండి\n• కరెంట్ లేకపోతే *4* లేదా *No power* నొక్కండి\n• సహాయం కోసం *HELP* అని టైప్ చేయండి',
+  },
+  buttons: {
+    en: { done: '✅ Done', skip: '⏭️ Skipped', noPower: '⚡ No power' },
+    hi: { done: '✅ Done (सिंचाई हो गई)', skip: '⏭️ Skipped (छोड़ा)', noPower: '⚡ No power (बिजली नहीं)' },
+    mr: { done: '✅ Done (पाणी दिले)', skip: '⏭️ Skipped (थांबवले)', noPower: '⚡ No power (वीज नाही)' },
+    pa: { done: '✅ Done (ਪਾਣੀ ਲਾਇਆ)', skip: '⏭️ Skipped (ਛੱਡਿਆ)', noPower: '⚡ No power (ਬਿਜਲੀ ਨਹੀਂ)' },
+    te: { done: '✅ Done (నీరు పెట్టాను)', skip: '⏭️ Skipped (వాయిదా)', noPower: '⚡ No power (కరెంట్ లేదు)' },
+  },
 };
 
 export interface DigestResult {
@@ -21,19 +196,20 @@ export interface DigestResult {
 
 /**
  * Builds a single localized daily advisory digest for a farmer combining all their fields.
+ * Supports all 5 languages ('en', 'hi', 'mr', 'pa', 'te').
  */
 export async function buildDigest(
   user: { _id: unknown; language?: string; name: string },
   dateStr: string,
 ): Promise<DigestResult> {
-  const lang = (user.language === 'hi' ? 'hi' : 'en') as 'en' | 'hi';
+  const userLang = user.language || 'en';
+  const lang: SupportedLanguage = (SUPPORTED_LANGUAGES as readonly string[]).includes(userLang)
+    ? (userLang as SupportedLanguage)
+    : 'en';
 
   const fields = await FieldModel.find({ userId: user._id }).sort({ name: 1 });
   if (!fields.length) {
-    const emptyMsg =
-      lang === 'hi'
-        ? `🌾 नमस्ते ${user.name}! IrrigIQ में अभी कोई खेत नहीं जुड़ा है।`
-        : `🌾 Hello ${user.name}! You haven't added any fields in IrrigIQ yet.`;
+    const emptyMsg = MESSAGES_I18N.empty[lang](user.name);
     return {
       text: emptyMsg,
       hasRecommendations: false,
@@ -56,17 +232,11 @@ export async function buildDigest(
   const lines: string[] = [];
 
   // Header
-  if (lang === 'hi') {
-    lines.push(`🌾 *IrrigIQ दैनिक कृषि सलाह (${dateStr})*`);
-    lines.push(`नमस्ते ${user.name}, आज के लिए आपके खेतों की योजना:\n`);
-  } else {
-    lines.push(`🌾 *IrrigIQ Daily Advisory (${dateStr})*`);
-    lines.push(`Hello ${user.name}, here is your irrigation plan for today:\n`);
-  }
+  lines.push(MESSAGES_I18N.header[lang](dateStr, user.name));
 
   for (const field of fields) {
     const cropObj = CROPS.find((c) => c.key === field.cropKey);
-    const cropName = cropObj ? (lang === 'hi' ? cropObj.nameHi : cropObj.nameEn) : field.cropKey;
+    const cropName = cropObj ? getCropName(cropObj, lang) : field.cropKey;
     const rec = recMap.get(String(field._id));
 
     if (field.waterMode === 'rainfed' || rec?.waterMode === 'rainfed') {
@@ -77,30 +247,18 @@ export async function buildDigest(
       const bucketPct = plan?.params?.['bucketPercent'] ?? 100;
       const dryDays = plan?.params?.['drySpellDays'] ?? 0;
 
-      if (lang === 'hi') {
-        lines.push(`🌧️ *${field.name}* (${cropName} - वर्षा आधारित):`);
-        lines.push(`• स्थिति: *${statusLabel}*`);
-        lines.push(`• उपलब्ध मृदा नमी: ${bucketPct}%`);
-        lines.push(`• शुष्क अवधि पूर्वानुमान: ${dryDays} दिन`);
-      } else {
-        lines.push(`🌧️ *${field.name}* (${cropName} - Rain-fed):`);
-        lines.push(`• Status: *${statusLabel}*`);
-        lines.push(`• Available Soil Moisture: ${bucketPct}%`);
-        lines.push(`• Forecast Dry Spell: ${dryDays} days`);
-      }
+      lines.push(`🌧️ *${field.name}* (${cropName} - ${MESSAGES_I18N.rainfedHeader[lang]}):`);
+      lines.push(`• ${MESSAGES_I18N.statusLabel[lang]}: *${statusLabel}*`);
+      lines.push(`• ${MESSAGES_I18N.moistureLabel[lang]}: ${bucketPct}%`);
+      lines.push(`• ${MESSAGES_I18N.drySpellLabel[lang]}: ${dryDays} ${MESSAGES_I18N.days[lang]}`);
       lines.push('');
       continue;
     }
 
     // Irrigated Field
     if (!rec) {
-      if (lang === 'hi') {
-        lines.push(`💧 *${field.name}* (${cropName}):`);
-        lines.push(`• सलाह की गणना की जा रही है...`);
-      } else {
-        lines.push(`💧 *${field.name}* (${cropName}):`);
-        lines.push(`• Advisory is being computed...`);
-      }
+      lines.push(`💧 *${field.name}* (${cropName}):`);
+      lines.push(MESSAGES_I18N.computing[lang]);
       lines.push('');
       continue;
     }
@@ -116,72 +274,38 @@ export async function buildDigest(
           ? rec.pumpSegments.map((s) => `${s.start}-${s.end}`).join(', ')
           : null;
 
-      if (lang === 'hi') {
-        lines.push(`💧 *${field.name}* (${cropName}):`);
-        lines.push(`• कार्य: *सिंचाई करें*`);
-        if (durationStr) {
-          lines.push(`• पंप चलाएं: *${durationStr}*`);
-        } else if (rec.pumpMissing) {
-          lines.push(`• (पंप समय देखने के लिए IrrigIQ में पंप जोड़ें)`);
-        }
-        if (segmentsStr) {
-          lines.push(`• बिजली समय: ${segmentsStr}`);
-        }
-        lines.push(`• पानी की मात्रा: ${rec.litres.toLocaleString()} L (${rec.grossMm} mm)`);
-        if (rec.pumpCost !== null && rec.pumpCost !== undefined) {
-          lines.push(`• अनुमानित लागत: ₹${rec.pumpCost}`);
-        }
-      } else {
-        lines.push(`💧 *${field.name}* (${cropName}):`);
-        lines.push(`• Action: *Irrigate*`);
-        if (durationStr) {
-          lines.push(`• Run Pump: *${durationStr}*`);
-        } else if (rec.pumpMissing) {
-          lines.push(`• (Add a pump in IrrigIQ to view pump run hours)`);
-        }
-        if (segmentsStr) {
-          lines.push(`• Power Window: ${segmentsStr}`);
-        }
-        lines.push(`• Water: ${rec.litres.toLocaleString()} L (${rec.grossMm} mm)`);
-        if (rec.pumpCost !== null && rec.pumpCost !== undefined) {
-          lines.push(`• Est. Cost: ₹${rec.pumpCost}`);
-        }
+      lines.push(`💧 *${field.name}* (${cropName}):`);
+      lines.push(`• ${MESSAGES_I18N.actionIrrigate[lang]}`);
+      if (durationStr) {
+        lines.push(`• ${MESSAGES_I18N.runPump[lang]}: *${durationStr}*`);
+      } else if (rec.pumpMissing) {
+        lines.push(`• ${MESSAGES_I18N.addPumpPrompt[lang]}`);
+      }
+      if (segmentsStr) {
+        lines.push(`• ${MESSAGES_I18N.powerWindow[lang]}: ${segmentsStr}`);
+      }
+      lines.push(`• ${MESSAGES_I18N.waterVol[lang]}: ${rec.litres.toLocaleString()} L (${rec.grossMm} mm)`);
+      if (rec.pumpCost !== null && rec.pumpCost !== undefined) {
+        lines.push(`• ${MESSAGES_I18N.estCost[lang]}: ₹${rec.pumpCost}`);
       }
     } else {
       // Skip
-      if (lang === 'hi') {
-        lines.push(`💧 *${field.name}* (${cropName}):`);
-        lines.push(`• कार्य: *सिंचाई न करें* (आज पानी की आवश्यकता नहीं है)`);
-      } else {
-        lines.push(`💧 *${field.name}* (${cropName}):`);
-        lines.push(`• Action: *Skip* (Adequate soil moisture)`);
-      }
+      lines.push(`💧 *${field.name}* (${cropName}):`);
+      lines.push(`• ${MESSAGES_I18N.actionSkip[lang]}`);
     }
     lines.push('');
   }
 
   // Footer instructions
-  if (lang === 'hi') {
-    lines.push('─'.repeat(24));
-    lines.push('त्वरित उत्तर विकल्प:');
-    lines.push('• सिंचाई पूरी होने पर *1* या *Done* दबाएं');
-    lines.push('• छोड़ने के लिए *2* या *Skipped* दबाएं');
-    lines.push('• बिजली न होने पर *4* या *No power* दबाएं');
-    lines.push('• मदद के लिए *HELP* लिखें');
-  } else {
-    lines.push('─'.repeat(24));
-    lines.push('Quick Actions:');
-    lines.push('• Reply *1* or tap *Done* when finished');
-    lines.push('• Reply *2* or tap *Skipped* to skip');
-    lines.push('• Reply *4* or tap *No power* to reschedule');
-    lines.push('• Type *HELP* for options');
-  }
+  lines.push('─'.repeat(24));
+  lines.push(MESSAGES_I18N.quickActions[lang]);
 
+  const btnLabels = MESSAGES_I18N.buttons[lang];
   const inlineKeyboard: InlineButton[][] = [
     [
-      { text: lang === 'hi' ? '✅ Done (सिंचाई हो गई)' : '✅ Done', callbackData: '1' },
-      { text: lang === 'hi' ? '⏭️ Skipped (छोड़ा)' : '⏭️ Skipped', callbackData: '2' },
-      { text: lang === 'hi' ? '⚡ No power (बिजली नहीं)' : '⚡ No power', callbackData: '4' },
+      { text: btnLabels.done, callbackData: '1' },
+      { text: btnLabels.skip, callbackData: '2' },
+      { text: btnLabels.noPower, callbackData: '4' },
     ],
   ];
 

@@ -87,3 +87,4 @@ export function generateLinkCode(): string {
 export function hashLinkCode(code: string): string {
   return crypto.createHash('sha256').update(code.trim().toUpperCase()).digest('hex');
 }
+
