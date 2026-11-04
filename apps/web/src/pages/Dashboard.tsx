@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { api, type Field, type Recommendation } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
 import { formatArea, formatNumber, formatDepthMm } from '../utils/formatters.js';
-import { CROPS_MAP } from '@irrigiq/shared';
+import { CROPS_MAP, formatDuration } from '@irrigiq/shared';
+import { PumpModal } from '../components/PumpModal.js';
 import {
   Droplet,
   PlusCircle,
@@ -18,9 +19,16 @@ import {
   Clock,
   ArrowRight,
   Loader2,
+  Gauge,
 } from 'lucide-react';
 
-function FieldRecommendationCard({ field }: { field: Field }): React.JSX.Element {
+function FieldRecommendationCard({
+  field,
+  onOpenPumpModal,
+}: {
+  field: Field;
+  onOpenPumpModal: (field: Field) => void;
+}): React.JSX.Element {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const lang = (i18n.language || user?.language || 'en') as 'en' | 'hi';
@@ -47,17 +55,41 @@ function FieldRecommendationCard({ field }: { field: Field }): React.JSX.Element
   const todayRecommendation: Recommendation | undefined = recommendations?.[0];
   const isIrrigate = todayRecommendation?.plan?.action === 'irrigate';
   const weatherStale = todayRecommendation?.weatherStale ?? false;
+  const runMinutesVal = todayRecommendation?.plan?.runMinutes;
+  const splitAcrossDays = todayRecommendation?.plan?.splitAcrossDays ?? false;
+  const pumpCostVal = todayRecommendation?.plan?.pumpCost;
+  const isPumpMissing = todayRecommendation?.plan?.pumpMissing ?? false;
 
-  // Localized action sentence
+  // Localized action sentence and detail line
   let actionSentence = '';
+  let detailSentence = '';
   if (todayRecommendation) {
     if (isIrrigate) {
       const depthFormatted = formatDepthMm(todayRecommendation.plan.grossMm, lang);
       const litresFormatted = formatNumber(Math.round(todayRecommendation.plan.litres), lang);
-      actionSentence =
-        lang === 'hi'
-          ? `आज ${depthFormatted} (लगभग ${litresFormatted} लीटर) सिंचाई करें`
-          : `Irrigate ${depthFormatted} (about ${litresFormatted} litres) today`;
+
+      if (runMinutesVal !== null && runMinutesVal !== undefined) {
+        const durationFormatted = formatDuration(runMinutesVal, lang);
+        actionSentence = t('dashboard.runPumpSentence', {
+          duration: durationFormatted,
+          defaultValue: `Run the pump ${durationFormatted} tonight`,
+        });
+        detailSentence = t('dashboard.volumeDetail', {
+          litres: litresFormatted,
+          depthMm: depthFormatted,
+          defaultValue: `${litresFormatted} L (${depthFormatted})`,
+        });
+      } else {
+        actionSentence =
+          lang === 'hi'
+            ? `आज ${depthFormatted} (लगभग ${litresFormatted} लीटर) सिंचाई करें`
+            : `Irrigate ${depthFormatted} (about ${litresFormatted} litres) today`;
+        detailSentence = t('dashboard.volumeDetail', {
+          litres: litresFormatted,
+          depthMm: depthFormatted,
+          defaultValue: `${litresFormatted} L (${depthFormatted})`,
+        });
+      }
     } else {
       actionSentence = lang === 'hi' ? 'आज सिंचाई छोड़ें' : 'Skip irrigation today';
     }
@@ -180,9 +212,47 @@ function FieldRecommendationCard({ field }: { field: Field }): React.JSX.Element
             </div>
 
             {/* Large clear sentence */}
-            <div className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">
-              {actionSentence}
+            <div>
+              <div className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">
+                {actionSentence}
+              </div>
+              {isIrrigate && detailSentence && (
+                <div className="text-xs sm:text-sm font-semibold text-emerald-300/90 mt-1.5 flex items-center gap-2">
+                  <span>{detailSentence}</span>
+                  {pumpCostVal !== null && pumpCostVal !== undefined && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                      {t('dashboard.pumpCostEstimate', { cost: pumpCostVal })}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
+
+            {/* Multi-day split alert */}
+            {isIrrigate && splitAcrossDays && (
+              <div className="mt-3 p-3 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-200 text-xs font-medium flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <span>{t('dashboard.splitAlert')}</span>
+              </div>
+            )}
+
+            {/* Pump missing alert */}
+            {isIrrigate && isPumpMissing && (
+              <div className="mt-3 p-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 text-xs flex items-center justify-between gap-2">
+                <span className="flex items-center gap-1.5">
+                  <Gauge className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <span>{t('dashboard.pumpMissingPrompt')}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onOpenPumpModal(field)}
+                  className="px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1 shadow cursor-pointer flex-shrink-0"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>{t('dashboard.addPump')}</span>
+                </button>
+              </div>
+            )}
 
             {/* Scientific Explanation */}
             {reasonText && (
@@ -248,6 +318,7 @@ export function Dashboard(): React.JSX.Element {
   const queryClient = useQueryClient();
   const [isSeeding, setIsSeeding] = useState(false);
   const [seedError, setSeedError] = useState<string | null>(null);
+  const [pumpModalField, setPumpModalField] = useState<Field | null>(null);
 
   const {
     data: fields,
@@ -426,10 +497,35 @@ export function Dashboard(): React.JSX.Element {
       {!isLoading && !isError && fields && fields.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {fields.map((field) => (
-            <FieldRecommendationCard key={field.id} field={field} />
+            <FieldRecommendationCard
+              key={field.id}
+              field={field}
+              onOpenPumpModal={(f) => setPumpModalField(f)}
+            />
           ))}
         </div>
       )}
+
+      {/* Pump Setup Modal */}
+      <PumpModal
+        isOpen={Boolean(pumpModalField)}
+        onClose={() => setPumpModalField(null)}
+        onSuccess={async (pump) => {
+          if (pumpModalField) {
+            try {
+              await api.updateField(pumpModalField.id, {
+                version: pumpModalField.version,
+                pumpId: pump.id,
+              });
+              queryClient.invalidateQueries({ queryKey: ['fields'] });
+              queryClient.invalidateQueries({ queryKey: ['recommendations', pumpModalField.id] });
+            } catch (err) {
+              console.error('Failed to link pump to field', err);
+            }
+          }
+          setPumpModalField(null);
+        }}
+      />
     </div>
   );
 }

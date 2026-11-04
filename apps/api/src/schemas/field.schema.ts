@@ -32,6 +32,8 @@ const baselineSchema = z.object({
   depthMm: z.number().min(1, 'Baseline depthMm must be at least 1 mm'),
 });
 
+const pumpIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid pump ID');
+
 export const createFieldSchema = z.object({
   name: z
     .string()
@@ -48,6 +50,7 @@ export const createFieldSchema = z.object({
     errorMap: () => ({ message: 'Irrigation method must be drip, sprinkler, or flood' }),
   }),
   baseline: baselineSchema,
+  pumpId: pumpIdSchema.optional().nullable(),
 });
 
 export type CreateFieldInput = z.infer<typeof createFieldSchema>;
@@ -76,6 +79,7 @@ export const updateFieldSchema = z.object({
     })
     .optional(),
   baseline: baselineSchema.optional(),
+  pumpId: pumpIdSchema.optional().nullable(),
 });
 
 export type UpdateFieldInput = z.infer<typeof updateFieldSchema>;

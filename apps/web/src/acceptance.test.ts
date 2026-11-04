@@ -1,6 +1,15 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import i18n, { setAppLanguage } from './locales/i18n.js';
-import { CROPS_MAP, validatePolygon, polygonAreaHa, type GeoJsonPolygon } from '@irrigiq/shared';
+import {
+  CROPS_MAP,
+  validatePolygon,
+  polygonAreaHa,
+  type GeoJsonPolygon,
+  bucketTestToLph,
+  runMinutes,
+  formatDuration,
+  pumpCost,
+} from '@irrigiq/shared';
 import { formatArea, formatNumber, formatDepthMm } from './utils/formatters.js';
 
 describe('Phase 9 Acceptance: Draw a field, save it, and see recommendations in Hindi & English', () => {
@@ -115,5 +124,59 @@ describe('Phase 9 Acceptance: Draw a field, save it, and see recommendations in 
     expect(i18n.t('dashboard.weatherStaleWarning')).toContain(
       'कैश किया गया पुराना मौसम डेटा उपयोग में है',
     );
+  });
+
+  describe('Phase 16 Acceptance: Pump Run Time & Tomato Canonical Example', () => {
+    it('calculates 18,000 L/h from a 20 L bucket in 4 seconds', () => {
+      const dischargeLph = bucketTestToLph(20, 4);
+      expect(dischargeLph).toBe(18000);
+    });
+
+    it('calculates exactly 107 minutes for 31,950 L at 18,000 L/h', () => {
+      const run = runMinutes(31950, 18000);
+      expect(run.minutes).toBe(107);
+      expect(run.splitAcrossDays).toBe(false);
+    });
+
+    it('formats tomato duration as "1 h 47 min" in English and "1 घंटा 47 मिनट" in Hindi', () => {
+      expect(formatDuration(107, 'en')).toBe('1 h 47 min');
+      expect(formatDuration(107, 'hi')).toBe('1 घंटा 47 मिनट');
+    });
+
+    it('displays the main answer as pump operating time ("Run the pump 1 h 47 min tonight")', () => {
+      const grossLitres = 31950;
+      const dischargeLph = 18000;
+      const run = runMinutes(grossLitres, dischargeLph);
+
+      // English advisory sentence
+      setAppLanguage('en');
+      const durationEn = formatDuration(run.minutes, 'en');
+      const sentenceEn = i18n.t('dashboard.runPumpSentence', {
+        duration: durationEn,
+        defaultValue: `Run the pump ${durationEn} tonight`,
+      });
+      expect(sentenceEn).toBe('Run the pump 1 h 47 min tonight');
+
+      // Hindi advisory sentence
+      setAppLanguage('hi');
+      const durationHi = formatDuration(run.minutes, 'hi');
+      const sentenceHi = i18n.t('dashboard.runPumpSentence', {
+        duration: durationHi,
+        defaultValue: `आज रात ${durationHi} पंप चलाएं`,
+      });
+      expect(sentenceHi).toBe('आज रात 1 घंटा 47 मिनट पंप चलाएं');
+    });
+
+    it('computes pump electricity / diesel operating cost accurately', () => {
+      const run = runMinutes(31950, 18000); // 107 min
+      const cost = pumpCost(run, 50); // ₹50/hour
+      expect(cost).toBe(89.17);
+    });
+
+    it('flags splitAcrossDays = true when run time exceeds 720 minutes (12 hours)', () => {
+      const longRun = runMinutes(250000, 18000);
+      expect(longRun.minutes).toBe(833);
+      expect(longRun.splitAcrossDays).toBe(true);
+    });
   });
 });

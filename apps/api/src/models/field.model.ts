@@ -20,6 +20,7 @@ export interface IField {
   soilType: SoilType;
   method: IrrigationMethod;
   baseline: IFieldBaseline;
+  pumpId?: Types.ObjectId | null;
   version: number;
   createdAt: Date;
   updatedAt: Date;
@@ -118,6 +119,11 @@ const fieldSchema = new Schema<IFieldDocument>(
       type: baselineSchema,
       required: true,
     },
+    pumpId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Pump',
+      default: null,
+    },
     version: {
       type: Number,
       required: true,
@@ -140,5 +146,6 @@ const fieldSchema = new Schema<IFieldDocument>(
 // Indexes
 fieldSchema.index({ geometry: '2dsphere' });
 fieldSchema.index({ userId: 1, updatedAt: -1 });
+fieldSchema.index({ pumpId: 1 });
 
 export const FieldModel = mongoose.model<IFieldDocument>('Field', fieldSchema);

@@ -13,6 +13,7 @@ import { SavingsCard } from './field-detail/SavingsCard.js';
 import { IrrigationLogModal } from './field-detail/IrrigationLogModal.js';
 import { RecentLogsTable } from './field-detail/RecentLogsTable.js';
 import { OfflineFieldMap } from '../components/OfflineFieldMap.js';
+import { PumpModal } from '../components/PumpModal.js';
 import {
   ArrowLeft,
   Wheat,
@@ -33,6 +34,7 @@ export function FieldDetail(): React.JSX.Element {
   const unit = user?.areaUnit || 'acre';
 
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [isPumpModalOpen, setIsPumpModalOpen] = useState(false);
   const [successToast, setSuccessToast] = useState<string | null>(null);
   const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
 
@@ -282,6 +284,7 @@ export function FieldDetail(): React.JSX.Element {
         field={field}
         todayRecommendation={recommendations[0]}
         onOpenLogModal={() => setIsLogModalOpen(true)}
+        onOpenPumpModal={() => setIsPumpModalOpen(true)}
       />
 
       {/* 2. 7-Day Plan Forecast (Recharts BarChart + Table) */}
@@ -330,6 +333,29 @@ export function FieldDetail(): React.JSX.Element {
           await createLogMutation.mutateAsync(data);
         }}
         isSubmitting={createLogMutation.isPending}
+      />
+
+      {/* Pump Setup Modal */}
+      <PumpModal
+        isOpen={isPumpModalOpen}
+        onClose={() => setIsPumpModalOpen(false)}
+        onSuccess={async (pump) => {
+          if (field) {
+            try {
+              await api.updateField(field.id, {
+                version: field.version,
+                pumpId: pump.id,
+              });
+              queryClient.invalidateQueries({ queryKey: ['field', fieldId] });
+              queryClient.invalidateQueries({ queryKey: ['recommendations', fieldId] });
+              setSuccessToast('Pump connected and recommendations updated!');
+              setTimeout(() => setSuccessToast(null), 4000);
+            } catch (err) {
+              console.error('Failed to link pump to field', err);
+            }
+          }
+          setIsPumpModalOpen(false);
+        }}
       />
     </div>
   );

@@ -201,6 +201,7 @@ export interface Field {
     everyDays: number;
     depthMm: number;
   };
+  pumpId?: string | null;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -225,10 +226,40 @@ export interface Recommendation {
     action: 'irrigate' | 'skip';
     grossMm: number;
     litres: number;
+    runMinutes?: number | null;
+    splitAcrossDays?: boolean;
+    pumpCost?: number | null;
+    pumpMissing?: boolean;
     reasonKey: string;
     reasonParams?: Record<string, string | number>;
     deficitMm: number;
   };
+}
+
+// Pump types
+export interface Pump {
+  id: string;
+  userId: string;
+  name: string;
+  dischargeLph: number;
+  measuredOn?: string;
+  costPerHour?: number | null;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreatePumpInput {
+  name: string;
+  dischargeLph: number;
+  measuredOn?: string | Date;
+  costPerHour?: number | null;
+}
+
+export interface UpdatePumpInput {
+  name?: string;
+  dischargeLph?: number;
+  measuredOn?: string | Date;
+  costPerHour?: number | null;
 }
 
 export interface IrrigationLog {
@@ -261,6 +292,32 @@ export interface SavingsData {
     baseline: { everyDays: number; depthMm: number };
     baselineNote: string;
   };
+}
+
+// Pump types
+export interface Pump {
+  id: string;
+  userId: string;
+  name: string;
+  dischargeLph: number;
+  measuredOn?: string;
+  costPerHour?: number | null;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreatePumpInput {
+  name: string;
+  dischargeLph: number;
+  measuredOn?: string | Date;
+  costPerHour?: number | null;
+}
+
+export interface UpdatePumpInput {
+  name?: string;
+  dischargeLph?: number;
+  measuredOn?: string | Date;
+  costPerHour?: number | null;
 }
 
 export interface Sensor {
@@ -482,6 +539,10 @@ export const api = {
         const rainMm = r.dailyNeeds?.rainMm ?? r.rainMm ?? 0;
         const etcMm = r.dailyNeeds?.etcMm ?? r.etcMm ?? 0;
         const weatherStale = Boolean(r.weatherStale ?? r.staleWeather ?? false);
+        const runMinutes = r.plan?.runMinutes ?? r.runMinutes ?? null;
+        const splitAcrossDays = Boolean(r.plan?.splitAcrossDays ?? r.splitAcrossDays ?? false);
+        const pumpCost = r.plan?.pumpCost ?? r.pumpCost ?? null;
+        const pumpMissing = Boolean(r.plan?.pumpMissing ?? r.pumpMissing ?? false);
 
         return {
           id: String(r.id || r._id || ''),
@@ -502,6 +563,10 @@ export const api = {
             action,
             grossMm,
             litres,
+            runMinutes,
+            splitAcrossDays,
+            pumpCost,
+            pumpMissing,
             reasonKey,
             reasonParams,
             deficitMm,
@@ -720,5 +785,57 @@ export const api = {
     const token = getAccessToken();
     const base = API_BASE.startsWith('http') ? API_BASE : `${window.location.origin}${API_BASE}`;
     return `${base}/reports/${reportId}/pdf${token ? `?token=${encodeURIComponent(token)}` : ''}`;
+  },
+
+  // Pumps
+  async getPumps(): Promise<Pump[]> {
+    const res = await apiFetch<
+      { status: string; data: { pumps: Pump[] } } | { pumps: Pump[] } | Pump[]
+    >('/pumps');
+    if (Array.isArray(res)) return res;
+    if ('data' in res && res.data?.pumps) return res.data.pumps;
+    if ('pumps' in res && res.pumps) return res.pumps;
+    return [];
+  },
+
+  async getPump(id: string): Promise<Pump> {
+    const res = await apiFetch<{ status: string; data: { pump: Pump } } | { pump: Pump } | Pump>(
+      `/pumps/${id}`,
+    );
+    if ('data' in res && res.data?.pump) return res.data.pump;
+    if ('pump' in res && res.pump) return res.pump;
+    return res as Pump;
+  },
+
+  async createPump(data: CreatePumpInput): Promise<Pump> {
+    const res = await apiFetch<{ status: string; data: { pump: Pump } } | { pump: Pump } | Pump>(
+      '/pumps',
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+      },
+    );
+    if ('data' in res && res.data?.pump) return res.data.pump;
+    if ('pump' in res && res.pump) return res.pump;
+    return res as Pump;
+  },
+
+  async updatePump(id: string, data: UpdatePumpInput): Promise<Pump> {
+    const res = await apiFetch<{ status: string; data: { pump: Pump } } | { pump: Pump } | Pump>(
+      `/pumps/${id}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      },
+    );
+    if ('data' in res && res.data?.pump) return res.data.pump;
+    if ('pump' in res && res.pump) return res.pump;
+    return res as Pump;
+  },
+
+  async deletePump(id: string): Promise<void> {
+    await apiFetch<void>(`/pumps/${id}`, {
+      method: 'DELETE',
+    });
   },
 };

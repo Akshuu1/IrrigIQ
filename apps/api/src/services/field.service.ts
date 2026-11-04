@@ -35,6 +35,7 @@ export class FieldService {
       soilType: input.soilType,
       method: input.method,
       baseline: input.baseline,
+      pumpId: input.pumpId ? new Types.ObjectId(input.pumpId) : null,
       version: 1,
     };
 
@@ -95,6 +96,9 @@ export class FieldService {
     }
     if (input.baseline !== undefined) {
       updateData.baseline = input.baseline;
+    }
+    if (input.pumpId !== undefined) {
+      updateData.pumpId = input.pumpId ? new Types.ObjectId(input.pumpId) : null;
     }
 
     // If geometry changed, re-validate and re-calculate area and centroid on server

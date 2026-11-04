@@ -1,6 +1,14 @@
 import { Types } from 'mongoose';
-import { buildDailyNeeds, planIrrigation, SoilType, IrrigationMethod } from '@irrigiq/shared';
+import {
+  buildDailyNeeds,
+  planIrrigation,
+  SoilType,
+  IrrigationMethod,
+  runMinutes,
+  pumpCost,
+} from '@irrigiq/shared';
 import { FieldModel } from '../models/field.model.js';
+import { PumpModel } from '../models/pump.model.js';
 import { RecommendationModel, IRecommendationDocument } from '../models/recommendation.model.js';
 import { IrrigationLogModel } from '../models/irrigation-log.model.js';
 import { weatherCellKey, getWeatherForCell, GetWeatherOptions } from './weather.service.js';
@@ -83,10 +91,26 @@ export async function recomputeField(
     options?.sensorReading,
   );
 
+  // Look up pump configuration if assigned to field
+  const pump = field.pumpId ? await PumpModel.findById(field.pumpId) : null;
+  const pumpMissing = !pump;
+
   // Bulk upsert into Recommendation collection
   const now = new Date();
   const bulkOps = plan.map((item) => {
     const need = dailyNeeds.find((d) => d.date === item.date);
+
+    let runMinutesVal: number | null = null;
+    let splitAcrossDaysVal = false;
+    let pumpCostVal: number | null = null;
+
+    if (pump) {
+      const run = runMinutes(item.litres, pump.dischargeLph);
+      runMinutesVal = run.minutes;
+      splitAcrossDaysVal = run.splitAcrossDays;
+      pumpCostVal = pumpCost(run.minutes, pump.costPerHour);
+    }
+
     return {
       updateOne: {
         filter: { fieldId: field._id, forDate: item.date },
@@ -97,6 +121,10 @@ export async function recomputeField(
             netMm: item.netMm,
             grossMm: item.grossMm,
             litres: item.litres,
+            runMinutes: runMinutesVal,
+            splitAcrossDays: splitAcrossDaysVal,
+            pumpCost: pumpCostVal,
+            pumpMissing,
             reasonKey: item.reasonKey,
             params: item.params,
             deficitMm: item.deficitMm,

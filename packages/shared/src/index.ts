@@ -6,3 +6,4 @@ export * from './geo.js';
 export * from './recommendations.js';
 export * from './savings.js';
 export * from './sync.js';
+export * from './pump.js';

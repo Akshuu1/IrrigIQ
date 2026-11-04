@@ -7,9 +7,10 @@ import '@geoman-io/leaflet-geoman-free';
 import 'leaflet/dist/leaflet.css';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
-import { api } from '../api/client.js';
+import { api, type Pump } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
 import { formatArea } from '../utils/formatters.js';
+import { PumpModal } from '../components/PumpModal.js';
 import {
   CROPS,
   type Crop,
@@ -31,6 +32,8 @@ import {
   Sparkles,
   Navigation,
   Search,
+  Gauge,
+  PlusCircle,
 } from 'lucide-react';
 
 export function FieldWizard(): React.JSX.Element {
@@ -68,6 +71,13 @@ export function FieldWizard(): React.JSX.Element {
   const [method, setMethod] = useState<IrrigationMethod>('drip');
   const [everyDays, setEveryDays] = useState<number>(4);
   const [depthMm, setDepthMm] = useState<number>(30);
+  const [pumps, setPumps] = useState<Pump[]>([]);
+  const [selectedPumpId, setSelectedPumpId] = useState<string>('');
+  const [isPumpModalOpen, setIsPumpModalOpen] = useState(false);
+
+  useEffect(() => {
+    api.getPumps().then(setPumps).catch(() => {});
+  }, []);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -381,6 +391,7 @@ export function FieldWizard(): React.JSX.Element {
         everyDays: Number(everyDays),
         depthMm: Number(depthMm),
       },
+      pumpId: selectedPumpId || undefined,
     };
 
     const result = createFieldSchema.safeParse(formPayload);
@@ -708,6 +719,49 @@ export function FieldWizard(): React.JSX.Element {
           </div>
         </div>
 
+        {/* Step 4: Irrigation Pump (Optional) */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+            <div>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Gauge className="w-5 h-5 text-emerald-400" />
+                <span>{t('pumps.title')}</span>
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Link a pump to get operating run-time hours instead of litres.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsPumpModalOpen(true)}
+              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold text-xs flex items-center gap-1.5 transition-all self-start sm:self-auto cursor-pointer"
+            >
+              <PlusCircle className="w-4 h-4 stroke-[2.5]" />
+              <span>{t('pumps.addNewPump')}</span>
+            </button>
+          </div>
+
+          <div>
+            <label htmlFor="field-pump" className="block text-sm font-semibold text-slate-200 mb-1">
+              {t('pumps.selectPlaceholder')}
+            </label>
+            <select
+              id="field-pump"
+              value={selectedPumpId}
+              onChange={(e) => setSelectedPumpId(e.target.value)}
+              className="w-full min-h-[48px] bg-slate-950 border border-slate-700 focus:border-emerald-400 rounded-xl px-4 py-3 text-base text-white focus:outline-none"
+            >
+              <option value="">{t('pumps.selectPlaceholder')}</option>
+              {pumps.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} ({p.dischargeLph.toLocaleString()} L/h)
+                  {p.costPerHour ? ` • ₹${p.costPerHour}/h` : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         {/* Submit Button */}
         <button
           type="submit"
@@ -727,6 +781,17 @@ export function FieldWizard(): React.JSX.Element {
           )}
         </button>
       </form>
+
+      {/* Pump Setup Modal */}
+      <PumpModal
+        isOpen={isPumpModalOpen}
+        onClose={() => setIsPumpModalOpen(false)}
+        onSuccess={(newPump) => {
+          setPumps((prev) => [newPump, ...prev]);
+          setSelectedPumpId(newPump.id);
+          setIsPumpModalOpen(false);
+        }}
+      />
     </div>
   );
 }

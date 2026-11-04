@@ -10,6 +10,10 @@ export interface IRecommendation {
   netMm: number;
   grossMm: number;
   litres: number;
+  runMinutes: number | null;
+  splitAcrossDays: boolean;
+  pumpCost: number | null;
+  pumpMissing: boolean;
   reasonKey: string;
   params: Record<string, number | string>;
   deficitMm: number;
@@ -64,6 +68,22 @@ const recommendationSchema = new Schema<IRecommendationDocument>(
       type: Number,
       required: true,
       min: 0,
+    },
+    runMinutes: {
+      type: Number,
+      default: null,
+    },
+    splitAcrossDays: {
+      type: Boolean,
+      default: false,
+    },
+    pumpCost: {
+      type: Number,
+      default: null,
+    },
+    pumpMissing: {
+      type: Boolean,
+      default: false,
     },
     reasonKey: {
       type: String,

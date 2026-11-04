@@ -2,42 +2,62 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { type Field, type Recommendation } from '../../api/client.js';
 import { formatNumber, formatDepthMm } from '../../utils/formatters.js';
+import { formatDuration } from '@irrigiq/shared';
 import {
-  Droplet,
   Clock,
   Sun,
   AlertTriangle,
   PlusCircle,
   Sparkles,
   CloudRain,
+  Gauge,
 } from 'lucide-react';
 
 interface TodayAdvisoryCardProps {
   field: Field;
   todayRecommendation?: Recommendation;
   onOpenLogModal: () => void;
+  onOpenPumpModal?: () => void;
 }
 
 export function TodayAdvisoryCard({
   field: _field,
   todayRecommendation,
   onOpenLogModal,
+  onOpenPumpModal,
 }: TodayAdvisoryCardProps): React.JSX.Element {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || 'en') as 'en' | 'hi';
 
   const isIrrigate = todayRecommendation?.plan?.action === 'irrigate';
   const weatherStale = todayRecommendation?.weatherStale ?? false;
+  const runMinutesVal = todayRecommendation?.plan?.runMinutes;
+  const splitAcrossDays = todayRecommendation?.plan?.splitAcrossDays ?? false;
+  const pumpCostVal = todayRecommendation?.plan?.pumpCost;
+  const isPumpMissing = todayRecommendation?.plan?.pumpMissing ?? false;
 
   let actionSentence = '';
+  let detailSentence = '';
+
   if (todayRecommendation) {
     if (isIrrigate) {
       const depthFormatted = formatDepthMm(todayRecommendation.plan.grossMm, lang);
       const litresFormatted = formatNumber(Math.round(todayRecommendation.plan.litres), lang);
-      actionSentence =
-        lang === 'hi'
-          ? `आज ${depthFormatted} (लगभग ${litresFormatted} लीटर) सिंचाई करें`
-          : `Irrigate ${depthFormatted} (about ${litresFormatted} litres) today`;
+
+      if (runMinutesVal !== null && runMinutesVal !== undefined) {
+        const durationFormatted = formatDuration(runMinutesVal, lang);
+        actionSentence = t('fieldDetail.runPumpSentence', {
+          duration: durationFormatted,
+          defaultValue: `Run the pump ${durationFormatted} tonight`,
+        });
+        detailSentence = `${litresFormatted} L (${depthFormatted})`;
+      } else {
+        actionSentence =
+          lang === 'hi'
+            ? `आज ${depthFormatted} (लगभग ${litresFormatted} लीटर) सिंचाई करें`
+            : `Irrigate ${depthFormatted} (about ${litresFormatted} litres) today`;
+        detailSentence = `${litresFormatted} L (${depthFormatted})`;
+      }
     } else {
       actionSentence = lang === 'hi' ? 'आज सिंचाई छोड़ें' : 'Skip irrigation today';
     }
@@ -92,17 +112,47 @@ export function TodayAdvisoryCard({
 
       <div className="pt-6 space-y-4">
         {/* Big Action Sentence */}
-        <div className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
-          {actionSentence}
+        <div>
+          <div className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
+            {actionSentence}
+          </div>
+          {isIrrigate && detailSentence && (
+            <div className="text-sm sm:text-base font-semibold text-emerald-200/90 mt-1.5 flex items-center gap-2">
+              <span>{detailSentence}</span>
+              {pumpCostVal !== null && pumpCostVal !== undefined && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                  {t('fieldDetail.pumpCostEstimate', { cost: pumpCostVal })}
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Litres Volume Pill (if irrigate) */}
-        {isIrrigate && todayRecommendation && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-500 text-slate-950 font-black text-base shadow-md">
-            <Droplet className="w-5 h-5 fill-slate-950" />
-            <span>
-              {formatNumber(Math.round(todayRecommendation.plan.litres), lang)} {t('units.litres')}
-            </span>
+        {/* Multi-day split alert */}
+        {isIrrigate && splitAcrossDays && (
+          <div className="p-3.5 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-200 text-xs sm:text-sm font-medium flex items-center gap-2.5">
+            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+            <span>{t('fieldDetail.splitAlert')}</span>
+          </div>
+        )}
+
+        {/* Pump Missing Advisory Banner */}
+        {isIrrigate && isPumpMissing && (
+          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-700/80 text-slate-300 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <Gauge className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+              <span>{t('fieldDetail.pumpMissingPrompt')}</span>
+            </div>
+            {onOpenPumpModal && (
+              <button
+                type="button"
+                onClick={onOpenPumpModal}
+                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition-all self-start sm:self-auto cursor-pointer"
+              >
+                <PlusCircle className="w-4 h-4 stroke-[2.5]" />
+                <span>{t('fieldDetail.addPump')}</span>
+              </button>
+            )}
           </div>
         )}
 
