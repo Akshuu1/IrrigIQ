@@ -10,6 +10,7 @@ import {
   weatherCellKey,
   parseWeatherCellKey,
   getWeatherForCell,
+  getPastAndForecastWeather,
   getDayOfYear,
   getDateRange,
   WeatherServiceError,
@@ -360,6 +361,52 @@ describe('Weather Service & Open-Meteo Integration', () => {
       // Cache collection in MongoDB has the 3 days saved
       const savedCount = await WeatherDayModel.countDocuments({ cellKey });
       expect(savedCount).toBe(3);
+    });
+
+    it('getPastAndForecastWeather fetches and partitions past 14 days and forecast days', async () => {
+      const cellKey = '26.9_75.8';
+      const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+
+      // Generate 21 days: 14 past + 7 forecast
+      const dates: string[] = [];
+      const start = new Date(`${today}T00:00:00.000Z`);
+      start.setUTCDate(start.getUTCDate() - 14);
+
+      for (let i = 0; i < 21; i++) {
+        dates.push(start.toISOString().split('T')[0]!);
+        start.setUTCDate(start.getUTCDate() + 1);
+      }
+
+      const mockPayload = {
+        latitude: 26.9,
+        longitude: 75.8,
+        daily: {
+          time: dates,
+          temperature_2m_max: dates.map(() => 30.0),
+          temperature_2m_min: dates.map(() => 18.0),
+          precipitation_sum: dates.map((_, idx) => (idx === 7 ? 25.0 : 0.0)),
+          et0_fao_evapotranspiration: dates.map(() => 4.5),
+          wind_speed_10m_max: dates.map(() => 10.0),
+        },
+      };
+
+      nock('https://api.open-meteo.com')
+        .get('/v1/forecast')
+        .query(true)
+        .reply(200, mockPayload);
+
+      const result = await getPastAndForecastWeather(cellKey, 14, 7, { redis: redisMock });
+
+      expect(result.stale).toBe(false);
+      expect(result.pastDays).toHaveLength(14);
+      expect(result.forecastDays).toHaveLength(7);
+      expect(result.allDays).toHaveLength(21);
+      expect(result.pastDays.every((d) => d.date < today)).toBe(true);
+      expect(result.forecastDays.every((d) => d.date >= today)).toBe(true);
+
+      // Verify MongoDB has cached all 21 days
+      const count = await WeatherDayModel.countDocuments({ cellKey });
+      expect(count).toBe(21);
     });
   });
 });

@@ -691,5 +691,44 @@ describe('Fields and Crops Integration Tests (MongoDB 7+)', () => {
       });
       spy.mockRestore();
     });
+
+    it('creates and updates rain-fed fields with waterMode and hasProtectiveWater', async () => {
+      const user = await createTestUser('rainfed_route_user@example.com');
+      const createRes = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${user.token}`)
+        .send({
+          name: 'Rain-fed Cotton Field',
+          locationMode: 'pin',
+          location: { type: 'Point', coordinates: [75.8, 26.9] },
+          areaValue: 5,
+          areaUnit: 'acre',
+          cropKey: 'cotton',
+          sowingDate: new Date('2026-06-20').toISOString(),
+          soilType: 'clay',
+          method: 'flood',
+          baseline: { everyDays: 5, depthMm: 30 },
+          waterMode: 'rainfed',
+          hasProtectiveWater: true,
+        });
+
+      expect(createRes.status).toBe(201);
+      expect(createRes.body.data.field.waterMode).toBe('rainfed');
+      expect(createRes.body.data.field.hasProtectiveWater).toBe(true);
+
+      const fieldId = createRes.body.data.field.id;
+      const version = createRes.body.data.field.version;
+
+      const updateRes = await request(app)
+        .patch(`/fields/${fieldId}`)
+        .set('Authorization', `Bearer ${user.token}`)
+        .send({
+          version,
+          hasProtectiveWater: false,
+        });
+
+      expect(updateRes.status).toBe(200);
+      expect(updateRes.body.data.field.hasProtectiveWater).toBe(false);
+    });
   });
 });

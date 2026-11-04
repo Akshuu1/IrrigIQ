@@ -13,13 +13,21 @@ import {
   mmToLitres,
   SOIL_CONFIG,
   PowerSchedule,
+  stateForPoint,
+  getCalendarForState,
+  planRainfed,
 } from '@irrigiq/shared';
 import { FieldModel } from '../models/field.model.js';
 import { PumpModel } from '../models/pump.model.js';
 import { PowerScheduleModel } from '../models/powerSchedule.model.js';
 import { RecommendationModel, IRecommendationDocument } from '../models/recommendation.model.js';
 import { IrrigationLogModel } from '../models/irrigation-log.model.js';
-import { weatherCellKey, getWeatherForCell, GetWeatherOptions } from './weather.service.js';
+import {
+  weatherCellKey,
+  getWeatherForCell,
+  getPastAndForecastWeather,
+  GetWeatherOptions,
+} from './weather.service.js';
 import { AppError } from '../errors/AppError.js';
 import { logger } from '../config/logger.js';
 
@@ -57,6 +65,86 @@ export async function recomputeField(
 
   // 7-day window starting today in Asia/Kolkata
   const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+
+  // Handle Rain-fed Mode
+  if (field.waterMode === 'rainfed') {
+    // 1. Retrieve past 14 days and forecast weather
+    const weatherResult = await getPastAndForecastWeather(cellKey, 14, 7, options);
+    const staleWeather = weatherResult.stale;
+
+    // 2. Lookup state and crop calendar
+    const state = stateForPoint(lon, lat);
+    const calendar = getCalendarForState(state, field.cropKey);
+
+    // 3. Plan rainfed advisory
+    const rainfedPlan = planRainfed(
+      {
+        cropKey: field.cropKey,
+        sowingDate: field.sowingDate,
+        soilType: field.soilType as SoilType,
+        hasProtectiveWater: field.hasProtectiveWater ?? false,
+      },
+      weatherResult.pastDays,
+      weatherResult.forecastDays,
+      calendar,
+      today,
+    );
+
+    // 4. Upsert rainfed recommendations for the 7 forecast days
+    const now = new Date();
+    const bulkOps = weatherResult.forecastDays.map((fDay) => ({
+      updateOne: {
+        filter: { fieldId: field._id, forDate: fDay.date },
+        update: {
+          $set: {
+            userId: field.userId,
+            action: 'skip' as const,
+            netMm: 0,
+            grossMm: 0,
+            litres: 0,
+            runMinutes: null,
+            splitAcrossDays: false,
+            pumpCost: null,
+            pumpMissing: false,
+            pumpSegments: [],
+            missingMinutes: 0,
+            notes: rainfedPlan.advice,
+            reasonKey: rainfedPlan.statusKey,
+            params: rainfedPlan.params,
+            waterMode: 'rainfed' as const,
+            rainfedPlan: {
+              statusKey: rainfedPlan.statusKey,
+              params: rainfedPlan.params,
+              advice: rainfedPlan.advice,
+            },
+            deficitMm: 0,
+            et0Mm: fDay.et0Mm,
+            kc: 0,
+            etcMm: 0,
+            rainMm: fDay.rainMm,
+            effectiveRainMm: fDay.rainMm,
+            staleWeather,
+            computedAt: now,
+          },
+        },
+        upsert: true,
+      },
+    }));
+
+    if (bulkOps.length > 0) {
+      await RecommendationModel.bulkWrite(bulkOps);
+    }
+
+    logger.info(
+      { fieldId: field._id.toString(), waterMode: 'rainfed', statusKey: rainfedPlan.statusKey, staleWeather },
+      'Rain-fed recommendations recomputed successfully',
+    );
+
+    return RecommendationModel.find({ fieldId: field._id })
+      .sort({ forDate: 1 })
+      .limit(7);
+  }
+
   const endDateObj = new Date(`${today}T00:00:00.000Z`);
   endDateObj.setUTCDate(endDateObj.getUTCDate() + 6);
   const toDate = endDateObj.toISOString().split('T')[0]!;
@@ -156,6 +244,8 @@ export async function recomputeField(
             notes: notesVal,
             reasonKey: item.reasonKey,
             params: item.params,
+            waterMode: 'irrigated' as const,
+            rainfedPlan: null,
             deficitMm: item.deficitMm,
             et0Mm: need?.et0Mm ?? 0,
             kc: need?.kc ?? 0,

@@ -80,7 +80,17 @@ function FieldRecommendationCard({
   let actionSentence = '';
   let detailSentence = '';
   if (todayRecommendation) {
-    if (isIrrigate) {
+    if (field.waterMode === 'rainfed' || todayRecommendation.waterMode === 'rainfed') {
+      const plan = todayRecommendation.rainfedPlan;
+      const statusKey = plan?.statusKey || todayRecommendation.plan?.reasonKey || 'rainfed.ok';
+      const statusSubKey = statusKey.replace(/^rainfed\./, '');
+      actionSentence = t(`rainfed.status.${statusSubKey}`, {
+        defaultValue: statusSubKey.replace(/_/g, ' '),
+      });
+      const rainLast7 = plan?.params?.rainLast7Days ?? 0;
+      const dryDays = plan?.params?.drySpellDays ?? 0;
+      detailSentence = `${t('rainfed.metrics.rainLast7Days', 'Last 7 Days Rain')}: ${rainLast7} mm • ${t('rainfed.metrics.drySpellDays', 'Dry Spell')}: ${dryDays} ${t('rainfed.metrics.days', 'days')}`;
+    } else if (isIrrigate) {
       const depthFormatted = formatDepthMm(todayRecommendation.plan.grossMm, lang);
       const litresFormatted = formatNumber(Math.round(todayRecommendation.plan.litres), lang);
 

@@ -286,6 +286,7 @@ export interface FetchForecastOptions {
   timeoutMs?: number;
   retryDelayMs?: number;
   fetchFn?: typeof fetch;
+  pastDays?: number;
 }
 
 /**
@@ -301,6 +302,7 @@ export async function fetchForecast(
   const timeoutMs = options?.timeoutMs ?? 5000;
   const retryDelayMs = options?.retryDelayMs ?? 300;
   const fetcher = options?.fetchFn ?? globalThis.fetch;
+  const pastDays = options?.pastDays ?? 14;
 
   const url = new URL('https://api.open-meteo.com/v1/forecast');
   url.searchParams.set('latitude', lat.toString());
@@ -311,6 +313,9 @@ export async function fetchForecast(
   );
   url.searchParams.set('timezone', 'Asia/Kolkata');
   url.searchParams.set('forecast_days', days.toString());
+  if (pastDays > 0) {
+    url.searchParams.set('past_days', pastDays.toString());
+  }
 
   async function executeCall(): Promise<OpenMeteoResponse> {
     const controller = new AbortController();
@@ -567,4 +572,53 @@ export async function getWeatherForCell(
       await releaseRedisLock(redis, lockKey, lockToken);
     }
   }
+}
+
+export interface PastAndForecastWeatherResult {
+  cellKey: string;
+  pastDays: WeatherDay[];
+  forecastDays: WeatherDay[];
+  allDays: WeatherDay[];
+  stale: boolean;
+  fetchedAt: Date;
+}
+
+/**
+ * Retrieves past days (default 14) and forecast days (default 7) for a grid cell.
+ * Cached in MongoDB per cell, with same 6-hour TTL and fallback to stale cached data on failure.
+ */
+export async function getPastAndForecastWeather(
+  cellKey: string,
+  pastDaysCount = 14,
+  forecastDaysCount = 7,
+  options?: GetWeatherOptions,
+): Promise<PastAndForecastWeatherResult> {
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+
+  // Calculate past start date
+  const pastStartObj = new Date(`${today}T00:00:00.000Z`);
+  pastStartObj.setUTCDate(pastStartObj.getUTCDate() - pastDaysCount);
+  const fromDate = pastStartObj.toISOString().split('T')[0]!;
+
+  // Calculate forecast end date
+  const forecastEndObj = new Date(`${today}T00:00:00.000Z`);
+  forecastEndObj.setUTCDate(forecastEndObj.getUTCDate() + (forecastDaysCount - 1));
+  const toDate = forecastEndObj.toISOString().split('T')[0]!;
+
+  const result = await getWeatherForCell(cellKey, fromDate, toDate, {
+    ...options,
+    pastDays: pastDaysCount,
+  });
+
+  const pastDays = result.days.filter((d) => d.date < today);
+  const forecastDays = result.days.filter((d) => d.date >= today);
+
+  return {
+    cellKey: result.cellKey,
+    pastDays,
+    forecastDays,
+    allDays: result.days,
+    stale: result.stale,
+    fetchedAt: result.fetchedAt,
+  };
 }

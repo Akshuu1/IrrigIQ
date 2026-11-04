@@ -27,6 +27,8 @@ export interface IField {
   method: IrrigationMethod;
   baseline: IFieldBaseline;
   pumpId?: Types.ObjectId | null;
+  waterMode: 'irrigated' | 'rainfed';
+  hasProtectiveWater: boolean;
   version: number;
   createdAt: Date;
   updatedAt: Date;
@@ -155,6 +157,16 @@ const fieldSchema = new Schema<IFieldDocument>(
       type: Schema.Types.ObjectId,
       ref: 'Pump',
       default: null,
+    },
+    waterMode: {
+      type: String,
+      enum: ['irrigated', 'rainfed'],
+      default: 'irrigated',
+      required: true,
+    },
+    hasProtectiveWater: {
+      type: Boolean,
+      default: false,
     },
     version: {
       type: Number,

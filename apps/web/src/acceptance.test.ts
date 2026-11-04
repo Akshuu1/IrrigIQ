@@ -20,6 +20,8 @@ import {
   stateForPoint,
   suggestLanguageForState,
   createFieldSchema,
+  getCalendarForState,
+  planRainfed,
 } from '@irrigiq/shared';
 import { formatArea, formatNumber, formatDepthMm } from './utils/formatters.js';
 
@@ -392,6 +394,101 @@ describe('Phase 9 Acceptance: Draw a field, save it, and see recommendations in 
       const bighaHa = toHectares(2, 'custom', 0.5);
       expect(bighaHa).toBe(0.4047);
       expect(fromHectares(bighaHa, 'custom', 0.5)).toBeCloseTo(2.0, 1);
+    });
+  });
+
+  describe('Phase 19 Acceptance: Rain-fed mode with state calendar and sensible weather status', () => {
+    it('a pin in a state with a calendar shows a sensible status for the current date and weather', async () => {
+      // 1. Farmer drops a pin in Maharashtra (Akola/Vidarbha cotton belt: [77.03, 20.70])
+      const pinCoords: [number, number] = [77.03, 20.70];
+      const detectedState = stateForPoint(pinCoords[0], pinCoords[1]);
+      expect(detectedState).toBe('Maharashtra');
+
+      // 2. Lookup state calendar for cotton
+      const calendar = getCalendarForState(detectedState, 'cotton');
+      expect(calendar).toBeDefined();
+      expect(calendar?.sowFrom).toBe('06-15');
+      expect(calendar?.sowTo).toBe('07-15');
+      expect(calendar?.sowingRainMm).toBe(75);
+
+      // 3. Scenario A: Sowing window open, but only 20 mm rainfall so far -> wait_to_sow
+      const pastRainLow = [0, 0, 5, 0, 10, 5, 0]; // 20 mm in last 7 days
+      const forecastSunny = [0, 0, 0, 0, 0, 0, 0];
+
+      const planWait = planRainfed(
+        {
+          cropKey: 'cotton',
+          sowingDate: '2026-07-01',
+          soilType: 'clay',
+          hasProtectiveWater: false,
+        },
+        pastRainLow,
+        forecastSunny,
+        calendar,
+        '2026-06-25', // inside window
+      );
+
+      expect(planWait.statusKey).toBe('rainfed.wait_to_sow');
+      expect(planWait.params.rainLast7Days).toBe(20);
+      expect(planWait.params.drySpellDays).toBe(7);
+
+      // Verify plain words in English & Hindi
+      await setAppLanguage('en');
+      const enStatus = i18n.t('rainfed.status.wait_to_sow');
+      expect(enStatus).toBe('Wait for Sowing Rains');
+
+      await setAppLanguage('hi');
+      const hiStatus = i18n.t('rainfed.status.wait_to_sow');
+      expect(hiStatus).toBe('बुवाई योग्य वर्षा की प्रतीक्षा करें');
+
+      // 4. Scenario B: Good monsoon arrival (85 mm rainfall in last 7 days) -> good_to_sow
+      const pastRainMonsoon = [15, 20, 10, 25, 0, 10, 5]; // 85 mm in last 7 days
+      const planGood = planRainfed(
+        {
+          cropKey: 'cotton',
+          sowingDate: '2026-07-01',
+          soilType: 'clay',
+          hasProtectiveWater: true,
+        },
+        pastRainMonsoon,
+        forecastSunny,
+        calendar,
+        '2026-06-25',
+      );
+
+      expect(planGood.statusKey).toBe('rainfed.good_to_sow');
+      expect(planGood.params.rainLast7Days).toBe(85);
+      expect(planGood.advice).toContain('rainfed.advice.sow_now');
+
+      await setAppLanguage('en');
+      expect(i18n.t('rainfed.status.good_to_sow')).toBe('Good to Sow');
+      await setAppLanguage('hi');
+      expect(i18n.t('rainfed.status.good_to_sow')).toBe('बुवाई के लिए उपयुक्त समय');
+
+      // 5. Scenario C: Sown field experiencing mid-season dry spell
+      const sownField = {
+        cropKey: 'cotton',
+        sowingDate: '2026-06-20',
+        soilType: 'clay' as const,
+        hasProtectiveWater: true,
+      };
+
+      const planSown = planRainfed(
+        sownField,
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        calendar,
+        '2026-07-20', // das = 30
+      );
+
+      expect(planSown.statusKey).toBe('rainfed.stress_risk');
+      expect(planSown.advice).toContain('rainfed.advice.protective_irrigation');
+
+      // Verify agronomist disclaimer key
+      await setAppLanguage('en');
+      const disclaimer = i18n.t('rainfed.advice.agronomist_disclaimer');
+      expect(disclaimer).toMatch(/ICAR-CRIDA/);
+      expect(disclaimer).toMatch(/Krishi Vigyan Kendra/);
     });
   });
 });

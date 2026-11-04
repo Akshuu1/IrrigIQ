@@ -116,6 +116,8 @@ export const createFieldSchema = z.object({
   method: IrrigationMethodSchema,
   baseline: baselineSchema,
   pumpId: pumpIdSchema.optional().nullable(),
+  waterMode: z.enum(['irrigated', 'rainfed']).default('irrigated'),
+  hasProtectiveWater: z.boolean().default(false),
 });
 export type CreateFieldInput = z.input<typeof createFieldSchema>;
 
@@ -141,6 +143,8 @@ export const updateFieldSchema = z.object({
   method: IrrigationMethodSchema.optional(),
   baseline: baselineSchema.optional(),
   pumpId: pumpIdSchema.optional().nullable(),
+  waterMode: z.enum(['irrigated', 'rainfed']).optional(),
+  hasProtectiveWater: z.boolean().optional(),
 });
 export type UpdateFieldInput = z.input<typeof updateFieldSchema>;
 

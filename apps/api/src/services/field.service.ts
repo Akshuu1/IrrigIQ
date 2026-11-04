@@ -139,6 +139,8 @@ export class FieldService {
       method: input.method,
       baseline: input.baseline,
       pumpId: input.pumpId ? new Types.ObjectId(input.pumpId) : null,
+      waterMode: input.waterMode ?? 'irrigated',
+      hasProtectiveWater: input.hasProtectiveWater ?? false,
       version: 1,
     };
 
@@ -215,6 +217,12 @@ export class FieldService {
     }
     if (input.customAcresPerUnit !== undefined) {
       updateData.customAcresPerUnit = input.customAcresPerUnit;
+    }
+    if (input.waterMode !== undefined) {
+      updateData.waterMode = input.waterMode;
+    }
+    if (input.hasProtectiveWater !== undefined) {
+      updateData.hasProtectiveWater = input.hasProtectiveWater;
     }
 
     // If geometry changed, re-validate and re-calculate area and centroid on server

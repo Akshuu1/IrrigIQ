@@ -83,13 +83,22 @@ describe('Recommendations Service & Scheduler Integration Tests', () => {
     ],
   };
 
-  // Generates 7 mock weather days starting today
-  function generateMockWeatherResponse(options: { rainOnDayIndex?: number; rainMm?: number } = {}) {
+  // Generates mock weather days starting today (optionally including past days)
+  function generateMockWeatherResponse(options: {
+    rainOnDayIndex?: number;
+    rainMm?: number;
+    pastDays?: number;
+  } = {}) {
+    const pastDaysCount = options.pastDays ?? 0;
     const dates: string[] = [];
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
     const current = new Date(`${today}T00:00:00.000Z`);
+    if (pastDaysCount > 0) {
+      current.setUTCDate(current.getUTCDate() - pastDaysCount);
+    }
 
-    for (let i = 0; i < 7; i++) {
+    const totalDays = pastDaysCount + 7;
+    for (let i = 0; i < totalDays; i++) {
       dates.push(current.toISOString().split('T')[0]!);
       current.setUTCDate(current.getUTCDate() + 1);
     }
@@ -103,10 +112,10 @@ describe('Recommendations Service & Scheduler Integration Tests', () => {
       longitude: 75.8,
       daily: {
         time: dates,
-        temperature_2m_max: [30.0, 31.0, 30.5, 32.0, 31.5, 30.0, 29.5],
-        temperature_2m_min: [18.0, 18.5, 18.0, 19.0, 18.5, 17.5, 17.0],
+        temperature_2m_max: dates.map(() => 30.0),
+        temperature_2m_min: dates.map(() => 18.0),
         precipitation_sum: rainList,
-        et0_fao_evapotranspiration: [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
+        et0_fao_evapotranspiration: dates.map(() => 5.0),
       },
     };
   }
@@ -425,6 +434,169 @@ describe('Recommendations Service & Scheduler Integration Tests', () => {
       // Litres = grossMm * field.areaHa * 10,000
       const fieldAreaHa = createRes.body.data.field.areaHa;
       expect(day4.litres).toBeCloseTo(day4.grossMm * fieldAreaHa * 10000, -2);
+    });
+  });
+
+  describe('Phase 19: Rain-fed Mode Recommendations', () => {
+    it('creates a rainfed field and computes rainfed plan (0 litres, null runMinutes)', async () => {
+      const { token } = await createTestUser('rainfed_farmer@example.com');
+
+      // Centroid in Rajasthan (75.8, 26.9)
+      nock('https://api.open-meteo.com')
+        .get('/v1/forecast')
+        .query(true)
+        .reply(200, generateMockWeatherResponse({ pastDays: 14 }));
+
+      const res = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'Rainfed Cotton Field',
+          geometry: validSquarePolygon,
+          cropKey: 'cotton',
+          sowingDate: new Date('2026-06-20').toISOString(),
+          soilType: 'clay',
+          method: 'flood',
+          baseline: { everyDays: 5, depthMm: 30 },
+          waterMode: 'rainfed',
+          hasProtectiveWater: true,
+        });
+
+      expect(res.status).toBe(201);
+      const field = res.body.data.field;
+      expect(field.waterMode).toBe('rainfed');
+      expect(field.hasProtectiveWater).toBe(true);
+
+      const recs = await RecommendationModel.find({ fieldId: field.id }).sort({ forDate: 1 });
+      expect(recs).toHaveLength(7);
+
+      for (const rec of recs) {
+        expect(rec.action).toBe('skip');
+        expect(rec.netMm).toBe(0);
+        expect(rec.grossMm).toBe(0);
+        expect(rec.litres).toBe(0);
+        expect(rec.runMinutes).toBeNull();
+        expect(rec.pumpCost).toBeNull();
+        expect(rec.waterMode).toBe('rainfed');
+        expect(rec.rainfedPlan).toBeDefined();
+        expect(rec.rainfedPlan?.statusKey).toMatch(/^rainfed\./);
+        expect(rec.rainfedPlan?.params).toHaveProperty('rainLast7Days');
+        expect(rec.rainfedPlan?.params).toHaveProperty('drySpellDays');
+        expect(rec.rainfedPlan?.params).toHaveProperty('bucketPercent');
+      }
+    });
+
+    it('recomputes correctly when switching from irrigated to rainfed and back', async () => {
+      const { token } = await createTestUser('switch_farmer@example.com');
+
+      nock('https://api.open-meteo.com')
+        .get('/v1/forecast')
+        .query(true)
+        .reply(200, generateMockWeatherResponse({ pastDays: 14 }));
+
+      // 1. Create irrigated field
+      const createRes = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'Switch Field',
+          geometry: validSquarePolygon,
+          cropKey: 'wheat',
+          sowingDate: new Date('2026-10-01').toISOString(),
+          soilType: 'loam',
+          method: 'drip',
+          baseline: { everyDays: 4, depthMm: 25 },
+          waterMode: 'irrigated',
+        });
+
+      const fieldId = createRes.body.data.field.id;
+      let fieldVersion = createRes.body.data.field.version;
+
+      const irrigatedRecs = await RecommendationModel.find({ fieldId }).sort({ forDate: 1 });
+      expect(irrigatedRecs.some((r) => r.action === 'irrigate')).toBe(true);
+      expect(irrigatedRecs[0]?.waterMode).toBe('irrigated');
+      expect(irrigatedRecs[0]?.rainfedPlan).toBeNull();
+
+      // 2. Switch to rainfed
+      nock('https://api.open-meteo.com')
+        .get('/v1/forecast')
+        .query(true)
+        .reply(200, generateMockWeatherResponse({ pastDays: 14 }));
+
+      const patchRes = await request(app)
+        .patch(`/fields/${fieldId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          version: fieldVersion,
+          waterMode: 'rainfed',
+          hasProtectiveWater: false,
+        });
+
+      expect(patchRes.status).toBe(200);
+      fieldVersion = patchRes.body.data.field.version;
+
+      const rainfedRecs = await RecommendationModel.find({ fieldId }).sort({ forDate: 1 });
+      expect(rainfedRecs).toHaveLength(7);
+      expect(rainfedRecs.every((r) => r.action === 'skip')).toBe(true);
+      expect(rainfedRecs.every((r) => r.litres === 0)).toBe(true);
+      expect(rainfedRecs[0]?.waterMode).toBe('rainfed');
+      expect(rainfedRecs[0]?.rainfedPlan).toBeDefined();
+
+      // 3. Switch back to irrigated
+      nock('https://api.open-meteo.com')
+        .get('/v1/forecast')
+        .query(true)
+        .reply(200, generateMockWeatherResponse({ pastDays: 14 }));
+
+      const patchBackRes = await request(app)
+        .patch(`/fields/${fieldId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          version: fieldVersion,
+          waterMode: 'irrigated',
+        });
+
+      expect(patchBackRes.status).toBe(200);
+
+      const restoredRecs = await RecommendationModel.find({ fieldId }).sort({ forDate: 1 });
+      expect(restoredRecs.some((r) => r.action === 'irrigate')).toBe(true);
+      expect(restoredRecs[0]?.waterMode).toBe('irrigated');
+      expect(restoredRecs[0]?.rainfedPlan).toBeNull();
+    });
+
+    it('returns rainfed.no_calendar for location without covered calendar state', async () => {
+      const { token } = await createTestUser('no_calendar@example.com');
+
+      // Pin location in sea / outside covered states (e.g. 72.0, 15.0 - Arabian Sea off Goa coast)
+      nock('https://api.open-meteo.com')
+        .get('/v1/forecast')
+        .query(true)
+        .reply(200, generateMockWeatherResponse({ pastDays: 14 }));
+
+      const createRes = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'Offshore Field',
+          locationMode: 'pin',
+          location: { type: 'Point', coordinates: [72.0, 15.0] },
+          areaValue: 2,
+          areaUnit: 'acre',
+          cropKey: 'cotton',
+          sowingDate: new Date('2026-06-20').toISOString(),
+          soilType: 'loam',
+          method: 'drip',
+          baseline: { everyDays: 4, depthMm: 25 },
+          waterMode: 'rainfed',
+        });
+
+      expect(createRes.status).toBe(201);
+      const fieldId = createRes.body.data.field.id;
+
+      const recs = await RecommendationModel.find({ fieldId }).sort({ forDate: 1 });
+      expect(recs[0]?.reasonKey).toBe('rainfed.no_calendar');
+      expect(recs[0]?.rainfedPlan?.statusKey).toBe('rainfed.no_calendar');
+      expect(recs[0]?.notes).toContain('rainfed.advice.no_calendar');
     });
   });
 });

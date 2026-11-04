@@ -349,6 +349,44 @@
     "openBtn": "Open in New Tab",
     "failed": "Report generation failed. Please try again.",
     "close": "Close"
+  },
+  "rainfed": {
+    "title": "Rain-fed Crop Advisory",
+    "subtitle": "Water balance, dry spell tracking and sowing calendar",
+    "modeLabel": "Farming Mode",
+    "irrigated": "Irrigated",
+    "rainfed": "Rain-fed (Barani)",
+    "protectiveWaterLabel": "Protective Water Source Available",
+    "protectiveWaterDesc": "Access to emergency water (farm pond, tanker, neighbour's well) for life-saving irrigation during severe dry spells",
+    "status": {
+      "wait_to_sow": "Wait for Sowing Rains",
+      "good_to_sow": "Good to Sow",
+      "outside_window": "Outside Sowing Window",
+      "ok": "Adequate Moisture",
+      "watch_dry": "Dry Spell Watch",
+      "stress_risk": "Drought Stress Risk",
+      "no_calendar": "No Calendar for this State"
+    },
+    "metrics": {
+      "rainLast7Days": "Last 7 Days Rain",
+      "drySpellDays": "Forecast Dry Spell",
+      "bucketPercent": "Available Soil Moisture",
+      "days": "days",
+      "drySpellBar": "7-Day Dry Spell Bar",
+      "of7Days": "/ 7 days dry"
+    },
+    "advice": {
+      "sow_now": "Adequate profile moisture available (≥ 75 mm in last 7 days). Optimal window to sow crop.",
+      "wait_for_soaking_rain": "Profile moisture insufficient. Wait for at least 75 mm cumulative rainfall before sowing.",
+      "prepare_land": "Pre-sowing window. Complete summer tillage and keep seeds/fertilizers ready.",
+      "contingency_short_duration": "Normal sowing window has ended. Adopt short-duration contingency crops or intercropping.",
+      "weed_management": "Soil moisture is favourable. Maintain timely weeding to minimize moisture competition.",
+      "mulching": "Dry spell developing. Apply organic mulch or dust mulching (shallow interculture) to conserve soil water.",
+      "foliar_spray": "Moisture stress detected. Spray 2% potassium chloride (KCl) or 2% urea to alleviate drought stress.",
+      "protective_irrigation": "Apply life-saving protective irrigation (20-30 mm) using available protective water.",
+      "no_calendar": "No state crop calendar configured for this location. Consult local Krishi Vigyan Kendra (KVK).",
+      "agronomist_disclaimer": "⚠️ Advisory generated based on ICAR-CRIDA dryland guidelines. Text and thresholds flagged for agronomic review by local Krishi Vigyan Kendra (KVK)."
+    }
   }
 }
 

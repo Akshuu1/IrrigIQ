@@ -1,0 +1,58 @@
+{
+  "state": "Maharashtra",
+  "source": "ICAR-CRIDA State Contingency Plan: Maharashtra (Vidarbha, Marathwada & Western Maharashtra Agro-climatic Zones)",
+  "verified": false,
+  "crops": [
+    {
+      "state": "Maharashtra",
+      "crop": "cotton",
+      "season": "kharif",
+      "sowFrom": "06-15",
+      "sowTo": "07-15",
+      "sowingRainMm": 75,
+      "source": "Dr. Panjabrao Deshmukh Krishi Vidyapeeth (PDKV) Akola Cotton Advisory",
+      "verified": false
+    },
+    {
+      "state": "Maharashtra",
+      "crop": "maize",
+      "season": "kharif",
+      "sowFrom": "06-20",
+      "sowTo": "07-20",
+      "sowingRainMm": 75,
+      "source": "Vasantrao Naik Marathwada Krishi Vidyapeeth (VNMKV) Parbhani Maize Calendar",
+      "verified": false
+    },
+    {
+      "state": "Maharashtra",
+      "crop": "rice",
+      "season": "kharif",
+      "sowFrom": "06-10",
+      "sowTo": "07-10",
+      "sowingRainMm": 100,
+      "source": "Dr. Balasaheb Sawant Konkan Krishi Vidyapeeth (DBSKKV) Dapoli Rice Calendar",
+      "verified": false
+    },
+    {
+      "state": "Maharashtra",
+      "crop": "tomato",
+      "season": "kharif",
+      "sowFrom": "06-15",
+      "sowTo": "07-31",
+      "sowingRainMm": 60,
+      "source": "Mahatma Phule Krishi Vidyapeeth (MPKV) Rahuri Vegetable Sowing Guide",
+      "verified": false
+    },
+    {
+      "state": "Maharashtra",
+      "crop": "wheat",
+      "season": "rabi",
+      "sowFrom": "10-25",
+      "sowTo": "11-20",
+      "sowingRainMm": 40,
+      "source": "MPKV Rahuri Rabi Wheat Contingency Recommendations",
+      "verified": false
+    }
+  ]
+}
+

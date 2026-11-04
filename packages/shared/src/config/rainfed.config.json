@@ -1,0 +1,106 @@
+{
+  "version": "2.0.0",
+  "rainyDayMm": {
+    "value": 2.5,
+    "source": "India Meteorological Department (IMD) Standard Definition: A rainy day is defined as a day with rainfall of 2.5 mm or more",
+    "verified": false
+  },
+  "sowingRainMm": {
+    "value": 75,
+    "source": "ICAR-CRIDA Rainfed Agriculture Guidelines: 75 mm cumulative rainfall over a 7-day window creates sufficient profile moisture to initiate kharif sowing",
+    "verified": false
+  },
+  "sowingRainWindowDays": {
+    "value": 7,
+    "source": "ICAR-CRIDA Technical Bulletin on Sowing Rainfall Windows and Contingency Planning",
+    "verified": false
+  },
+  "maxDrySpellAfterSowDays": {
+    "value": 7,
+    "source": "ICAR-CRIDA Dryland Contingency Planning: >7 consecutive dry days after sowing triggers early dry-spell advisory and seedling mortality warning",
+    "verified": false
+  },
+  "stressThresholds": {
+    "watch": {
+      "value": 0.5,
+      "source": "FAO-56 Management Allowed Depletion (p ~ 0.5 for most field crops before yield reduction begins)",
+      "verified": false
+    },
+    "stress": {
+      "value": 0.3,
+      "source": "FAO-56 Severe Water Stress Threshold: Available soil moisture below 30% of TAW induces stomatal closure and wilting",
+      "verified": false
+    }
+  },
+  "soilWaterCapacityPerMetre": {
+    "sandy": {
+      "value": 100,
+      "unit": "mm/m",
+      "source": "FAO Irrigation and Drainage Paper 56, Table 19: Available soil water capacity for coarse sand/loamy sand (60-140 mm/m, starter 100 mm/m)",
+      "verified": false
+    },
+    "loam": {
+      "value": 140,
+      "unit": "mm/m",
+      "source": "FAO-56 Table 19: Available soil water capacity for medium texture loam/silt loam (100-180 mm/m, starter 140 mm/m)",
+      "verified": false
+    },
+    "clay": {
+      "value": 180,
+      "unit": "mm/m",
+      "source": "FAO-56 Table 19: Available soil water capacity for heavy clay/clay loam (160-220 mm/m, starter 180 mm/m)",
+      "verified": false
+    }
+  },
+  "rootDepthPerCropAndStage": {
+    "wheat": {
+      "ini": { "value": 0.3, "source": "FAO-56 Table 22", "verified": false },
+      "dev": { "value": 0.6, "source": "FAO-56 Table 22", "verified": false },
+      "mid": { "value": 1.2, "source": "FAO-56 Table 22", "verified": false },
+      "late": { "value": 1.2, "source": "FAO-56 Table 22", "verified": false }
+    },
+    "rice": {
+      "ini": { "value": 0.2, "source": "FAO-56 Table 22", "verified": false },
+      "dev": { "value": 0.4, "source": "FAO-56 Table 22", "verified": false },
+      "mid": { "value": 0.8, "source": "FAO-56 Table 22", "verified": false },
+      "late": { "value": 0.8, "source": "FAO-56 Table 22", "verified": false }
+    },
+    "maize": {
+      "ini": { "value": 0.3, "source": "FAO-56 Table 22", "verified": false },
+      "dev": { "value": 0.6, "source": "FAO-56 Table 22", "verified": false },
+      "mid": { "value": 1.2, "source": "FAO-56 Table 22", "verified": false },
+      "late": { "value": 1.2, "source": "FAO-56 Table 22", "verified": false }
+    },
+    "cotton": {
+      "ini": { "value": 0.3, "source": "FAO-56 Table 22", "verified": false },
+      "dev": { "value": 0.7, "source": "FAO-56 Table 22", "verified": false },
+      "mid": { "value": 1.4, "source": "FAO-56 Table 22", "verified": false },
+      "late": { "value": 1.4, "source": "FAO-56 Table 22", "verified": false }
+    },
+    "tomato": {
+      "ini": { "value": 0.25, "source": "FAO-56 Table 22", "verified": false },
+      "dev": { "value": 0.5, "source": "FAO-56 Table 22", "verified": false },
+      "mid": { "value": 0.9, "source": "FAO-56 Table 22", "verified": false },
+      "late": { "value": 0.9, "source": "FAO-56 Table 22", "verified": false }
+    },
+    "potato": {
+      "ini": { "value": 0.2, "source": "FAO-56 Table 22", "verified": false },
+      "dev": { "value": 0.4, "source": "FAO-56 Table 22", "verified": false },
+      "mid": { "value": 0.6, "source": "FAO-56 Table 22", "verified": false },
+      "late": { "value": 0.6, "source": "FAO-56 Table 22", "verified": false }
+    },
+    "onion": {
+      "ini": { "value": 0.2, "source": "FAO-56 Table 22", "verified": false },
+      "dev": { "value": 0.3, "source": "FAO-56 Table 22", "verified": false },
+      "mid": { "value": 0.5, "source": "FAO-56 Table 22", "verified": false },
+      "late": { "value": 0.5, "source": "FAO-56 Table 22", "verified": false }
+    },
+    "sugarcane": {
+      "ini": { "value": 0.3, "source": "FAO-56 Table 22", "verified": false },
+      "dev": { "value": 0.7, "source": "FAO-56 Table 22", "verified": false },
+      "mid": { "value": 1.5, "source": "FAO-56 Table 22", "verified": false },
+      "late": { "value": 1.5, "source": "FAO-56 Table 22", "verified": false }
+    }
+  }
+}
+

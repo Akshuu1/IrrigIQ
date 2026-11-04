@@ -9,3 +9,4 @@ export * from './sync.js';
 export * from './pump.js';
 export * from './power-schedule.js';
 export * from './soil.js';
+export * from './rainfed.js';

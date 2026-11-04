@@ -89,6 +89,8 @@ export function FieldWizard(): React.JSX.Element {
   });
   const [soilType, setSoilType] = useState<SoilType>('loam');
   const [method, setMethod] = useState<IrrigationMethod>('drip');
+  const [waterMode, setWaterMode] = useState<'irrigated' | 'rainfed'>('irrigated');
+  const [hasProtectiveWater, setHasProtectiveWater] = useState(false);
   const [everyDays, setEveryDays] = useState<number>(4);
   const [depthMm, setDepthMm] = useState<number>(30);
   const [pumps, setPumps] = useState<Pump[]>([]);
@@ -397,6 +399,8 @@ export function FieldWizard(): React.JSX.Element {
         sowingDate: new Date(sowingDate || Date.now()),
         soilType,
         method,
+        waterMode,
+        hasProtectiveWater,
         baseline: {
           everyDays: Number(everyDays),
           depthMm: Number(depthMm),
@@ -426,6 +430,8 @@ export function FieldWizard(): React.JSX.Element {
         sowingDate: new Date(sowingDate || Date.now()),
         soilType,
         method,
+        waterMode,
+        hasProtectiveWater,
         baseline: {
           everyDays: Number(everyDays),
           depthMm: Number(depthMm),
@@ -872,6 +878,64 @@ export function FieldWizard(): React.JSX.Element {
                 <option value="sprinkler">{t('fieldWizard.methodSprinkler')}</option>
                 <option value="flood">{t('fieldWizard.methodFlood')}</option>
               </select>
+            </div>
+
+            {/* Water Farming Mode */}
+            <div className="sm:col-span-2 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+              <label className="block text-sm font-semibold text-slate-200 mb-2">
+                {t('rainfed.modeLabel', 'Farming Mode')} *
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  data-testid="mode-irrigated"
+                  onClick={() => setWaterMode('irrigated')}
+                  className={`min-h-[44px] rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
+                    waterMode === 'irrigated'
+                      ? 'bg-emerald-500 text-white shadow-md'
+                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  }`}
+                >
+                  💧 {t('rainfed.irrigated', 'Irrigated')}
+                </button>
+                <button
+                  type="button"
+                  data-testid="mode-rainfed"
+                  onClick={() => setWaterMode('rainfed')}
+                  className={`min-h-[44px] rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
+                    waterMode === 'rainfed'
+                      ? 'bg-amber-500 text-white shadow-md'
+                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  }`}
+                >
+                  🌧️ {t('rainfed.rainfed', 'Rain-fed (Barani)')}
+                </button>
+              </div>
+
+              {waterMode === 'rainfed' && (
+                <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      data-testid="protective-water-checkbox"
+                      checked={hasProtectiveWater}
+                      onChange={(e) => setHasProtectiveWater(e.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-400"
+                    />
+                    <div className="text-xs">
+                      <span className="font-semibold text-amber-200">
+                        {t('rainfed.protectiveWaterLabel', 'Protective Water Source Available')}
+                      </span>
+                      <p className="mt-0.5 text-slate-300">
+                        {t(
+                          'rainfed.protectiveWaterDesc',
+                          "Access to emergency water (farm pond, tanker, neighbour's well) for life-saving irrigation during severe dry spells",
+                        )}
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              )}
             </div>
           </div>
         </div>

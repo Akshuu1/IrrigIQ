@@ -19,6 +19,12 @@ export interface IRecommendation {
   notes: string[];
   reasonKey: string;
   params: Record<string, number | string>;
+  waterMode?: 'irrigated' | 'rainfed';
+  rainfedPlan?: {
+    statusKey: string;
+    params: Record<string, number | string>;
+    advice: string[];
+  } | null;
   deficitMm: number;
   et0Mm: number;
   kc: number;
@@ -113,6 +119,15 @@ const recommendationSchema = new Schema<IRecommendationDocument>(
     params: {
       type: Schema.Types.Mixed,
       default: {},
+    },
+    waterMode: {
+      type: String,
+      enum: ['irrigated', 'rainfed'],
+      default: 'irrigated',
+    },
+    rainfedPlan: {
+      type: Schema.Types.Mixed,
+      default: null,
     },
     deficitMm: {
       type: Number,

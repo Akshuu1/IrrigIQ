@@ -14,6 +14,7 @@ import {
   ZapOff,
   Wind,
 } from 'lucide-react';
+import { RainfedAdvisoryCard } from './RainfedAdvisoryCard.js';
 
 interface TodayAdvisoryCardProps {
   field: Field;
@@ -40,6 +41,15 @@ export function TodayAdvisoryCard({
   const pumpCostVal = todayRecommendation?.plan?.pumpCost;
   const isPumpMissing = todayRecommendation?.plan?.pumpMissing ?? false;
   const [isReportingNoPower, setIsReportingNoPower] = useState(false);
+
+  if (field.waterMode === 'rainfed') {
+    return (
+      <RainfedAdvisoryCard
+        field={field}
+        todayRecommendation={todayRecommendation}
+      />
+    );
+  }
 
   const handleReportNoPower = async () => {
     if (!todayRecommendation) return;

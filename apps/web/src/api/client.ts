@@ -223,6 +223,8 @@ export interface Field {
     depthMm: number;
   };
   pumpId?: string | null;
+  waterMode?: 'irrigated' | 'rainfed';
+  hasProtectiveWater?: boolean;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -258,6 +260,20 @@ export interface Recommendation {
     reasonParams?: Record<string, string | number>;
     deficitMm: number;
   };
+  waterMode?: 'irrigated' | 'rainfed';
+  rainfedPlan?: {
+    statusKey: string;
+    params: {
+      rainLast7Days: number;
+      drySpellDays: number;
+      bucketPercent: number;
+      tawMm?: number;
+      currentStoreMm?: number;
+      sowingRainTargetMm?: number;
+      das?: number;
+    };
+    advice: string[];
+  } | null;
 }
 
 // Pump types

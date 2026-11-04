@@ -406,6 +406,50 @@ In rural Indian agriculture, electrical power for agricultural tubewells and pum
 
 ---
 
+## ADR 013: Rain-fed (Barani) Farming Mode, Sowing Calendars & Past Weather Data
+
+### Context & Problem Statement
+
+Over 51% of net sown area in India is rain-fed, contributing ~40% of food grain production. Rain-fed farmers do not operate regular irrigation pumps on schedule; instead, they make critical agronomic decisions based on:
+1. Sowing readiness (whether the monsoon has delivered enough profile moisture to sow without risk of false starts).
+2. Dry spell monitoring (tracking consecutive dry days during vegetative and flowering stages).
+3. Critical soil water deficit (whether life-saving protective water from farm ponds or tankers is required).
+
+### Agronomic Decision Rules & Scientific Foundations
+
+1. **Rainy Day Definition ($\ge 2.5\text{ mm}$)**:
+   - **Source**: India Meteorological Department (IMD) Standard Climatological Definition.
+   - Days with rainfall $< 2.5\text{ mm}$ evaporate rapidly from the topsoil without recharging root-zone soil moisture and are classified as dry days.
+
+2. **Sowing Rainfall Trigger Threshold ($75\text{ mm}$ in 7 days)**:
+   - **Source**: ICAR-CRIDA (Central Research Institute for Dryland Agriculture) Dryland Sowing Guidelines.
+   - Sowing before $75\text{ mm}$ cumulative rain risks seed desiccation in dry subsoil; waiting too long after window closes reduces crop duration and yield.
+
+3. **Dry Spell Hazard Threshold ($7\text{ days}$)**:
+   - **Source**: ICAR-CRIDA All India Coordinated Research Project for Dryland Agriculture (AICRPDA).
+   - A dry spell $> 7\text{ days}$ immediately after seedling emergence triggers emergency mulching, weed competition elimination, or foliar application of 2% potassium chloride (KCl) or urea.
+
+4. **Available Soil Water Capacity & TAW**:
+   - **Source**: FAO-56 Paper No. 56, Table 19 & 22.
+   - Water capacity per metre: Sandy ($100\text{ mm/m}$), Loam ($140\text{ mm/m}$), Clay ($180\text{ mm/m}$).
+   - $\text{TAW} = \text{CapacityPerMetre} \times \text{RootDepth}(\text{crop}, \text{DAS})$.
+   - Bucket mass balance: $\text{Store}_{t} = \min(\text{TAW}, \max(0, \text{Store}_{t-1} + P_{\text{eff}} - ET_c))$.
+   - Stress thresholds: $\text{ratio} < 0.3 \to \text{stress}$, $0.3 \le \text{ratio} < 0.5 \to \text{watch}$, $\text{ratio} \ge 0.5 \to \text{ok}$.
+
+### External API Terms & Usage: Open-Meteo `past_days=14`
+
+- **Endpoint**: `https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&past_days=14&forecast_days=7&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,et0_fao_evapotranspiration,wind_speed_10m_max&timezone=Asia%2FKolkata`
+- **Terms & License**: Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)**.
+- **Fair Use & Limits**: Requesting 14 past days + 7 forecast days stays within the 10,000 requests/day free tier.
+- **Caching**: Stored in MongoDB `WeatherDay` collection per 0.1° cell with 6-hour TTL. Fallback to stale cache with `stale: true` on upstream outages ensures 100% availability.
+
+### Configuration Integrity
+
+All agronomic thresholds, sowing rain windows, soil capacities, and state calendars are maintained in versioned JSON config files (`packages/shared/src/config/rainfed.config.json` and `packages/shared/src/config/calendars/<state>.json`) with explicit `source` and `verified: false` tags for agronomist review.
+
+
+---
+
 ## ADR 012: Pin Drop, Area Units, State Boundaries & ISRIC SoilGrids Integration
 
 ### Context
@@ -467,6 +511,50 @@ Phase 18 introduces streamlined field creation for Indian smallholder farmers wh
    - When multiple fields share a single pump, field run durations are sorted by urgency (highest water deficit in mm first) and allocated back-to-back across available intervals.
 4. **No-Power Resilience (`rescheduleForNoPower`)**:
    - When a farmer reports an unexpected feeder outage, the scheduled run moves to the next available interval while preserving the accumulated root-zone soil water deficit.
+
+---
+
+## ADR 013: Rain-fed (Barani) Farming Mode, Sowing Calendars & Past Weather Data
+
+### Context & Problem Statement
+
+Over 51% of net sown area in India is rain-fed, contributing ~40% of food grain production. Rain-fed farmers do not operate regular irrigation pumps on schedule; instead, they make critical agronomic decisions based on:
+1. Sowing readiness (whether the monsoon has delivered enough profile moisture to sow without risk of false starts).
+2. Dry spell monitoring (tracking consecutive dry days during vegetative and flowering stages).
+3. Critical soil water deficit (whether life-saving protective water from farm ponds or tankers is required).
+
+### Agronomic Decision Rules & Scientific Foundations
+
+1. **Rainy Day Definition ($\ge 2.5\text{ mm}$)**:
+   - **Source**: India Meteorological Department (IMD) Standard Climatological Definition.
+   - Days with rainfall $< 2.5\text{ mm}$ evaporate rapidly from the topsoil without recharging root-zone soil moisture and are classified as dry days.
+
+2. **Sowing Rainfall Trigger Threshold ($75\text{ mm}$ in 7 days)**:
+   - **Source**: ICAR-CRIDA (Central Research Institute for Dryland Agriculture) Dryland Sowing Guidelines.
+   - Sowing before $75\text{ mm}$ cumulative rain risks seed desiccation in dry subsoil; waiting too long after window closes reduces crop duration and yield.
+
+3. **Dry Spell Hazard Threshold ($7\text{ days}$)**:
+   - **Source**: ICAR-CRIDA All India Coordinated Research Project for Dryland Agriculture (AICRPDA).
+   - A dry spell $> 7\text{ days}$ immediately after seedling emergence triggers emergency mulching, weed competition elimination, or foliar application of 2% potassium chloride (KCl) or urea.
+
+4. **Available Soil Water Capacity & TAW**:
+   - **Source**: FAO-56 Paper No. 56, Table 19 & 22.
+   - Water capacity per metre: Sandy ($100\text{ mm/m}$), Loam ($140\text{ mm/m}$), Clay ($180\text{ mm/m}$).
+   - $\text{TAW} = \text{CapacityPerMetre} \times \text{RootDepth}(\text{crop}, \text{DAS})$.
+   - Bucket mass balance: $\text{Store}_{t} = \min(\text{TAW}, \max(0, \text{Store}_{t-1} + P_{\text{eff}} - ET_c))$.
+   - Stress thresholds: $\text{ratio} < 0.3 \to \text{stress}$, $0.3 \le \text{ratio} < 0.5 \to \text{watch}$, $\text{ratio} \ge 0.5 \to \text{ok}$.
+
+### External API Terms & Usage: Open-Meteo `past_days=14`
+
+- **Endpoint**: `https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&past_days=14&forecast_days=7&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,et0_fao_evapotranspiration,wind_speed_10m_max&timezone=Asia%2FKolkata`
+- **Terms & License**: Distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)**.
+- **Fair Use & Limits**: Requesting 14 past days + 7 forecast days stays within the 10,000 requests/day free tier.
+- **Caching**: Stored in MongoDB `WeatherDay` collection per 0.1° cell with 6-hour TTL. Fallback to stale cache with `stale: true` on upstream outages ensures 100% availability.
+
+### Configuration Integrity
+
+All agronomic thresholds, sowing rain windows, soil capacities, and state calendars are maintained in versioned JSON config files (`packages/shared/src/config/rainfed.config.json` and `packages/shared/src/config/calendars/<state>.json`) with explicit `source` and `verified: false` tags for agronomist review.
+
 
 
 
