@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -7,6 +7,7 @@ import { createApp } from '../app.js';
 import { UserModel } from '../models/user.model.js';
 import { RefreshTokenModel } from '../models/refreshToken.model.js';
 import { FieldModel } from '../models/field.model.js';
+import { SoilService } from '../services/soil.service.js';
 
 describe('Fields and Crops Integration Tests (MongoDB 7+)', () => {
   let mongod: MongoMemoryServer;
@@ -667,6 +668,13 @@ describe('Fields and Crops Integration Tests (MongoDB 7+)', () => {
 
     it('exposes GET /fields/soil-suggestion', async () => {
       const user = await createTestUser('soil_route_user@example.com');
+      const spy = vi.spyOn(SoilService.prototype, 'getSoilSuggestion').mockResolvedValueOnce({
+        sandPct: 40,
+        siltPct: 35,
+        clayPct: 25,
+        texture: 'loam',
+        source: 'ISRIC SoilGrids 250m v2.0',
+      });
 
       const res = await request(app)
         .get('/fields/soil-suggestion?lng=75.8&lat=26.9')
@@ -674,7 +682,14 @@ describe('Fields and Crops Integration Tests (MongoDB 7+)', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.status).toBe('success');
-      expect(res.body.data).toHaveProperty('suggestion');
+      expect(res.body.data.suggestion).toEqual({
+        sandPct: 40,
+        siltPct: 35,
+        clayPct: 25,
+        texture: 'loam',
+        source: 'ISRIC SoilGrids 250m v2.0',
+      });
+      spy.mockRestore();
     });
   });
 });
