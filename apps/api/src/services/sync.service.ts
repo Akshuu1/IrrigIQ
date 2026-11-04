@@ -1,8 +1,14 @@
 import { Types } from 'mongoose';
-import { SyncMutation, SyncResultItem, SyncMutationType } from '@irrigiq/shared';
+import {
+  SyncMutation,
+  SyncResultItem,
+  SyncMutationType,
+  CreateFieldInput,
+} from '@irrigiq/shared';
 import { SyncRecord } from '../models/sync-record.model.js';
 import { FieldModel } from '../models/field.model.js';
 import { FieldRepository } from '../repositories/field.repository.js';
+import { fieldService } from './field.service.js';
 import { IrrigationLogService } from './irrigation-log.service.js';
 import { recomputeField } from './recommendation.service.js';
 import { logger } from '../config/logger.js';
@@ -32,7 +38,10 @@ export class SyncService {
         }
 
         // Validate fieldId format
-        if (!Types.ObjectId.isValid(mutation.fieldId)) {
+        if (
+          mutation.type !== 'create_field' &&
+          (!mutation.fieldId || !Types.ObjectId.isValid(mutation.fieldId))
+        ) {
           const item: SyncResultItem = {
             clientId: mutation.clientId,
             type: mutation.type as SyncMutationType,
@@ -46,10 +55,32 @@ export class SyncService {
 
         let itemResult: SyncResultItem;
 
-        if (mutation.type === 'create_irrigation_log') {
+        if (mutation.type === 'create_field') {
+          try {
+            const field = await fieldService.createField(
+              userId,
+              mutation.payload as unknown as CreateFieldInput,
+            );
+            itemResult = {
+              clientId: mutation.clientId,
+              type: 'create_field',
+              status: 'applied',
+              fieldId: field.id,
+              serverField: field.toObject ? field.toObject() : field,
+            };
+          } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to create field';
+            itemResult = {
+              clientId: mutation.clientId,
+              type: 'create_field',
+              status: 'error',
+              error: message,
+            };
+          }
+        } else if (mutation.type === 'create_irrigation_log') {
           // Process irrigation log
           try {
-            const log = await this.irrigationLogService.createLog(userId, mutation.fieldId, {
+            const log = await this.irrigationLogService.createLog(userId, mutation.fieldId!, {
               date: mutation.payload.date,
               appliedMm: mutation.payload.appliedMm,
               source: mutation.payload.source || 'manual',
@@ -77,7 +108,7 @@ export class SyncService {
           // Process field update with optimistic concurrency control
           const baseVersion = mutation.baseVersion ?? 1;
           const updateResult = await this.fieldRepo.updateWithVersion(
-            mutation.fieldId,
+            mutation.fieldId!,
             userId,
             baseVersion,
             mutation.payload,
@@ -93,7 +124,7 @@ export class SyncService {
             };
           } else if (updateResult.status === 'CONFLICT') {
             const serverField = await FieldModel.findOne({
-              _id: new Types.ObjectId(mutation.fieldId),
+              _id: new Types.ObjectId(mutation.fieldId!),
               userId: new Types.ObjectId(userId),
             });
             itemResult = {
@@ -108,7 +139,7 @@ export class SyncService {
           } else {
             // SUCCESS
             try {
-              await recomputeField(new Types.ObjectId(mutation.fieldId));
+              await recomputeField(new Types.ObjectId(mutation.fieldId!));
             } catch (recErr) {
               logger.warn({ recErr, fieldId: mutation.fieldId }, 'Recompute failed after sync update');
             }

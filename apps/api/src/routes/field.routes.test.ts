@@ -497,4 +497,184 @@ describe('Fields and Crops Integration Tests (MongoDB 7+)', () => {
       expect(invalidRadiusRes.body.code).toBe('VALIDATION_ERROR');
     });
   });
+
+  describe('Phase 18: Pin Drop, Area Units and Soil Suggestion', () => {
+    it('creates a field with only a pin and 2 acres', async () => {
+      const user = await createTestUser('pin_user@example.com');
+
+      const pinPayload = {
+        name: 'My 2-Acre Pin Field',
+        locationMode: 'pin',
+        location: {
+          type: 'Point',
+          coordinates: [75.8, 26.9],
+        },
+        areaValue: 2,
+        areaUnit: 'acre',
+        cropKey: 'wheat',
+        sowingDate: new Date().toISOString(),
+        soilType: 'loam',
+        method: 'drip',
+        baseline: { everyDays: 4, depthMm: 25 },
+      };
+
+      const res = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${user.token}`)
+        .send(pinPayload);
+
+      expect(res.status).toBe(201);
+      expect(res.body.status).toBe('success');
+      const field = res.body.data.field;
+      expect(field.locationMode).toBe('pin');
+      expect(field.geometry).toBeNull();
+      expect(field.location.type).toBe('Point');
+      expect(field.location.coordinates).toEqual([75.8, 26.9]);
+      expect(field.centroid.coordinates).toEqual([75.8, 26.9]);
+      // 2 acres * 0.404686 = 0.8094 ha
+      expect(field.areaHa).toBe(0.8094);
+      expect(field.areaWarning).toBeNull();
+    });
+
+    it('creates a pin field with guntha and custom multiplier (bigha)', async () => {
+      const user = await createTestUser('units_user@example.com');
+
+      // 40 guntha = 1 acre = 0.4047 ha
+      const gunthaRes = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${user.token}`)
+        .send({
+          name: 'Guntha Field',
+          locationMode: 'pin',
+          location: { type: 'Point', coordinates: [75.8, 26.9] },
+          areaValue: 40,
+          areaUnit: 'guntha',
+          cropKey: 'tomato',
+          sowingDate: new Date().toISOString(),
+          soilType: 'sandy',
+          method: 'flood',
+          baseline: { everyDays: 7, depthMm: 50 },
+        });
+
+      expect(gunthaRes.status).toBe(201);
+      expect(gunthaRes.body.data.field.areaHa).toBe(0.4047);
+
+      // 2 custom units (bigha at 0.5 acre/unit) = 1 acre = 0.4047 ha
+      const customRes = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${user.token}`)
+        .send({
+          name: 'Bigha Field',
+          locationMode: 'pin',
+          location: { type: 'Point', coordinates: [75.8, 26.9] },
+          areaValue: 2,
+          areaUnit: 'custom',
+          customAcresPerUnit: 0.5,
+          cropKey: 'tomato',
+          sowingDate: new Date().toISOString(),
+          soilType: 'clay',
+          method: 'sprinkler',
+          baseline: { everyDays: 5, depthMm: 30 },
+        });
+
+      expect(customRes.status).toBe(201);
+      expect(customRes.body.data.field.areaHa).toBe(0.4047);
+    });
+
+    it('rejects pin fields with coordinates outside India bounding box', async () => {
+      const user = await createTestUser('bounds_user@example.com');
+
+      const res = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${user.token}`)
+        .send({
+          name: 'London Field',
+          locationMode: 'pin',
+          location: { type: 'Point', coordinates: [-0.12, 51.5] }, // London
+          areaValue: 2,
+          areaUnit: 'acre',
+          cropKey: 'wheat',
+          sowingDate: new Date().toISOString(),
+          soilType: 'loam',
+          method: 'drip',
+          baseline: { everyDays: 4, depthMm: 25 },
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.code).toBe('INVALID_COORDINATES');
+    });
+
+    it('validates area bounds and emits warning if area exceeds 50 ha', async () => {
+      const user = await createTestUser('limits_user@example.com');
+
+      // Too small (< 0.01 ha)
+      const tinyRes = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${user.token}`)
+        .send({
+          name: 'Too Small',
+          locationMode: 'pin',
+          location: { type: 'Point', coordinates: [75.8, 26.9] },
+          areaValue: 0.005,
+          areaUnit: 'ha',
+          cropKey: 'wheat',
+          sowingDate: new Date().toISOString(),
+          soilType: 'loam',
+          method: 'drip',
+          baseline: { everyDays: 4, depthMm: 25 },
+        });
+      expect(tinyRes.status).toBe(400);
+      expect(tinyRes.body.code).toBe('INVALID_AREA');
+
+      // Too large (> 500 ha)
+      const hugeRes = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${user.token}`)
+        .send({
+          name: 'Too Huge',
+          locationMode: 'pin',
+          location: { type: 'Point', coordinates: [75.8, 26.9] },
+          areaValue: 600,
+          areaUnit: 'ha',
+          cropKey: 'wheat',
+          sowingDate: new Date().toISOString(),
+          soilType: 'loam',
+          method: 'drip',
+          baseline: { everyDays: 4, depthMm: 25 },
+        });
+      expect(hugeRes.status).toBe(400);
+      expect(hugeRes.body.code).toBe('INVALID_AREA');
+
+      // Large area (> 50 ha) emits warning but succeeds
+      const warningRes = await request(app)
+        .post('/fields')
+        .set('Authorization', `Bearer ${user.token}`)
+        .send({
+          name: 'Large Farm',
+          locationMode: 'pin',
+          location: { type: 'Point', coordinates: [75.8, 26.9] },
+          areaValue: 150,
+          areaUnit: 'acre', // 150 * 0.404686 ≈ 60.7 ha
+          cropKey: 'wheat',
+          sowingDate: new Date().toISOString(),
+          soilType: 'loam',
+          method: 'drip',
+          baseline: { everyDays: 4, depthMm: 25 },
+        });
+      expect(warningRes.status).toBe(201);
+      expect(warningRes.body.data.field.areaWarning).toMatch(/exceeds 50 ha/i);
+    });
+
+    it('exposes GET /fields/soil-suggestion', async () => {
+      const user = await createTestUser('soil_route_user@example.com');
+
+      const res = await request(app)
+        .get('/fields/soil-suggestion?lng=75.8&lat=26.9')
+        .set('Authorization', `Bearer ${user.token}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('success');
+      expect(res.body.data).toHaveProperty('suggestion');
+    });
+  });
 });

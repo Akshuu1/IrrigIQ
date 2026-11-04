@@ -2,15 +2,42 @@
  * IrrigIQ Scientific Unit Conversion Helpers (FAO-56 standard)
  */
 
+export const AREA_CONFIG = {
+  version: '1.0.0',
+  acreToHa: {
+    value: 0.404686,
+    source: 'National Institute of Standards and Technology (NIST) / Metric Conversion Act (1 acre = 0.40468564224 ha)',
+    verified: false,
+  },
+  gunthaToAcre: {
+    value: 0.025, // 1/40
+    source: 'Standard Indian Land Measurement (1 Guntha = 1/40 Acre = 1,089 sq ft)',
+    verified: false,
+  },
+  minAreaHa: {
+    value: 0.01,
+    source: 'Phase 18 validation limits (minimum 0.01 ha ≈ 100 m²)',
+    verified: false,
+  },
+  maxAreaHa: {
+    value: 500.0,
+    source: 'Phase 18 validation limits (maximum 500 ha ≈ 5 km²)',
+    verified: false,
+  },
+  largeAreaWarningHa: {
+    value: 50.0,
+    source: 'Phase 18 specification / Warn when farmer enters area exceeding 50 ha',
+    verified: false,
+  },
+} as const;
+
+export type AreaUnit = 'acre' | 'hectare' | 'ha' | 'guntha' | 'custom';
+
 /**
  * Converts water depth in millimetres over an area in hectares to volume in litres.
  * 1 mm of water over 1 square metre = 1 litre.
  * 1 hectare = 10,000 square metres.
  * Formula: litres = depth(mm) * area(ha) * 10,000.
- *
- * @param depthMm - Irrigation depth in millimetres.
- * @param areaHa - Field area in hectares.
- * @returns Total water volume in litres (rounded to nearest integer).
  */
 export function mmToLitres(depthMm: number, areaHa: number): number {
   if (isNaN(depthMm) || isNaN(areaHa)) {
@@ -25,10 +52,6 @@ export function mmToLitres(depthMm: number, areaHa: number): number {
 /**
  * Converts water volume in litres over an area in hectares to depth in millimetres.
  * Formula: depth(mm) = litres / (area(ha) * 10,000).
- *
- * @param litres - Water volume in litres.
- * @param areaHa - Field area in hectares.
- * @returns Depth in millimetres rounded to 2 decimal places.
  */
 export function litresToMm(litres: number, areaHa: number): number {
   if (isNaN(litres) || isNaN(areaHa)) {
@@ -45,9 +68,6 @@ export function litresToMm(litres: number, areaHa: number): number {
 
 /**
  * Converts area from hectares to acres (1 ha ≈ 2.47105 acres).
- *
- * @param ha - Area in hectares.
- * @returns Area in acres rounded to 3 decimal places.
  */
 export function haToAcre(ha: number): number {
   if (isNaN(ha) || ha < 0) {
@@ -58,9 +78,6 @@ export function haToAcre(ha: number): number {
 
 /**
  * Converts area from acres to hectares (1 acre ≈ 0.404686 ha).
- *
- * @param acre - Area in acres.
- * @returns Area in hectares rounded to 3 decimal places.
  */
 export function acreToHa(acre: number): number {
   if (isNaN(acre) || acre < 0) {
@@ -70,28 +87,113 @@ export function acreToHa(acre: number): number {
 }
 
 /**
- * Formats field area in either acres or hectares with localized number string.
- *
- * @param areaHa - Field area in hectares.
- * @param unit - Target display unit ('acre' or 'ha').
- * @param options - Locale and decimal precision options.
- * @returns Formatted area string (e.g., "2.47 acre" or "1.00 ha").
+ * Converts an area value in any supported unit (acre, hectare, guntha, custom) to hectares.
+ * Canonical Phase 18 ratios:
+ * - 1 acre = 0.4047 ha
+ * - 40 guntha = 1 acre = 0.4047 ha
+ * - custom unit uses customAcresPerUnit (e.g. bigha)
+ */
+export function toHectares(
+  value: number,
+  unit: AreaUnit | string,
+  customAcresPerUnit?: number,
+): number {
+  if (isNaN(value) || value <= 0) {
+    throw new Error('Area must be a positive number');
+  }
+
+  const normalized = unit.toLowerCase();
+
+  switch (normalized) {
+    case 'hectare':
+    case 'ha':
+      return Number(value.toFixed(4));
+    case 'acre':
+      return Number((value * 0.404686).toFixed(4));
+    case 'guntha':
+      return Number(((value / 40) * 0.404686).toFixed(4));
+    case 'custom': {
+      if (!customAcresPerUnit || isNaN(customAcresPerUnit) || customAcresPerUnit <= 0) {
+        throw new Error('Custom unit requires a valid acres-per-unit multiplier');
+      }
+      return Number((value * customAcresPerUnit * 0.404686).toFixed(4));
+    }
+    default:
+      throw new Error(`Unsupported area unit: ${unit}`);
+  }
+}
+
+/**
+ * Converts an area in hectares to a target area unit.
+ * Canonical Phase 18 ratio:
+ * - 1 ha = 2.471 acre
+ */
+export function fromHectares(
+  areaHa: number,
+  unit: AreaUnit | string,
+  customAcresPerUnit?: number,
+): number {
+  if (isNaN(areaHa) || areaHa < 0) {
+    throw new Error('Area must be a non-negative number');
+  }
+
+  const normalized = unit.toLowerCase();
+
+  switch (normalized) {
+    case 'hectare':
+    case 'ha':
+      return Number(areaHa.toFixed(4));
+    case 'acre':
+      return Number((areaHa * 2.47105).toFixed(3));
+    case 'guntha':
+      return Number((areaHa * 2.47105 * 40).toFixed(2));
+    case 'custom': {
+      if (!customAcresPerUnit || isNaN(customAcresPerUnit) || customAcresPerUnit <= 0) {
+        throw new Error('Custom unit requires a valid acres-per-unit multiplier');
+      }
+      return Number(((areaHa * 2.47105) / customAcresPerUnit).toFixed(2));
+    }
+    default:
+      throw new Error(`Unsupported area unit: ${unit}`);
+  }
+}
+
+/**
+ * Formats field area with support for multiple units, language translation, and custom units.
  */
 export function formatArea(
   areaHa: number,
-  unit: 'acre' | 'ha' = 'ha',
-  options: { locale?: string; decimals?: number } = {},
+  unit: AreaUnit | string = 'ha',
+  optionsOrLang?: { locale?: string; decimals?: number } | 'en' | 'hi',
+  customAcresPerUnit?: number,
 ): string {
   if (isNaN(areaHa) || areaHa < 0) {
     throw new Error('Area must be a non-negative number');
   }
 
-  const { locale = 'en-IN', decimals = 2 } = options;
-  const value = unit === 'acre' ? haToAcre(areaHa) : areaHa;
-  const formattedNum = value.toLocaleString(locale, {
+  const isLegacyOptions = typeof optionsOrLang === 'object' && optionsOrLang !== null;
+  const lang: 'en' | 'hi' = typeof optionsOrLang === 'string' ? optionsOrLang : 'en';
+  const decimals = isLegacyOptions ? optionsOrLang.decimals ?? 2 : 2;
+
+  const value = fromHectares(areaHa, unit, customAcresPerUnit);
+  const formattedNum = value.toLocaleString(lang === 'hi' ? 'hi-IN' : 'en-IN', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
 
-  return `${formattedNum} ${unit}`;
+  const normalized = unit.toLowerCase();
+  let label = unit;
+  if (lang === 'hi') {
+    if (normalized === 'acre') label = 'एकड़';
+    else if (normalized === 'ha' || normalized === 'hectare') label = 'हेक्टेयर';
+    else if (normalized === 'guntha') label = 'गुंठा';
+    else if (normalized === 'custom') label = 'बीघा/कस्टम';
+  } else {
+    if (normalized === 'ha') label = 'ha';
+    else if (normalized === 'hectare') label = 'hectare';
+    else if (normalized === 'acre') label = 'acre';
+    else if (normalized === 'guntha') label = 'guntha';
+  }
+
+  return `${formattedNum} ${label}`;
 }

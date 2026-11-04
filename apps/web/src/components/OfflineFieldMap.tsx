@@ -4,7 +4,7 @@ import { WifiOff, MapPin } from 'lucide-react';
 import type { GeoJsonPolygon } from '@irrigiq/shared';
 
 interface OfflineFieldMapProps {
-  geometry: GeoJsonPolygon;
+  geometry?: GeoJsonPolygon | null;
   areaHa?: number;
   fieldName?: string;
   className?: string;

@@ -6,8 +6,7 @@ import { PUMP_CONFIG } from './pump.js';
 export const LanguageSchema = z.enum(['en', 'hi']);
 export type Language = z.infer<typeof LanguageSchema>;
 
-export const AreaUnitSchema = z.enum(['acre', 'ha']);
-export type AreaUnit = z.infer<typeof AreaUnitSchema>;
+export const AreaUnitSchema = z.enum(['acre', 'ha', 'hectare', 'guntha', 'custom']);
 
 export const UserPreferencesSchema = z.object({
   language: LanguageSchema.default('en'),
@@ -52,6 +51,12 @@ export const geoJsonPolygonSchema = z.object({
   coordinates: z.array(z.array(z.array(z.number()))),
 });
 export type GeoJsonPolygon = z.infer<typeof geoJsonPolygonSchema>;
+
+export const geoJsonPointSchema = z.object({
+  type: z.literal('Point'),
+  coordinates: z.tuple([z.number(), z.number()]),
+});
+export type GeoJsonPoint = z.infer<typeof geoJsonPointSchema>;
 
 export const sowingDateSchema = z
   .union([z.string(), z.date()])
@@ -99,7 +104,12 @@ export const createFieldSchema = z.object({
     .trim()
     .min(1, 'Name is required')
     .max(100, 'Name must not exceed 100 characters'),
-  geometry: geoJsonPolygonSchema,
+  locationMode: z.enum(['pin', 'polygon']).default('polygon'),
+  geometry: geoJsonPolygonSchema.optional().nullable(),
+  location: geoJsonPointSchema.optional().nullable(),
+  areaValue: z.number().positive('Area must be positive').optional().nullable(),
+  areaUnit: AreaUnitSchema.optional().nullable(),
+  customAcresPerUnit: z.number().positive('Custom multiplier must be positive').optional().nullable(),
   cropKey: cropKeySchema,
   sowingDate: sowingDateSchema,
   soilType: SoilTypeSchema,
@@ -107,7 +117,7 @@ export const createFieldSchema = z.object({
   baseline: baselineSchema,
   pumpId: pumpIdSchema.optional().nullable(),
 });
-export type CreateFieldInput = z.infer<typeof createFieldSchema>;
+export type CreateFieldInput = z.input<typeof createFieldSchema>;
 
 export const updateFieldSchema = z.object({
   version: z
@@ -119,7 +129,12 @@ export const updateFieldSchema = z.object({
     .min(1, 'Name is required')
     .max(100, 'Name must not exceed 100 characters')
     .optional(),
-  geometry: geoJsonPolygonSchema.optional(),
+  locationMode: z.enum(['pin', 'polygon']).optional(),
+  geometry: geoJsonPolygonSchema.optional().nullable(),
+  location: geoJsonPointSchema.optional().nullable(),
+  areaValue: z.number().positive('Area must be positive').optional().nullable(),
+  areaUnit: AreaUnitSchema.optional().nullable(),
+  customAcresPerUnit: z.number().positive('Custom multiplier must be positive').optional().nullable(),
   cropKey: cropKeySchema.optional(),
   sowingDate: sowingDateSchema.optional(),
   soilType: SoilTypeSchema.optional(),
@@ -127,7 +142,7 @@ export const updateFieldSchema = z.object({
   baseline: baselineSchema.optional(),
   pumpId: pumpIdSchema.optional().nullable(),
 });
-export type UpdateFieldInput = z.infer<typeof updateFieldSchema>;
+export type UpdateFieldInput = z.input<typeof updateFieldSchema>;
 
 // Pump schemas
 export const createPumpSchema = z.object({

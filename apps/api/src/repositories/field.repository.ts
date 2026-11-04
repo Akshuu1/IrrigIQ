@@ -111,11 +111,22 @@ export class FieldRepository {
 
     return FieldModel.find({
       userId: new Types.ObjectId(userId),
-      geometry: {
-        $geoWithin: {
-          $centerSphere: [[lng, lat], radiusInRadians],
+      $or: [
+        {
+          geometry: {
+            $geoWithin: {
+              $centerSphere: [[lng, lat], radiusInRadians],
+            },
+          },
         },
-      },
+        {
+          centroid: {
+            $geoWithin: {
+              $centerSphere: [[lng, lat], radiusInRadians],
+            },
+          },
+        },
+      ],
     });
   }
 }

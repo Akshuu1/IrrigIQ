@@ -8,3 +8,4 @@ export * from './savings.js';
 export * from './sync.js';
 export * from './pump.js';
 export * from './power-schedule.js';
+export * from './soil.js';

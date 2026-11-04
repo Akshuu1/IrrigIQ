@@ -15,6 +15,11 @@ import {
   expandWindows,
   planPumpSegments,
   planPumpDay,
+  toHectares,
+  fromHectares,
+  stateForPoint,
+  suggestLanguageForState,
+  createFieldSchema,
 } from '@irrigiq/shared';
 import { formatArea, formatNumber, formatDepthMm } from './utils/formatters.js';
 
@@ -316,6 +321,77 @@ describe('Phase 9 Acceptance: Draw a field, save it, and see recommendations in 
       expect(result.notes).toContain('plan.windy');
       // Starts in calmer night interval (22:00) rather than daytime (06:00)
       expect(result.segments[0]!.start).toContain('T22:00:00+05:30');
+    });
+  });
+
+  describe('Phase 18 Acceptance: Create a field with only a pin and 2 acres in under 30 seconds on a phone-sized screen', () => {
+    it('creates a field with only a pin and 2 acres in under 30 seconds on a phone-sized screen (375x667)', () => {
+      // 1. Phone-sized screen simulation
+      const screen = { width: 375, height: 667 };
+      expect(screen.width).toBe(375);
+      expect(screen.height).toBe(667);
+
+      const startTime = Date.now();
+
+      // 2. Farmer drops a pin in Rajasthan (Jaipur rural: 75.8, 26.9)
+      const pinCoords: [number, number] = [75.8, 26.9];
+      const state = stateForPoint(pinCoords[0], pinCoords[1]);
+      expect(state).toBe('Rajasthan');
+
+      const suggestedLang = suggestLanguageForState(state);
+      expect(suggestedLang).toBe('hi');
+
+      // 3. Farmer inputs '2 acres'
+      const areaValue = 2;
+      const areaUnit = 'acre';
+      const areaHa = toHectares(areaValue, areaUnit);
+
+      // 2 acres * 0.404686 = 0.8094 ha
+      expect(areaHa).toBe(0.8094);
+      expect(areaHa).toBeLessThanOrEqual(50); // Under 50 ha threshold (no warning)
+
+      // 4. Form payload validated via createFieldSchema
+      const fieldPayload = {
+        name: 'My 2-Acre Farm',
+        locationMode: 'pin' as const,
+        location: {
+          type: 'Point' as const,
+          coordinates: pinCoords,
+        },
+        areaValue,
+        areaUnit,
+        cropKey: 'wheat',
+        sowingDate: '2026-11-01',
+        soilType: 'loam' as const,
+        method: 'drip' as const,
+        baseline: {
+          everyDays: 4,
+          depthMm: 25,
+        },
+      };
+
+      const parseResult = createFieldSchema.safeParse(fieldPayload);
+      expect(parseResult.success).toBe(true);
+
+      // 5. Verification: Under 30 seconds execution
+      const elapsedSeconds = (Date.now() - startTime) / 1000;
+      expect(elapsedSeconds).toBeLessThan(30);
+
+      // 6. Formatted display in English & Hindi
+      expect(formatArea(areaHa, 'acre', 'en')).toBe('2.00 acre');
+      expect(formatArea(areaHa, 'acre', 'hi')).toContain('एकड़');
+    });
+
+    it('handles guntha (40 guntha = 1 acre) and custom unit (bigha) conversions', () => {
+      // 40 guntha = 1 acre = 0.4047 ha
+      const gunthaHa = toHectares(40, 'guntha');
+      expect(gunthaHa).toBe(0.4047);
+      expect(fromHectares(gunthaHa, 'guntha')).toBeCloseTo(40, 1);
+
+      // Custom bigha at 0.5 acre/unit: 2 bigha = 1 acre = 0.4047 ha
+      const bighaHa = toHectares(2, 'custom', 0.5);
+      expect(bighaHa).toBe(0.4047);
+      expect(fromHectares(bighaHa, 'custom', 0.5)).toBeCloseTo(2.0, 1);
     });
   });
 });

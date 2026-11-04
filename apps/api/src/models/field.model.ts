@@ -12,9 +12,15 @@ export interface IFieldBaseline {
 export interface IField {
   userId: Types.ObjectId;
   name: string;
-  geometry: GeoJSONPolygon;
+  locationMode: 'pin' | 'polygon';
+  geometry?: GeoJSONPolygon | null;
+  location?: GeoJSONPoint | null;
   centroid: GeoJSONPoint;
   areaHa: number;
+  areaValue?: number | null;
+  areaUnit?: string | null;
+  customAcresPerUnit?: number | null;
+  areaWarning?: string | null;
   cropKey: string;
   sowingDate: Date;
   soilType: SoilType;
@@ -83,9 +89,19 @@ const fieldSchema = new Schema<IFieldDocument>(
       minlength: 1,
       maxlength: 100,
     },
+    locationMode: {
+      type: String,
+      enum: ['pin', 'polygon'],
+      default: 'polygon',
+      required: true,
+    },
     geometry: {
       type: polygonSchema,
-      required: true,
+      default: null,
+    },
+    location: {
+      type: pointSchema,
+      default: null,
     },
     centroid: {
       type: pointSchema,
@@ -96,6 +112,22 @@ const fieldSchema = new Schema<IFieldDocument>(
       required: true,
       min: 0.01,
       max: 500,
+    },
+    areaValue: {
+      type: Number,
+      default: null,
+    },
+    areaUnit: {
+      type: String,
+      default: null,
+    },
+    customAcresPerUnit: {
+      type: Number,
+      default: null,
+    },
+    areaWarning: {
+      type: String,
+      default: null,
     },
     cropKey: {
       type: String,
@@ -144,7 +176,9 @@ const fieldSchema = new Schema<IFieldDocument>(
 );
 
 // Indexes
-fieldSchema.index({ geometry: '2dsphere' });
+fieldSchema.index({ geometry: '2dsphere' }, { sparse: true });
+fieldSchema.index({ location: '2dsphere' }, { sparse: true });
+fieldSchema.index({ centroid: '2dsphere' }, { sparse: true });
 fieldSchema.index({ userId: 1, updatedAt: -1 });
 fieldSchema.index({ pumpId: 1 });
 

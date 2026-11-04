@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { FieldService, fieldService } from '../services/field.service.js';
+import { soilService } from '../services/soil.service.js';
 import {
   createFieldSchema,
   updateFieldSchema,
@@ -126,6 +127,27 @@ export class FieldController {
         status: 'success',
         data: {
           fields,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getSoilSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const lng = Number(req.query.lng);
+      const lat = Number(req.query.lat);
+      if (isNaN(lng) || isNaN(lat)) {
+        throw new AppError('Valid lng and lat query parameters are required', 400, 'BAD_REQUEST');
+      }
+
+      const suggestion = await soilService.getSoilSuggestion(lng, lat);
+
+      res.json({
+        status: 'success',
+        data: {
+          suggestion,
         },
       });
     } catch (err) {

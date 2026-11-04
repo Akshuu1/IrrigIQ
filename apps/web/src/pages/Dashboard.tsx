@@ -425,6 +425,7 @@ export function Dashboard(): React.JSX.Element {
 
       await api.createField({
         name: i18n.language === 'hi' ? 'करनाल गेहूं का खेत (उत्तर)' : 'Karnal Wheat Field (North)',
+        locationMode: 'polygon',
         cropKey: 'wheat',
         soilType: 'loam',
         method: 'drip',
@@ -446,6 +447,7 @@ export function Dashboard(): React.JSX.Element {
 
       await api.createField({
         name: i18n.language === 'hi' ? 'लुधियाना मक्का का खेत (दक्षिण)' : 'Ludhiana Maize Field (South)',
+        locationMode: 'polygon',
         cropKey: 'maize',
         soilType: 'clay',
         method: 'sprinkler',

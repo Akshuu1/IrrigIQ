@@ -58,7 +58,7 @@ export async function enqueueMutation(
   await db.put('mutationQueue', mutation);
 
   // Apply optimistic local update to IndexedDB
-  if (mutation.type === 'update_field') {
+  if (mutation.type === 'update_field' && mutation.fieldId) {
     const existing = await getCachedField(mutation.fieldId);
     if (existing) {
       const updated = {
@@ -201,7 +201,7 @@ export async function flushQueue(): Promise<{
         // Store conflict draft for UI resolution
         if (res.serverField) {
           await saveFieldDraft({
-            fieldId: res.fieldId,
+            fieldId: res.fieldId || mut.fieldId || '',
             baseVersion: mut.baseVersion ?? 1,
             serverVersion: res.serverVersion ?? 2,
             draftPayload: mut.payload,

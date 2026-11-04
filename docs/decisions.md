@@ -378,13 +378,77 @@ To guarantee that daily recommendations are executed without requiring expensive
 
 ---
 
-## ADR 007: Phase 17 Power Windows & Wind Drift Sprinkler Protection
+## ADR 011: Phase 17 Power Windows & Wind Drift Sprinkler Protection
 
 ### Context
 
 In rural Indian agriculture, electrical power for agricultural tubewells and pumps is intermittent and scheduled in 6-to-8 hour daily blocks (e.g., night blocks from 22:00 to 06:00 IST or day blocks from 06:00 to 14:00 IST, often rotating weekly between feeder circuits). Furthermore, sprinkler irrigation in high wind causes severe droplet drift, non-uniform distribution, and up to 30% water loss from spray evaporation.
 
 ### Upstream Meteorological Specifications
+
+- **API Variable**: `wind_speed_10m_max` from Open-Meteo Forecast API (`https://api.open-meteo.com/v1/forecast`).
+- **Unit**: `km/h` (default unit returned by Open-Meteo).
+- **Physical Meaning**: Daily maximum 10-meter wind speed over the 24-hour UTC/IST aggregation window.
+- **Agronomic Threshold**: FAO-56 and USDA Natural Resources Conservation Service guidelines establish $20 \text{ km/h}$ ($\approx 5.5 \text{ m/s}$) as the upper permissible limit for standard agricultural impact sprinklers. Above $20 \text{ km/h}$, operating sprinklers leads to pattern distortion.
+- **Config Representation**: Versioned under `POWER_SCHEDULE_CONFIG.windLimitKmh` with `source: 'FAO-56 Irrigation and Drainage Paper No. 56 / Sprinkler droplet drift threshold (starter 20 km/h)'` and `verified: false`.
+
+### Power Window Model Architecture
+
+1. **Concrete Interval Expansion (`expandWindows`)**:
+   - Converts weekly recurrent schedules `{ days, start 'HH:MM', end 'HH:MM' }` in Indian Standard Time (IST) into concrete timestamps for date $D$ and $D+1$.
+   - Handles midnight-crossing windows (e.g. `22:00` to `06:00`): splits cleanly into `22:00` to `24:00` on Day $D$, and `00:00` to `06:00` on Day $D+1$.
+2. **Weekly Rotation Support (`weekA` vs `weekB`)**:
+   - Compares target date against `anchorDate` in 7-day increments: even week index maps to `weekA`, odd week index maps to `weekB`.
+3. **Multi-Field Dispatch (`planPumpDay`)**:
+   - When multiple fields share a single pump, field run durations are sorted by urgency (highest water deficit in mm first) and allocated back-to-back across available intervals.
+4. **No-Power Resilience (`rescheduleForNoPower`)**:
+   - When a farmer reports an unexpected feeder outage, the scheduled run moves to the next available interval while preserving the accumulated root-zone soil water deficit.
+
+---
+
+## ADR 012: Pin Drop, Area Units, State Boundaries & ISRIC SoilGrids Integration
+
+### Context
+
+Phase 18 introduces streamlined field creation for Indian smallholder farmers who may find polygon boundary drawing difficult or time-consuming on mobile screens. Farmers can now drop a single location pin, select an Indian area unit (acre, hectare, guntha, or custom multiplier such as bigha), and automatically receive detected administrative state, language suggestion, and soil texture suggestion.
+
+### 1. Simplified Indian State Boundaries GeoJSON & Reverse-Geocoding
+
+- **Source & Attribution**: Derived from the **Data{Meet} Community Maps Project** (`datameet/maps`), released under the **Open Database License (ODbL) v1.0** / **Creative Commons Attribution 4.0 International (CC-BY 4.0)**.
+- **Licence Compliance**: Included within `@irrigiq/shared` under `src/data/india-states.ts` with appropriate attribution comments. The dataset is simplified via Douglas-Peucker algorithm to preserve small bundle footprint (< 30 KB) while ensuring 100% accuracy for point-in-polygon queries.
+- **Offline Reverse-Geocoding**:
+  - Pure function `stateForPoint(lng, lat)` executes `@turf/boolean-point-in-polygon` against bundled state boundaries.
+  - Returns the state name (e.g., `'Maharashtra'`, `'Karnataka'`, `'Delhi'`, `'Punjab'`, `'Tamil Nadu'`) or `null` if the point falls in the sea or outside India's territory.
+  - Zero network overhead and operates completely offline inside the PWA.
+- **Language Suggestion**:
+  - `suggestLanguageForState(state)` maps states in the Hindi belt (Delhi, Uttar Pradesh, Bihar, Rajasthan, Madhya Pradesh, Haryana, Himachal Pradesh, Jharkhand, Chhattisgarh, Uttarakhand) to `'hi'`, and others to `'en'`.
+
+### 2. ISRIC SoilGrids v2 REST API Integration
+
+- **Service Endpoint**:
+  `https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lng}&lat={lat}&property=clay&property=sand&property=silt&depth=0-5cm&depth=5-15cm&value=mean`
+- **Data Licensing**: ISRIC SoilGrids data is distributed under **Creative Commons Attribution 4.0 International (CC BY 4.0)**.
+- **Terms & Fair Use Compliance**:
+  - ISRIC permits non-commercial and research/operational queries with reasonable rate limiting.
+  - To respect upstream infrastructure and ensure resilient offline/degraded operation:
+    1. **Hard Timeout**: Every outbound fetch enforces a strict 5,000 ms timeout via `AbortSignal.timeout(5000)`.
+    2. **Grid-Cell Caching**: Query coordinates are rounded to $0.01^\circ$ cells ($\approx 1.1 \text{ km}$) and cached in Redis with a 30-day TTL (`soil:{lat.toFixed(2)}:{lng.toFixed(2)}`).
+    3. **Failure Invariance**: If the request fails, times out, or returns invalid data, `soilSuggestion` returns `null` silently without throwing errors or impeding field onboarding.
+    4. **Feature Flag**: Guarded by `SOILGRIDS_ENABLED` environment variable (defaults to `true`).
+- **Texture Classification**:
+  - SoilGrids values are in $\text{g/kg}$ ($10 \text{ g/kg} = 1\%$).
+  - Evaluated against USDA texture triangle simplification (`SOIL_TEXTURE_CONFIG` with `verified: false`):
+    - **Clay**: $\ge 40\%$ clay.
+    - **Sandy**: $\ge 70\%$ sand and $\le 15\%$ clay.
+    - **Loam**: all other combinations.
+
+### 3. OpenStreetMap Nominatim Geocoding Policy for Village Search
+
+- **Endpoint**: `https://nominatim.openstreetmap.org/search?q={query}&format=json&countrycodes=in&limit=5`
+- **Usage Policy Compliance**:
+  - Enforces mandatory `User-Agent: IrrigIQ/1.0 (https://irrigiq.org; agronomy@irrigiq.org)`.
+  - Debounced at 500 ms in the user interface to avoid rapid successive queries.
+  - Never scrapes or caches bulk geocoder directories; requests occur strictly on user-initiated search typing.
 
 - **API Variable**: `wind_speed_10m_max` from Open-Meteo Forecast API (`https://api.open-meteo.com/v1/forecast`).
 - **Unit**: `km/h` (default unit returned by Open-Meteo).

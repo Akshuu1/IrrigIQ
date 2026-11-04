@@ -1,4 +1,5 @@
 import * as turf from '@turf/turf';
+import { INDIA_STATES_GEOJSON } from './data/india-states.js';
 
 export interface GeoJSONPolygon {
   type: 'Polygon';
@@ -184,3 +185,57 @@ export function validatePolygon(geometry: GeoJSONPolygon): ValidatedPolygonResul
     centroid,
   };
 }
+
+export const HINDI_BELT_STATES = [
+  'Delhi',
+  'Uttar Pradesh',
+  'Bihar',
+  'Rajasthan',
+  'Madhya Pradesh',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Chhattisgarh',
+  'Uttarakhand',
+  'Chandigarh',
+] as const;
+
+/**
+ * Determines which Indian state or union territory contains a given coordinate [lng, lat].
+ * Uses Turf point-in-polygon against bundled simplified state boundaries.
+ * Returns state name (e.g. 'Delhi', 'Maharashtra', 'Karnataka') or null if outside India / in the sea.
+ */
+export function stateForPoint(lng: number, lat: number): string | null {
+  if (
+    typeof lng !== 'number' ||
+    typeof lat !== 'number' ||
+    Number.isNaN(lng) ||
+    Number.isNaN(lat) ||
+    lng < INDIA_BOUNDS.minLng ||
+    lng > INDIA_BOUNDS.maxLng ||
+    lat < INDIA_BOUNDS.minLat ||
+    lat > INDIA_BOUNDS.maxLat
+  ) {
+    return null;
+  }
+
+  const pt = turf.point([lng, lat]);
+
+  for (const feature of INDIA_STATES_GEOJSON.features) {
+    if (turf.booleanPointInPolygon(pt, turf.polygon(feature.geometry.coordinates))) {
+      return feature.properties.name;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Suggests default user language ('hi' vs 'en') based on the detected Indian state.
+ * Hindi-belt states suggest 'hi'; southern and eastern states default to 'en'.
+ */
+export function suggestLanguageForState(state: string | null): 'en' | 'hi' {
+  if (!state) return 'en';
+  return (HINDI_BELT_STATES as readonly string[]).includes(state) ? 'hi' : 'en';
+}
+

@@ -12,8 +12,15 @@ import type {
   PowerWindow,
   CreatePowerScheduleInput,
   UpdatePowerScheduleInput,
+  SoilSuggestionResult,
 } from '@irrigiq/shared';
-export type { PowerSchedule, PowerWindow, CreatePowerScheduleInput, UpdatePowerScheduleInput };
+export type {
+  PowerSchedule,
+  PowerWindow,
+  CreatePowerScheduleInput,
+  UpdatePowerScheduleInput,
+  SoilSuggestionResult,
+};
 import { CROPS } from '@irrigiq/shared';
 import {
   getCachedFields,
@@ -189,15 +196,24 @@ export interface Field {
   id: string;
   userId: string;
   name: string;
-  geometry: {
+  locationMode?: 'pin' | 'polygon';
+  geometry?: {
     type: 'Polygon';
     coordinates: number[][][];
-  };
+  } | null;
+  location?: {
+    type: 'Point';
+    coordinates: [number, number];
+  } | null;
   centroid: {
     type: 'Point';
     coordinates: [number, number];
   };
   areaHa: number;
+  areaValue?: number | null;
+  areaUnit?: string | null;
+  customAcresPerUnit?: number | null;
+  areaWarning?: string | null;
   cropKey: string;
   sowingDate: string;
   soilType: 'sandy' | 'loam' | 'clay';
@@ -514,15 +530,109 @@ export const api = {
   },
 
   async createField(data: CreateFieldInput): Promise<Field> {
-    const res = await apiFetch<{ data?: { field: Field }; field?: Field } | Field>('/fields', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-    return 'data' in res && res.data?.field
-      ? res.data.field
-      : 'field' in res && res.field
-        ? res.field
-        : (res as Field);
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      const mut = await enqueueMutation({
+        type: 'create_field',
+        payload: data,
+      });
+      const offlineField: Field = {
+        id: mut.clientId,
+        userId: 'offline-user',
+        name: data.name,
+        locationMode: data.locationMode ?? (data.geometry ? 'polygon' : 'pin'),
+        geometry: data.geometry ?? null,
+        location: data.location ?? null,
+        centroid: data.location ?? { type: 'Point', coordinates: [75.8, 26.9] },
+        areaHa: data.areaValue
+          ? data.areaUnit === 'acre'
+            ? data.areaValue * 0.4047
+            : data.areaValue
+          : 1.0,
+        areaValue: data.areaValue ?? null,
+        areaUnit: data.areaUnit ?? null,
+        customAcresPerUnit: data.customAcresPerUnit ?? null,
+        cropKey: data.cropKey,
+        sowingDate:
+          typeof data.sowingDate === 'string'
+            ? data.sowingDate
+            : (data.sowingDate as Date).toISOString(),
+        soilType: data.soilType,
+        method: data.method,
+        baseline: data.baseline,
+        pumpId: data.pumpId ?? null,
+        version: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      await setCachedField(offlineField);
+      return offlineField;
+    }
+
+    try {
+      const res = await apiFetch<{ data?: { field: Field }; field?: Field } | Field>('/fields', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      const field =
+        'data' in res && res.data?.field
+          ? res.data.field
+          : 'field' in res && res.field
+            ? res.field
+            : (res as Field);
+      setCachedField(field).catch(() => {});
+      return field;
+    } catch (err) {
+      if (err instanceof TypeError || (err instanceof ApiError && err.status >= 500)) {
+        const mut = await enqueueMutation({
+          type: 'create_field',
+          payload: data,
+        });
+        const offlineField: Field = {
+          id: mut.clientId,
+          userId: 'offline-user',
+          name: data.name,
+          locationMode: data.locationMode ?? (data.geometry ? 'polygon' : 'pin'),
+          geometry: data.geometry ?? null,
+          location: data.location ?? null,
+          centroid: data.location ?? { type: 'Point', coordinates: [75.8, 26.9] },
+          areaHa: data.areaValue
+            ? data.areaUnit === 'acre'
+              ? data.areaValue * 0.4047
+              : data.areaValue
+            : 1.0,
+          areaValue: data.areaValue ?? null,
+          areaUnit: data.areaUnit ?? null,
+          customAcresPerUnit: data.customAcresPerUnit ?? null,
+          cropKey: data.cropKey,
+          sowingDate:
+            typeof data.sowingDate === 'string'
+              ? data.sowingDate
+              : (data.sowingDate as Date).toISOString(),
+          soilType: data.soilType,
+          method: data.method,
+          baseline: data.baseline,
+          pumpId: data.pumpId ?? null,
+          version: 1,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        await setCachedField(offlineField);
+        return offlineField;
+      }
+      throw err;
+    }
+  },
+
+  async getSoilSuggestion(lng: number, lat: number): Promise<SoilSuggestionResult | null> {
+    try {
+      const res = await apiFetch<{
+        data?: { suggestion: SoilSuggestionResult | null };
+        suggestion?: SoilSuggestionResult | null;
+      }>(`/fields/soil-suggestion?lng=${lng}&lat=${lat}`);
+      return res.data?.suggestion ?? res.suggestion ?? null;
+    } catch {
+      return null;
+    }
   },
 
   async deleteField(id: string): Promise<void> {

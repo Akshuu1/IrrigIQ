@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { SoilTypeSchema, IrrigationMethodSchema } from './schemas.js';
 
-export type SyncMutationType = 'create_irrigation_log' | 'update_field';
+export type SyncMutationType = 'create_irrigation_log' | 'update_field' | 'create_field';
 
 export const CreateIrrigationLogPayloadSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD'),
@@ -29,8 +29,8 @@ export type UpdateFieldPayload = z.infer<typeof UpdateFieldPayloadSchema>;
 
 export const SyncMutationSchema = z.object({
   clientId: z.string().min(1, 'clientId is required'),
-  type: z.enum(['create_irrigation_log', 'update_field']),
-  fieldId: z.string().min(1, 'fieldId is required'),
+  type: z.enum(['create_irrigation_log', 'update_field', 'create_field']),
+  fieldId: z.string().optional(),
   baseVersion: z.number().int().nonnegative().optional(),
   payload: z.record(z.any()),
   timestamp: z.number().int().positive().optional(),
@@ -50,7 +50,7 @@ export interface SyncResultItem {
   clientId: string;
   type: SyncMutationType;
   status: SyncResultStatus;
-  fieldId: string;
+  fieldId?: string;
   error?: string;
   serverVersion?: number;
   serverField?: unknown;

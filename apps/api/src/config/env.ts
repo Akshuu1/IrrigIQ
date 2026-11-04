@@ -21,6 +21,7 @@ export const EnvSchema = z.object({
   REFRESH_TOKEN_EXPIRES_DAYS: z.coerce.number().default(7),
   CRON_SECRET: z.string().default('development-cron-secret-key-min-16-chars'),
   COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('strict'),
+  SOILGRIDS_ENABLED: z.coerce.boolean().default(true),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

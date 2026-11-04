@@ -4,8 +4,8 @@ import type { Field } from '../api/client.js';
 
 export interface QueuedMutation {
   clientId: string;
-  type: 'create_irrigation_log' | 'update_field';
-  fieldId: string;
+  type: 'create_irrigation_log' | 'update_field' | 'create_field';
+  fieldId?: string;
   baseVersion?: number;
   payload: Record<string, any>;
   timestamp: number;

@@ -15,6 +15,7 @@ router.use(authMiddleware as unknown as RequestHandler);
 router.post('/', fieldController.create);
 router.get('/', fieldController.list);
 router.get('/nearby', fieldController.getNearby);
+router.get('/soil-suggestion', fieldController.getSoilSuggestion);
 router.get('/:id', fieldController.getById);
 router.patch('/:id', fieldController.update);
 router.delete('/:id', fieldController.delete);

@@ -15,3 +15,4 @@ router.patch('/:id', powerScheduleController.update);
 router.delete('/:id', powerScheduleController.delete);
 
 export { router as powerScheduleRouter };
+

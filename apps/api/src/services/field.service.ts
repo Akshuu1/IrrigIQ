@@ -1,5 +1,12 @@
 import { Types } from 'mongoose';
-import { validatePolygon, type GeoJSONPoint } from '@irrigiq/shared';
+import {
+  validatePolygon,
+  toHectares,
+  INDIA_BOUNDS,
+  AREA_CONFIG,
+  type GeoJSONPoint,
+  type GeoJSONPolygon,
+} from '@irrigiq/shared';
 import { AppError } from '../errors/AppError.js';
 import { FieldRepository, fieldRepository } from '../repositories/field.repository.js';
 import { IField, IFieldDocument } from '../models/field.model.js';
@@ -11,27 +18,123 @@ export class FieldService {
   constructor(private readonly repo: FieldRepository = fieldRepository) {}
 
   async createField(userId: string, input: CreateFieldInput): Promise<IFieldDocument> {
-    // Validate polygon and compute area and centroid on server - NEVER trust client values
+    const hasPolygon =
+      input.geometry &&
+      Array.isArray(input.geometry.coordinates) &&
+      input.geometry.coordinates.length > 0;
+    const isPinMode = input.locationMode === 'pin' || (!hasPolygon && Boolean(input.location));
+
     let areaHa: number;
     let centroid: GeoJSONPoint;
+    let geometry: GeoJSONPolygon | null = null;
+    let location: GeoJSONPoint | null = null;
+    let areaWarning: string | null = null;
 
-    try {
-      const geoResult = validatePolygon(input.geometry);
-      areaHa = geoResult.areaHa;
-      centroid = geoResult.centroid;
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Invalid polygon geometry';
-      throw new AppError(message, 400, 'INVALID_GEOMETRY');
+    if (hasPolygon) {
+      // Polygon mode (polygon geodesic area wins)
+      try {
+        const geoResult = validatePolygon(input.geometry!);
+        areaHa = geoResult.areaHa;
+        centroid = geoResult.centroid;
+        geometry = input.geometry!;
+        location = centroid;
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Invalid polygon geometry';
+        throw new AppError(message, 400, 'INVALID_GEOMETRY');
+      }
+    } else if (isPinMode) {
+      // Pin mode
+      if (
+        !input.location ||
+        !Array.isArray(input.location.coordinates) ||
+        input.location.coordinates.length < 2
+      ) {
+        throw new AppError(
+          'Location coordinates [lng, lat] are required for pin fields',
+          400,
+          'INVALID_COORDINATES',
+        );
+      }
+      const [lng, lat] = input.location.coordinates;
+      if (
+        typeof lng !== 'number' ||
+        typeof lat !== 'number' ||
+        isNaN(lng) ||
+        isNaN(lat) ||
+        lng < INDIA_BOUNDS.minLng ||
+        lng > INDIA_BOUNDS.maxLng ||
+        lat < INDIA_BOUNDS.minLat ||
+        lat > INDIA_BOUNDS.maxLat
+      ) {
+        throw new AppError(
+          `Coordinate [${lng}, ${lat}] is outside India's bounding box [${INDIA_BOUNDS.minLng}, ${INDIA_BOUNDS.minLat}, ${INDIA_BOUNDS.maxLng}, ${INDIA_BOUNDS.maxLat}]`,
+          400,
+          'INVALID_COORDINATES',
+        );
+      }
+
+      if (!input.areaValue || isNaN(input.areaValue) || input.areaValue <= 0) {
+        throw new AppError('Area value must be a positive number', 400, 'INVALID_AREA');
+      }
+      if (!input.areaUnit) {
+        throw new AppError('Area unit is required', 400, 'INVALID_AREA');
+      }
+
+      try {
+        areaHa = toHectares(input.areaValue, input.areaUnit, input.customAcresPerUnit ?? undefined);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Invalid area conversion';
+        throw new AppError(msg, 400, 'INVALID_AREA');
+      }
+
+      if (areaHa < AREA_CONFIG.minAreaHa.value) {
+        throw new AppError(
+          `Field area is ${areaHa.toFixed(4)} ha, which is below the minimum allowed ${AREA_CONFIG.minAreaHa.value} ha`,
+          400,
+          'INVALID_AREA',
+        );
+      }
+      if (areaHa > AREA_CONFIG.maxAreaHa.value) {
+        throw new AppError(
+          `Field area is ${areaHa.toFixed(2)} ha, which exceeds the maximum allowed ${AREA_CONFIG.maxAreaHa.value} ha`,
+          400,
+          'INVALID_AREA',
+        );
+      }
+
+      centroid = {
+        type: 'Point',
+        coordinates: [Number(lng.toFixed(6)), Number(lat.toFixed(6))],
+      };
+      location = centroid;
+      geometry = null;
+    } else {
+      throw new AppError(
+        'Field must specify either a valid boundary polygon or a location pin with area',
+        400,
+        'INVALID_GEOMETRY',
+      );
+    }
+
+    if (areaHa > AREA_CONFIG.largeAreaWarningHa.value) {
+      areaWarning = `Field area (${areaHa.toFixed(2)} ha) exceeds ${AREA_CONFIG.largeAreaWarningHa.value} ha. Please verify the entered land size.`;
     }
 
     const fieldData: Partial<IField> = {
       userId: new Types.ObjectId(userId),
       name: input.name,
-      geometry: input.geometry,
+      locationMode: hasPolygon ? 'polygon' : 'pin',
+      geometry,
+      location,
       centroid,
       areaHa,
+      areaValue: input.areaValue ?? null,
+      areaUnit: input.areaUnit ?? null,
+      customAcresPerUnit: input.customAcresPerUnit ?? null,
+      areaWarning,
       cropKey: input.cropKey,
-      sowingDate: input.sowingDate,
+      sowingDate:
+        typeof input.sowingDate === 'string' ? new Date(input.sowingDate) : input.sowingDate,
       soilType: input.soilType,
       method: input.method,
       baseline: input.baseline,
@@ -86,7 +189,8 @@ export class FieldService {
       updateData.cropKey = input.cropKey;
     }
     if (input.sowingDate !== undefined) {
-      updateData.sowingDate = input.sowingDate;
+      updateData.sowingDate =
+        typeof input.sowingDate === 'string' ? new Date(input.sowingDate) : input.sowingDate;
     }
     if (input.soilType !== undefined) {
       updateData.soilType = input.soilType;
@@ -100,17 +204,72 @@ export class FieldService {
     if (input.pumpId !== undefined) {
       updateData.pumpId = input.pumpId ? new Types.ObjectId(input.pumpId) : null;
     }
+    if (input.locationMode !== undefined) {
+      updateData.locationMode = input.locationMode;
+    }
+    if (input.areaValue !== undefined) {
+      updateData.areaValue = input.areaValue;
+    }
+    if (input.areaUnit !== undefined) {
+      updateData.areaUnit = input.areaUnit;
+    }
+    if (input.customAcresPerUnit !== undefined) {
+      updateData.customAcresPerUnit = input.customAcresPerUnit;
+    }
 
     // If geometry changed, re-validate and re-calculate area and centroid on server
     if (input.geometry !== undefined) {
-      try {
-        const geoResult = validatePolygon(input.geometry);
-        updateData.geometry = input.geometry;
-        updateData.areaHa = geoResult.areaHa;
-        updateData.centroid = geoResult.centroid;
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Invalid polygon geometry';
-        throw new AppError(message, 400, 'INVALID_GEOMETRY');
+      if (input.geometry && Array.isArray(input.geometry.coordinates) && input.geometry.coordinates.length > 0) {
+        try {
+          const geoResult = validatePolygon(input.geometry);
+          updateData.geometry = input.geometry;
+          updateData.areaHa = geoResult.areaHa;
+          updateData.centroid = geoResult.centroid;
+          updateData.location = geoResult.centroid;
+          updateData.locationMode = 'polygon';
+          updateData.areaWarning =
+            geoResult.areaHa > AREA_CONFIG.largeAreaWarningHa.value
+              ? `Field area (${geoResult.areaHa.toFixed(2)} ha) exceeds ${AREA_CONFIG.largeAreaWarningHa.value} ha.`
+              : null;
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : 'Invalid polygon geometry';
+          throw new AppError(message, 400, 'INVALID_GEOMETRY');
+        }
+      } else {
+        updateData.geometry = null;
+      }
+    } else if (input.location !== undefined || (input.locationMode === 'pin' && input.areaValue !== undefined)) {
+      if (input.location) {
+        const [lng, lat] = input.location.coordinates;
+        if (
+          typeof lng !== 'number' ||
+          typeof lat !== 'number' ||
+          isNaN(lng) ||
+          isNaN(lat) ||
+          lng < INDIA_BOUNDS.minLng ||
+          lng > INDIA_BOUNDS.maxLng ||
+          lat < INDIA_BOUNDS.minLat ||
+          lat > INDIA_BOUNDS.maxLat
+        ) {
+          throw new AppError("Coordinate is outside India's bounding box", 400, 'INVALID_COORDINATES');
+        }
+        updateData.location = {
+          type: 'Point',
+          coordinates: [Number(lng.toFixed(6)), Number(lat.toFixed(6))],
+        };
+        updateData.centroid = updateData.location;
+      }
+
+      if (input.areaValue !== undefined && input.areaUnit !== undefined && input.areaValue !== null && input.areaUnit !== null) {
+        const areaHa = toHectares(input.areaValue, input.areaUnit, input.customAcresPerUnit ?? undefined);
+        if (areaHa < AREA_CONFIG.minAreaHa.value || areaHa > AREA_CONFIG.maxAreaHa.value) {
+          throw new AppError('Field area is outside allowable limits (0.01 - 500 ha)', 400, 'INVALID_AREA');
+        }
+        updateData.areaHa = areaHa;
+        updateData.areaWarning =
+          areaHa > AREA_CONFIG.largeAreaWarningHa.value
+            ? `Field area (${areaHa.toFixed(2)} ha) exceeds ${AREA_CONFIG.largeAreaWarningHa.value} ha.`
+            : null;
       }
     }
 

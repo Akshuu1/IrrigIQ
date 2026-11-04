@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import * as turf from '@turf/turf';
-import { validatePolygon, polygonAreaHa, polygonCentroid, type GeoJSONPolygon } from './geo.js';
+import {
+  validatePolygon,
+  polygonAreaHa,
+  polygonCentroid,
+  stateForPoint,
+  suggestLanguageForState,
+  type GeoJSONPolygon,
+} from './geo.js';
 
 describe('Geo helpers', () => {
   // A valid ~1-hectare field near Jaipur, Rajasthan (approx 75.8°E, 26.9°N)
@@ -153,5 +160,40 @@ describe('Geo helpers', () => {
       ],
     };
     expect(() => validatePolygon(unclosed)).toThrow(/closed ring/i);
+  });
+
+  describe('Phase 18 State Lookup & Language Suggestion', () => {
+    const cityCases = [
+      { name: 'Delhi', lng: 77.2090, lat: 28.6139, expectedState: 'Delhi', expectedLang: 'hi' },
+      { name: 'Mumbai', lng: 72.8777, lat: 19.0760, expectedState: 'Maharashtra', expectedLang: 'en' },
+      { name: 'Bengaluru', lng: 77.5946, lat: 12.9716, expectedState: 'Karnataka', expectedLang: 'en' },
+      { name: 'Chandigarh', lng: 76.7794, lat: 30.7333, expectedState: 'Chandigarh', expectedLang: 'hi' },
+      { name: 'Chennai', lng: 80.2707, lat: 13.0827, expectedState: 'Tamil Nadu', expectedLang: 'en' },
+    ];
+
+    it.each(cityCases)(
+      'resolves $name ($lng, $lat) to $expectedState with language $expectedLang',
+      ({ lng, lat, expectedState, expectedLang }) => {
+        const state = stateForPoint(lng, lat);
+        expect(state).toBe(expectedState);
+        expect(suggestLanguageForState(state)).toBe(expectedLang);
+      },
+    );
+
+    it('returns null for a point in the Arabian sea', () => {
+      // Point in Arabian Sea off the coast of Goa
+      expect(stateForPoint(70.0, 15.0)).toBeNull();
+      expect(suggestLanguageForState(null)).toBe('en');
+    });
+
+    it('returns null for a point in the Bay of Bengal', () => {
+      // Point in Bay of Bengal
+      expect(stateForPoint(85.0, 15.0)).toBeNull();
+    });
+
+    it('returns null for points completely outside India bounding box', () => {
+      expect(stateForPoint(-0.12, 51.5)).toBeNull(); // London
+      expect(stateForPoint(139.69, 35.68)).toBeNull(); // Tokyo
+    });
   });
 });
