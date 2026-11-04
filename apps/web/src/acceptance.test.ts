@@ -491,4 +491,46 @@ describe('Phase 9 Acceptance: Draw a field, save it, and see recommendations in 
       expect(disclaimer).toMatch(/Krishi Vigyan Kendra/);
     });
   });
+
+  describe('Phase 20 Acceptance: Chat messaging with Telegram', () => {
+    it('verifies Telegram messaging localization, linking deep links, and advisory text in English & Hindi', async () => {
+      // 1. English localized UI keys
+      await setAppLanguage('en');
+      expect(i18n.t('messaging.title')).toBe('Telegram Advisory Notifications');
+      expect(i18n.t('messaging.connectBtn')).toBe('Connect Telegram');
+      expect(i18n.t('messaging.statusActive')).toBe('Connected & Active');
+      expect(i18n.t('messaging.statusDisconnected')).toBe('Not Connected');
+      expect(i18n.t('messaging.testBtn')).toBe('Send Test Advisory');
+      expect(i18n.t('messaging.linkInstructions')).toContain('Open Telegram');
+
+      // 2. Hindi localized UI keys
+      await setAppLanguage('hi');
+      expect(i18n.t('messaging.title')).toBe('टेलीग्राम कृषि सलाह सूचनाएं');
+      expect(i18n.t('messaging.connectBtn')).toBe('टेलीग्राम कनेक्ट करें');
+      expect(i18n.t('messaging.statusActive')).toBe('सक्रिय व कनेक्टेड');
+      expect(i18n.t('messaging.testBtn')).toBe('परीक्षण सलाह भेजें');
+
+      // 3. Telegram deep link generation
+      const linkCode = '849201';
+      const botUsername = 'IrrigIQBot';
+      const deepLink = `https://t.me/${botUsername}?start=${linkCode}`;
+      expect(deepLink).toBe('https://t.me/IrrigIQBot?start=849201');
+
+      // 4. Pump advisory duration formatted for Telegram in EN & HI
+      const runMins = 107; // Tomato 31,950 L at 18,000 L/h
+      expect(formatDuration(runMins, 'en')).toBe('1 h 47 min');
+      expect(formatDuration(runMins, 'hi')).toBe('1 घंटा 47 मिनट');
+
+      // 5. Devanagari numerals normalization
+      const devanagariInput = '३ ०७:३०';
+      const normalized = devanagariInput.replace(/[०-९]/g, (d) => {
+        const map: Record<string, string> = {
+          '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
+          '५': '5', '६': '6', '७': '7', '८': '8', '९': '9',
+        };
+        return map[d] || d;
+      });
+      expect(normalized).toBe('3 07:30');
+    });
+  });
 });

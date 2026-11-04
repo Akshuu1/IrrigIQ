@@ -35,6 +35,28 @@ import {
 } from '../offline/db.js';
 import { enqueueMutation } from '../offline/queue.js';
 
+export interface MessageChannel {
+  userId: string;
+  provider: 'telegram';
+  optedIn: boolean;
+  optedInAt?: string;
+  status: 'active' | 'deactivated' | 'pending_opt_in';
+  sendTime: string;
+  quietHours: {
+    start: string;
+    end: string;
+  };
+  dailyCap: number;
+  messagesSentToday: number;
+  lastSentDate?: string;
+}
+
+export interface LinkCodeResponse {
+  code: string;
+  deepLink: string;
+  expiresAt: string;
+}
+
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
 let accessToken: string | null = null;
@@ -1052,5 +1074,44 @@ export const api = {
       body: JSON.stringify({ date }),
     });
     return res.data;
+  },
+
+  // Messaging (Telegram & Chat Advisories)
+  async getMessagingChannel(): Promise<MessageChannel | null> {
+    const res = await apiFetch<{ status: string; data: MessageChannel | null }>(
+      '/messaging/channel',
+    );
+    return res.data;
+  },
+
+  async createLinkCode(): Promise<LinkCodeResponse> {
+    const res = await apiFetch<{ status: string; data: LinkCodeResponse }>('/messaging/link-code', {
+      method: 'POST',
+    });
+    return res.data;
+  },
+
+  async updateMessagingChannel(data: {
+    sendTime?: string;
+    quietHours?: { start: string; end: string };
+    dailyCap?: number;
+  }): Promise<MessageChannel> {
+    const res = await apiFetch<{ status: string; data: MessageChannel }>('/messaging/channel', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+    return res.data;
+  },
+
+  async deleteMessagingChannel(): Promise<void> {
+    await apiFetch<void>('/messaging/channel', {
+      method: 'DELETE',
+    });
+  },
+
+  async sendTestMessage(): Promise<void> {
+    await apiFetch<{ status: string; message: string }>('/messaging/test-message', {
+      method: 'POST',
+    });
   },
 };

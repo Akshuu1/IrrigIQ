@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext.js';
 import { type Language, type AreaUnit } from '@irrigiq/shared';
 import { setAppLanguage, type SupportedLanguage } from '../locales/i18n.js';
 import { Settings as SettingsIcon, Check, AlertCircle, Loader2, Globe, Ruler } from 'lucide-react';
+import { TelegramConnectCard } from '../components/TelegramConnectCard.js';
 
 export function Settings(): React.JSX.Element {
   const { t, i18n } = useTranslation();
@@ -178,6 +179,9 @@ export function Settings(): React.JSX.Element {
           )}
         </button>
       </form>
+
+      {/* Phase 20: Chat Messaging & Telegram Advisory Integration */}
+      <TelegramConnectCard />
     </div>
   );
 }

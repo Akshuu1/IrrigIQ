@@ -27,6 +27,15 @@ async function startServer(): Promise<void> {
         } catch (schedulerErr) {
           logger.error({ err: schedulerErr }, 'Failed to initialize recommendation scheduler');
         }
+
+        // Initialize BullMQ messages queue for WhatsApp / Telegram advisory delivery
+        try {
+          const { initMessagesQueue } = await import('./services/messaging/message.queue.js');
+          initMessagesQueue();
+          logger.info('BullMQ messages delivery queue initialized');
+        } catch (msgQueueErr) {
+          logger.error({ err: msgQueueErr }, 'Failed to initialize messages queue');
+        }
       })
       .catch((err) => {
         logger.warn({ err }, 'Redis initial connection failed - will retry on demand');

@@ -8,8 +8,8 @@ export const createIrrigationLogSchema = z.object({
     .number({ required_error: 'appliedMm is required' })
     .min(0, 'Applied mm must be at least 0')
     .max(500, 'Applied mm cannot exceed 500 mm'),
-  source: z.enum(['recommended', 'manual'], {
-    required_error: 'Source must be either recommended or manual',
+  source: z.enum(['recommended', 'manual', 'chat'], {
+    required_error: 'Source must be recommended, manual, or chat',
   }),
   note: z.string().trim().max(500, 'Note cannot exceed 500 characters').optional(),
 });

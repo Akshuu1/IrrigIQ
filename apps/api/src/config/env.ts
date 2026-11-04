@@ -22,6 +22,10 @@ export const EnvSchema = z.object({
   CRON_SECRET: z.string().default('development-cron-secret-key-min-16-chars'),
   COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('strict'),
   SOILGRIDS_ENABLED: z.coerce.boolean().default(true),
+  TELEGRAM_BOT_TOKEN: z.string().default('test-bot-token'),
+  TELEGRAM_BOT_USERNAME: z.string().default('IrrigIQBot'),
+  TELEGRAM_WEBHOOK_SECRET: z.string().default('irrigiq-telegram-webhook-secret-token'),
+  CHAT_ENCRYPTION_KEY: z.string().min(32).default('0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

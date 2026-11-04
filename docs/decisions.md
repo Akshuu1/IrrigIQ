@@ -447,7 +447,6 @@ Over 51% of net sown area in India is rain-fed, contributing ~40% of food grain 
 
 All agronomic thresholds, sowing rain windows, soil capacities, and state calendars are maintained in versioned JSON config files (`packages/shared/src/config/rainfed.config.json` and `packages/shared/src/config/calendars/<state>.json`) with explicit `source` and `verified: false` tags for agronomist review.
 
-
 ---
 
 ## ADR 012: Pin Drop, Area Units, State Boundaries & ISRIC SoilGrids Integration
@@ -554,6 +553,46 @@ Over 51% of net sown area in India is rain-fed, contributing ~40% of food grain 
 ### Configuration Integrity
 
 All agronomic thresholds, sowing rain windows, soil capacities, and state calendars are maintained in versioned JSON config files (`packages/shared/src/config/rainfed.config.json` and `packages/shared/src/config/calendars/<state>.json`) with explicit `source` and `verified: false` tags for agronomist review.
+
+---
+
+## ADR 014: Telegram Bot API Integration, Webhook Security & Personal Data Protection
+
+### Context & Problem Statement
+
+Farmers think in pump hours and need actionable daily irrigation advisories pushed directly to their mobile chat apps without requiring manual app log-ins every morning. In Phase 20, IrrigIQ introduces automated chat messaging via the Telegram Bot API, enabling farmers to receive daily field advisories and reply directly or tap inline buttons (`Done`, `Skipped`, `No power`).
+
+### Telegram Bot API Documentation & Terms Analysis
+
+1. **API Endpoints & Architecture**:
+   - Base URL: `https://api.telegram.org/bot<token>`
+   - `setWebhook`: Configures webhook callback URL with `secret_token` parameter.
+   - `sendMessage`: Sends formatted messages with Markdown and `inline_keyboard` buttons.
+
+2. **Rate Limits & Fair Use**:
+   - **Global Sending Limit**: 30 messages per second across all chats.
+   - **Chat Limit**: 1 message per second to a particular chat.
+   - **Batching & Queuing**: Managed through BullMQ queue (`messages`) configured with `limiter: { max: 25, duration: 1000 }` and 5 worker concurrency to guarantee compliance.
+
+3. **Webhook Security & Verification**:
+   - Telegram sends the configured secret in the `X-Telegram-Bot-Api-Secret-Token` HTTP header.
+   - IrrigIQ verifies this header on every inbound request using `crypto.timingSafeEqual` to prevent timing attacks. Any request with a missing or mismatched token is rejected immediately with `401 Unauthorized`.
+
+4. **Idempotency & Deduplication (48-Hour TTL)**:
+   - Every inbound webhook contains a unique integer `update_id`.
+   - Incoming updates are deduplicated using distributed Redis atomic operation: `SET dedupe:telegram:${updateId} 1 EX 172800 NX` (48 hours TTL).
+   - Duplicate deliveries immediately return `200 OK` with `{ ok: true, duplicate: true }` and bypass duplicate background execution.
+
+5. **Personal Data Protection & Encryption at Rest**:
+   - Telegram `chat_id` values, phone numbers, and authentication tokens are personal data.
+   - **Encryption at Rest**: Encrypted using **AES-256-GCM** with a 12-byte random IV and 16-byte authentication tag in format `iv:authTag:ciphertext`.
+   - **No Logging Rule**: Raw `chat_id` is never logged to application logs or external monitoring systems.
+   - **Indexed Lookups**: A deterministic SHA-256 hash (`externalIdHash`) is stored alongside the encrypted payload to allow indexing and lookups without decrypting all records or logging identifiers.
+   - **Consent & Rights**: Farmers must provide explicit opt-in. Unsubscription is supported via `STOP` text command, and complete erasure is supported via `DELETE /messaging/channel`.
+
+6. **Fault Isolation & Permanent Failure Handling**:
+   - If Telegram returns `403 Forbidden` (`bot was blocked by the user` or `user is deactivated`), the channel is marked `deactivated` immediately.
+   - Deliveries for one user run completely isolated in BullMQ; failure for one user never affects or halts deliveries for others.
 
 
 

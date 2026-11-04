@@ -104,6 +104,14 @@ export async function processDailyRecommendations(): Promise<{
     'Daily recommendations processing finished',
   );
 
+  // Phase 20: Dispatch daily messaging digests to active farmer channels
+  try {
+    const { dispatchDailyDigests } = await import('../services/messaging/digest.service.js');
+    await dispatchDailyDigests();
+  } catch (err: unknown) {
+    logger.warn({ err }, 'Failed to dispatch daily messaging digests');
+  }
+
   return {
     distinctCells: distinctCellKeys.size,
     processedFields,

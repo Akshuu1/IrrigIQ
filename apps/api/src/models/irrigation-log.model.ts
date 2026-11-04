@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
-export type IrrigationLogSource = 'recommended' | 'manual';
+export type IrrigationLogSource = 'recommended' | 'manual' | 'chat';
 
 export interface IIrrigationLog {
   fieldId: Types.ObjectId;
@@ -43,7 +43,7 @@ const irrigationLogSchema = new Schema<IIrrigationLogDocument>(
     },
     source: {
       type: String,
-      enum: ['recommended', 'manual'],
+      enum: ['recommended', 'manual', 'chat'],
       required: true,
     },
     note: {

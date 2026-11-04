@@ -387,6 +387,34 @@
       "no_calendar": "No state crop calendar configured for this location. Consult local Krishi Vigyan Kendra (KVK).",
       "agronomist_disclaimer": "⚠️ Advisory generated based on ICAR-CRIDA dryland guidelines. Text and thresholds flagged for agronomic review by local Krishi Vigyan Kendra (KVK)."
     }
+  },
+  "messaging": {
+    "title": "Telegram Advisory Notifications",
+    "subtitle": "Receive daily pump run-times and irrigation alerts right on your phone",
+    "status": "Telegram Status",
+    "statusActive": "Connected & Active",
+    "statusPending": "Pending Confirmation",
+    "statusDisconnected": "Not Connected",
+    "connectBtn": "Connect Telegram",
+    "connecting": "Generating Code...",
+    "linkInstructions": "Open Telegram, start the bot, and confirm opt-in to begin receiving daily advisories at your scheduled pump time.",
+    "openTelegram": "Open in Telegram",
+    "linkCode": "One-time Link Code",
+    "codeExpires": "Valid for 15 minutes",
+    "preferencesTitle": "Delivery Preferences",
+    "sendTime": "Daily Advisory Send Time (IST)",
+    "quietHours": "Quiet Hours (No messages sent)",
+    "quietFrom": "From",
+    "quietTo": "To",
+    "dailyCap": "Daily Message Cap",
+    "savePreferences": "Save Preferences",
+    "saving": "Saving...",
+    "preferencesSaved": "Advisory preferences saved successfully",
+    "testBtn": "Send Test Advisory",
+    "sendingTest": "Sending test advisory...",
+    "testSent": "Test advisory sent to your Telegram!",
+    "disconnectBtn": "Disconnect Telegram",
+    "confirmDisconnect": "Are you sure you want to disconnect Telegram? You will no longer receive daily chat advisories."
   }
 }
 

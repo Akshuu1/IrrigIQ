@@ -16,6 +16,8 @@ import { syncRouter } from './routes/sync.routes.js';
 import { reportRouter } from './routes/report.routes.js';
 import { pumpRouter } from './routes/pump.routes.js';
 import { powerScheduleRouter } from './routes/powerSchedule.routes.js';
+import { webhookRouter } from './routes/webhook.routes.js';
+import { messagingRouter } from './routes/messaging.routes.js';
 import { processDailyRecommendations } from './scheduler/recommendation.scheduler.js';
 
 export function createApp(): Express {
@@ -77,8 +79,15 @@ export function createApp(): Express {
     );
   }
 
-  // Parse JSON bodies with request size limit protection
-  app.use(express.json({ limit: '100kb' }) as unknown as RequestHandler);
+  // Parse JSON bodies with request size limit protection and rawBody preservation
+  app.use(
+    express.json({
+      limit: '100kb',
+      verify: (req, _res, buf) => {
+        (req as unknown as { rawBody: Buffer }).rawBody = buf;
+      },
+    }) as unknown as RequestHandler,
+  );
 
   // Mount routes
   app.use('/', healthRouter);
@@ -90,6 +99,8 @@ export function createApp(): Express {
   app.use('/reports', reportRouter);
   app.use('/pumps', pumpRouter);
   app.use('/power-schedules', powerScheduleRouter);
+  app.use('/webhooks', webhookRouter);
+  app.use('/messaging', messagingRouter);
 
   // External cron trigger for waking up free-tier cloud instances (e.g. Render/Fly.io)
   app.post('/scheduler/trigger-daily-recommendations', async (req, res) => {
