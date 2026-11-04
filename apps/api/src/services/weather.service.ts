@@ -10,6 +10,7 @@ export interface WeatherDay {
   tminC: number;
   rainMm: number;
   et0Mm: number;
+  windSpeedMaxKmh?: number;
   source: WeatherSource;
 }
 
@@ -26,6 +27,7 @@ export interface OpenMeteoDailyData {
   temperature_2m_min?: (number | null)[];
   precipitation_sum?: (number | null)[];
   et0_fao_evapotranspiration?: (number | null)[];
+  wind_speed_10m_max?: (number | null)[];
 }
 
 export interface OpenMeteoResponse {
@@ -260,12 +262,19 @@ export function normalizeForecast(raw: OpenMeteoResponse, latDeg?: number): Weat
       source = 'hargreaves';
     }
 
+    const rawWind = daily.wind_speed_10m_max?.[i];
+    const windSpeedMaxKmh =
+      typeof rawWind === 'number' && !isNaN(rawWind) && rawWind >= 0
+        ? Number(rawWind.toFixed(1))
+        : 0;
+
     result.push({
       date,
       tmaxC: Number(tmax.toFixed(1)),
       tminC: Number(tmin.toFixed(1)),
       rainMm: Number(rain.toFixed(2)),
       et0Mm,
+      windSpeedMaxKmh,
       source,
     });
   }
@@ -298,7 +307,7 @@ export async function fetchForecast(
   url.searchParams.set('longitude', lon.toString());
   url.searchParams.set(
     'daily',
-    'temperature_2m_max,temperature_2m_min,precipitation_sum,et0_fao_evapotranspiration',
+    'temperature_2m_max,temperature_2m_min,precipitation_sum,et0_fao_evapotranspiration,wind_speed_10m_max',
   );
   url.searchParams.set('timezone', 'Asia/Kolkata');
   url.searchParams.set('forecast_days', days.toString());
@@ -404,6 +413,7 @@ function docToWeatherDay(doc: IWeatherDayDocument): WeatherDay {
     tminC: doc.tminC,
     rainMm: doc.rainMm,
     et0Mm: doc.et0Mm,
+    windSpeedMaxKmh: doc.windSpeedMaxKmh ?? 0,
     source: doc.source,
   };
 }
@@ -531,6 +541,7 @@ export async function getWeatherForCell(
             tminC: day.tminC,
             rainMm: day.rainMm,
             et0Mm: day.et0Mm,
+            windSpeedMaxKmh: day.windSpeedMaxKmh ?? 0,
             source: day.source,
             fetchedAt: fetchTimestamp,
           },

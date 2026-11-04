@@ -7,3 +7,4 @@ export * from './recommendations.js';
 export * from './savings.js';
 export * from './sync.js';
 export * from './pump.js';
+export * from './power-schedule.js';

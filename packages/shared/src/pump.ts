@@ -173,3 +173,4 @@ export function pumpCost(
   const cost = (mins / 60) * costPerHour;
   return Math.round(cost * 100) / 100;
 }
+

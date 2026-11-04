@@ -145,6 +145,7 @@ export const createPumpSchema = z.object({
     .transform((val) => new Date(val))
     .optional(),
   costPerHour: z.number().min(0, 'Cost per hour must be non-negative').optional().nullable(),
+  scheduleId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid schedule ID').optional().nullable(),
 });
 export type CreatePumpInput = z.infer<typeof createPumpSchema>;
 
@@ -165,5 +166,44 @@ export const updatePumpSchema = z.object({
     .transform((val) => new Date(val))
     .optional(),
   costPerHour: z.number().min(0, 'Cost per hour must be non-negative').optional().nullable(),
+  scheduleId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid schedule ID').optional().nullable(),
 });
 export type UpdatePumpInput = z.infer<typeof updatePumpSchema>;
+
+// Power Schedule schemas
+export const powerWindowSchema = z.object({
+  days: z.array(z.number().int().min(0).max(6)).min(1, 'At least one day must be selected'),
+  start: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Start time must be in HH:MM format'),
+  end: z.string().regex(/^([01]\d|2[0-3]|24):([0-5]\d)$/, 'End time must be in HH:MM format'),
+});
+
+export const scheduleRotationSchema = z.object({
+  weekA: z.array(powerWindowSchema).min(1, 'Week A must contain at least one window'),
+  weekB: z.array(powerWindowSchema).min(1, 'Week B must contain at least one window'),
+  anchorDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Anchor date must be YYYY-MM-DD'),
+});
+
+export const createPowerScheduleSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Schedule name is required')
+    .max(100, 'Schedule name must not exceed 100 characters'),
+  type: z.enum(['night', 'day', 'custom']).default('custom'),
+  windows: z.array(powerWindowSchema).default([]),
+  rotation: scheduleRotationSchema.optional().nullable(),
+});
+export type CreatePowerScheduleInput = z.infer<typeof createPowerScheduleSchema>;
+
+export const updatePowerScheduleSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Schedule name is required')
+    .max(100, 'Schedule name must not exceed 100 characters')
+    .optional(),
+  type: z.enum(['night', 'day', 'custom']).optional(),
+  windows: z.array(powerWindowSchema).optional(),
+  rotation: scheduleRotationSchema.optional().nullable(),
+});
+export type UpdatePowerScheduleInput = z.infer<typeof updatePowerScheduleSchema>;

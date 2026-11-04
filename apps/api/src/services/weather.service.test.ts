@@ -53,6 +53,7 @@ describe('Weather Service & Open-Meteo Integration', () => {
       temperature_2m_min: [18.2, 19.0, 17.5],
       precipitation_sum: [0.0, 2.5, 0.0],
       et0_fao_evapotranspiration: [4.2, 3.8, 4.0],
+      wind_speed_10m_max: [14.2, 22.5, 11.0],
     },
   };
 
@@ -92,9 +93,11 @@ describe('Weather Service & Open-Meteo Integration', () => {
         tminC: 18.2,
         rainMm: 0.0,
         et0Mm: 4.2,
+        windSpeedMaxKmh: 14.2,
         source: 'open-meteo',
       });
       expect(days[1]?.rainMm).toBe(2.5);
+      expect(days[1]?.windSpeedMaxKmh).toBe(22.5);
       expect(days[1]?.source).toBe('open-meteo');
     });
 

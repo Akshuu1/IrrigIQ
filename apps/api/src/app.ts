@@ -15,6 +15,7 @@ import { sensorReadingRouter } from './routes/sensor-reading.routes.js';
 import { syncRouter } from './routes/sync.routes.js';
 import { reportRouter } from './routes/report.routes.js';
 import { pumpRouter } from './routes/pump.routes.js';
+import { powerScheduleRouter } from './routes/powerSchedule.routes.js';
 import { processDailyRecommendations } from './scheduler/recommendation.scheduler.js';
 
 export function createApp(): Express {
@@ -88,6 +89,7 @@ export function createApp(): Express {
   app.use('/sync', syncRouter);
   app.use('/reports', reportRouter);
   app.use('/pumps', pumpRouter);
+  app.use('/power-schedules', powerScheduleRouter);
 
   // External cron trigger for waking up free-tier cloud instances (e.g. Render/Fly.io)
   app.post('/scheduler/trigger-daily-recommendations', async (req, res) => {

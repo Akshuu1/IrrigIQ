@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
-import { getRecommendationsForField, recomputeField } from '../services/recommendation.service.js';
+import {
+  getRecommendationsForField,
+  recomputeField,
+  rescheduleForNoPower,
+} from '../services/recommendation.service.js';
 import { FieldModel } from '../models/field.model.js';
 import { AppError } from '../errors/AppError.js';
 import { Types } from 'mongoose';
@@ -62,6 +66,38 @@ export class RecommendationController {
         data: {
           recommendations,
         },
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  reportNoPower = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401, 'UNAUTHORIZED');
+      }
+
+      const fieldId = req.params.id as string;
+      if (!Types.ObjectId.isValid(fieldId)) {
+        throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
+      }
+
+      const field = await FieldModel.findOne({
+        _id: new Types.ObjectId(fieldId),
+        userId: new Types.ObjectId(req.user.id),
+      });
+
+      if (!field) {
+        throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
+      }
+
+      const date = (req.body?.date as string) || (req.query?.date as string);
+      const result = await rescheduleForNoPower(field._id, date);
+
+      res.json({
+        status: 'success',
+        data: result,
       });
     } catch (err) {
       next(err);

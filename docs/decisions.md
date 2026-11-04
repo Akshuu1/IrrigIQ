@@ -21,6 +21,7 @@ Open-Meteo provides a free-tier, open-access weather API utilizing national mete
     - `precipitation_sum`: Total daily precipitation (rain, showers, snow) (unit: `mm`).
     - `temperature_2m_max`: Maximum daily air temperature at 2 meters above ground (unit: `°C`).
     - `temperature_2m_min`: Minimum daily air temperature at 2 meters above ground (unit: `°C`).
+    - `wind_speed_10m_max`: Daily maximum wind speed at 10 meters above ground (unit: `km/h`). Required by Phase 17 to detect high-wind spray drift risk (> 20 km/h) for sprinkler irrigation scheduling.
   - `timezone`: `Asia/Kolkata` (mandatory for daily aggregation aligning with Indian Standard Time UTC+05:30).
   - `forecast_days`: Number of days to return (1–16 days, typically 7).
 
@@ -374,6 +375,35 @@ To guarantee that daily recommendations are executed without requiring expensive
    - Protected by `CRON_SECRET` header validation (`x-cron-secret` or `Authorization: Bearer <CRON_SECRET>`).
    - An external cron runner (e.g. GitHub Actions `.github/workflows/daily-cron.yml` firing at `30 23 * * *`, or cron-job.org) sends a ping every morning.
    - The inbound HTTP request wakes the sleeping Render instance, executes `processDailyRecommendations()`, logs results, and returns HTTP 200 with the execution summary (`{ distinctCells, processedFields, failedFields }`).
+
+---
+
+## ADR 007: Phase 17 Power Windows & Wind Drift Sprinkler Protection
+
+### Context
+
+In rural Indian agriculture, electrical power for agricultural tubewells and pumps is intermittent and scheduled in 6-to-8 hour daily blocks (e.g., night blocks from 22:00 to 06:00 IST or day blocks from 06:00 to 14:00 IST, often rotating weekly between feeder circuits). Furthermore, sprinkler irrigation in high wind causes severe droplet drift, non-uniform distribution, and up to 30% water loss from spray evaporation.
+
+### Upstream Meteorological Specifications
+
+- **API Variable**: `wind_speed_10m_max` from Open-Meteo Forecast API (`https://api.open-meteo.com/v1/forecast`).
+- **Unit**: `km/h` (default unit returned by Open-Meteo).
+- **Physical Meaning**: Daily maximum 10-meter wind speed over the 24-hour UTC/IST aggregation window.
+- **Agronomic Threshold**: FAO-56 and USDA Natural Resources Conservation Service guidelines establish $20 \text{ km/h}$ ($\approx 5.5 \text{ m/s}$) as the upper permissible limit for standard agricultural impact sprinklers. Above $20 \text{ km/h}$, operating sprinklers leads to pattern distortion.
+- **Config Representation**: Versioned under `POWER_SCHEDULE_CONFIG.windLimitKmh` with `source: 'FAO-56 Irrigation and Drainage Paper No. 56 / Sprinkler droplet drift threshold (starter 20 km/h)'` and `verified: false`.
+
+### Power Window Model Architecture
+
+1. **Concrete Interval Expansion (`expandWindows`)**:
+   - Converts weekly recurrent schedules `{ days, start 'HH:MM', end 'HH:MM' }` in Indian Standard Time (IST) into concrete timestamps for date $D$ and $D+1$.
+   - Handles midnight-crossing windows (e.g. `22:00` to `06:00`): splits cleanly into `22:00` to `24:00` on Day $D$, and `00:00` to `06:00` on Day $D+1$.
+2. **Weekly Rotation Support (`weekA` vs `weekB`)**:
+   - Compares target date against `anchorDate` in 7-day increments: even week index maps to `weekA`, odd week index maps to `weekB`.
+3. **Multi-Field Dispatch (`planPumpDay`)**:
+   - When multiple fields share a single pump, field run durations are sorted by urgency (highest water deficit in mm first) and allocated back-to-back across available intervals.
+4. **No-Power Resilience (`rescheduleForNoPower`)**:
+   - When a farmer reports an unexpected feeder outage, the scheduled run moves to the next available interval while preserving the accumulated root-zone soil water deficit.
+
 
 
 

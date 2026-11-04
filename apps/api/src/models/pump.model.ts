@@ -6,6 +6,7 @@ export interface IPump {
   dischargeLph: number;
   measuredOn: Date;
   costPerHour?: number | null;
+  scheduleId?: Types.ObjectId | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +43,11 @@ const pumpSchema = new Schema<IPumpDocument>(
       min: 0,
       default: null,
     },
+    scheduleId: {
+      type: Schema.Types.ObjectId,
+      ref: 'PowerSchedule',
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -59,3 +65,4 @@ const pumpSchema = new Schema<IPumpDocument>(
 pumpSchema.index({ userId: 1, createdAt: -1 });
 
 export const PumpModel = mongoose.model<IPumpDocument>('Pump', pumpSchema);
+

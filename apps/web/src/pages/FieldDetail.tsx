@@ -285,6 +285,9 @@ export function FieldDetail(): React.JSX.Element {
         todayRecommendation={recommendations[0]}
         onOpenLogModal={() => setIsLogModalOpen(true)}
         onOpenPumpModal={() => setIsPumpModalOpen(true)}
+        onRescheduled={() =>
+          queryClient.invalidateQueries({ queryKey: ['recommendations', field.id] })
+        }
       />
 
       {/* 2. 7-Day Plan Forecast (Recharts BarChart + Table) */}

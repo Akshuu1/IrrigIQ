@@ -9,6 +9,7 @@ export interface IWeatherDay {
   tminC: number;
   rainMm: number;
   et0Mm: number;
+  windSpeedMaxKmh?: number;
   source: WeatherSource;
   fetchedAt: Date;
   createdAt: Date;
@@ -47,6 +48,10 @@ const weatherDaySchema = new Schema<IWeatherDayDocument>(
       required: true,
       min: 0,
       max: 15,
+    },
+    windSpeedMaxKmh: {
+      type: Number,
+      default: 0,
     },
     source: {
       type: String,

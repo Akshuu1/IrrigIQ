@@ -19,6 +19,7 @@ export function PumpModal({ isOpen, onClose, onSuccess }: PumpModalProps): React
   const [seconds, setSeconds] = useState<number>(4);
   const [directLph, setDirectLph] = useState<number>(18000);
   const [costPerHour, setCostPerHour] = useState<string>('');
+  const [scheduleOption, setScheduleOption] = useState<'night' | 'day' | 'none'>('night');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,10 +65,17 @@ export function PumpModal({ isOpen, onClose, onSuccess }: PumpModalProps): React
 
     setIsSubmitting(true);
     try {
+      let assignedScheduleId: string | null = null;
+      if (scheduleOption === 'night' || scheduleOption === 'day') {
+        const preset = await api.ensurePowerSchedulePreset(scheduleOption);
+        assignedScheduleId = preset.id || (preset as any)._id;
+      }
+
       const created = await api.createPump({
         name: name.trim(),
         dischargeLph: effectiveLph,
         costPerHour: parsedCost,
+        scheduleId: assignedScheduleId,
       });
       onSuccess(created);
       onClose();
@@ -251,6 +259,26 @@ export function PumpModal({ isOpen, onClose, onSuccess }: PumpModalProps): React
             />
           </div>
 
+          {/* Power Supply Window Selector */}
+          <div>
+            <label
+              htmlFor="power-schedule-select"
+              className="block text-xs font-semibold text-slate-300 mb-1"
+            >
+              {t('powerSchedule.selectLabel')}
+            </label>
+            <select
+              id="power-schedule-select"
+              value={scheduleOption}
+              onChange={(e) => setScheduleOption(e.target.value as 'night' | 'day' | 'none')}
+              className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-400 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none"
+            >
+              <option value="night">{t('powerSchedule.presetNight')}</option>
+              <option value="day">{t('powerSchedule.presetDay')}</option>
+              <option value="none">{t('powerSchedule.none')}</option>
+            </select>
+          </div>
+
           {/* Action Buttons */}
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
             <button
@@ -273,3 +301,4 @@ export function PumpModal({ isOpen, onClose, onSuccess }: PumpModalProps): React
     </div>
   );
 }
+

@@ -6,9 +6,17 @@ import {
   IrrigationMethod,
   runMinutes,
   pumpCost,
+  expandWindows,
+  planPumpSegments,
+  addDaysToIsoDate,
+  grossNeed,
+  mmToLitres,
+  SOIL_CONFIG,
+  PowerSchedule,
 } from '@irrigiq/shared';
 import { FieldModel } from '../models/field.model.js';
 import { PumpModel } from '../models/pump.model.js';
+import { PowerScheduleModel } from '../models/powerSchedule.model.js';
 import { RecommendationModel, IRecommendationDocument } from '../models/recommendation.model.js';
 import { IrrigationLogModel } from '../models/irrigation-log.model.js';
 import { weatherCellKey, getWeatherForCell, GetWeatherOptions } from './weather.service.js';
@@ -94,6 +102,9 @@ export async function recomputeField(
   // Look up pump configuration if assigned to field
   const pump = field.pumpId ? await PumpModel.findById(field.pumpId) : null;
   const pumpMissing = !pump;
+  const powerSchedule = pump?.scheduleId
+    ? await PowerScheduleModel.findById(pump.scheduleId)
+    : null;
 
   // Bulk upsert into Recommendation collection
   const now = new Date();
@@ -103,12 +114,27 @@ export async function recomputeField(
     let runMinutesVal: number | null = null;
     let splitAcrossDaysVal = false;
     let pumpCostVal: number | null = null;
+    let pumpSegmentsVal: { start: string; end: string; durationMinutes: number }[] = [];
+    let missingMinutesVal = 0;
+    let notesVal: string[] = [];
 
     if (pump) {
       const run = runMinutes(item.litres, pump.dischargeLph);
       runMinutesVal = run.minutes;
       splitAcrossDaysVal = run.splitAcrossDays;
       pumpCostVal = pumpCost(run.minutes, pump.costPerHour);
+
+      if (powerSchedule && run.minutes > 0) {
+        const intervals = expandWindows(powerSchedule as unknown as PowerSchedule, item.date);
+        const weatherDay = weatherResult.days.find((d) => d.date === item.date);
+        const planResult = planPumpSegments(run.minutes, intervals, {
+          method: field.method as 'drip' | 'sprinkler' | 'flood',
+          windSpeedMax: weatherDay?.windSpeedMaxKmh,
+        });
+        pumpSegmentsVal = planResult.segments;
+        missingMinutesVal = planResult.missingMinutes;
+        notesVal = planResult.notes;
+      }
     }
 
     return {
@@ -125,6 +151,9 @@ export async function recomputeField(
             splitAcrossDays: splitAcrossDaysVal,
             pumpCost: pumpCostVal,
             pumpMissing,
+            pumpSegments: pumpSegmentsVal,
+            missingMinutes: missingMinutesVal,
+            notes: notesVal,
             reasonKey: item.reasonKey,
             params: item.params,
             deficitMm: item.deficitMm,
@@ -195,4 +224,105 @@ export async function getRecommendationsForField(
   }
 
   return recs;
+}
+
+/**
+ * Reschedules irrigation for a field when there is a power cut on `date`.
+ * Moves planned pump segments to the next power window / next interval
+ * while retaining the accumulated root-zone deficit.
+ */
+export async function rescheduleForNoPower(
+  fieldId: string | Types.ObjectId,
+  date?: string,
+): Promise<{
+  currentRecommendation: IRecommendationDocument;
+  rescheduledRecommendation?: IRecommendationDocument | null;
+}> {
+  const objectId = typeof fieldId === 'string' ? new Types.ObjectId(fieldId) : fieldId;
+  const field = await FieldModel.findById(objectId);
+  if (!field) {
+    throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
+  }
+
+  const targetDate =
+    date || new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+
+  let rec = await RecommendationModel.findOne({ fieldId: field._id, forDate: targetDate });
+  if (!rec) {
+    await recomputeField(field._id);
+    rec = await RecommendationModel.findOne({ fieldId: field._id, forDate: targetDate });
+  }
+
+  if (!rec) {
+    throw new AppError('Recommendation not found for the specified date', 404, 'RECOMMENDATION_NOT_FOUND');
+  }
+
+  const keptDeficit = rec.deficitMm;
+  const wasIrrigating = rec.action === 'irrigate' || (rec.runMinutes ?? 0) > 0;
+  const runMins = rec.runMinutes ?? 0;
+
+  // Mark the outage on the current date: keep the deficit!
+  rec.action = 'skip';
+  rec.reasonKey = 'reason.power_cut';
+  rec.notes = Array.from(new Set([...(rec.notes || []), 'plan.no_power']));
+  rec.pumpSegments = [];
+  rec.missingMinutes = wasIrrigating ? runMins : 0;
+  rec.litres = 0;
+  rec.grossMm = 0;
+  rec.netMm = 0;
+  rec.runMinutes = 0;
+  rec.pumpCost = 0;
+  rec.deficitMm = keptDeficit;
+  await rec.save();
+
+  // Move to next interval (next day)
+  const nextDate = addDaysToIsoDate(targetDate, 1);
+  const nextRec = await RecommendationModel.findOne({ fieldId: field._id, forDate: nextDate });
+
+  if (nextRec && wasIrrigating) {
+    const pump = field.pumpId ? await PumpModel.findById(field.pumpId) : null;
+    const powerSchedule = pump?.scheduleId
+      ? await PowerScheduleModel.findById(pump.scheduleId)
+      : null;
+
+    nextRec.deficitMm = Number((nextRec.deficitMm + keptDeficit).toFixed(2));
+    nextRec.action = 'irrigate';
+
+    const soilLimits = SOIL_CONFIG.maxDepthMm[field.soilType as SoilType] ?? 50;
+    nextRec.netMm = Math.min(nextRec.deficitMm, soilLimits);
+    nextRec.grossMm = grossNeed(nextRec.netMm, field.method as IrrigationMethod);
+    nextRec.litres = mmToLitres(nextRec.grossMm, field.areaHa);
+    nextRec.reasonKey = 'reason.deficit_reached';
+    nextRec.params = { mm: Number(nextRec.deficitMm.toFixed(1)) };
+
+    if (pump) {
+      const run = runMinutes(nextRec.litres, pump.dischargeLph);
+      nextRec.runMinutes = run.minutes;
+      nextRec.splitAcrossDays = run.splitAcrossDays;
+      nextRec.pumpCost = pumpCost(run.minutes, pump.costPerHour);
+      nextRec.pumpMissing = false;
+
+      if (powerSchedule && run.minutes > 0) {
+        const intervals = expandWindows(powerSchedule as unknown as PowerSchedule, nextDate);
+        const planResult = planPumpSegments(run.minutes, intervals, {
+          method: field.method as 'drip' | 'sprinkler' | 'flood',
+        });
+        nextRec.pumpSegments = planResult.segments;
+        nextRec.missingMinutes = planResult.missingMinutes;
+        nextRec.notes = planResult.notes;
+      }
+    }
+
+    await nextRec.save();
+  }
+
+  logger.info(
+    { fieldId: field._id.toString(), targetDate, nextDate, keptDeficit },
+    'Field irrigation rescheduled due to power outage',
+  );
+
+  return {
+    currentRecommendation: rec,
+    rescheduledRecommendation: nextRec,
+  };
 }

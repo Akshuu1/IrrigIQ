@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { type Field, type Recommendation } from '../../api/client.js';
+import { api, type Field, type Recommendation } from '../../api/client.js';
 import { formatNumber, formatDepthMm } from '../../utils/formatters.js';
-import { formatDuration } from '@irrigiq/shared';
+import { formatDuration, formatTimeRange } from '@irrigiq/shared';
 import {
   Clock,
   Sun,
@@ -11,6 +11,8 @@ import {
   Sparkles,
   CloudRain,
   Gauge,
+  ZapOff,
+  Wind,
 } from 'lucide-react';
 
 interface TodayAdvisoryCardProps {
@@ -18,13 +20,15 @@ interface TodayAdvisoryCardProps {
   todayRecommendation?: Recommendation;
   onOpenLogModal: () => void;
   onOpenPumpModal?: () => void;
+  onRescheduled?: () => void;
 }
 
 export function TodayAdvisoryCard({
-  field: _field,
+  field,
   todayRecommendation,
   onOpenLogModal,
   onOpenPumpModal,
+  onRescheduled,
 }: TodayAdvisoryCardProps): React.JSX.Element {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || 'en') as 'en' | 'hi';
@@ -35,6 +39,20 @@ export function TodayAdvisoryCard({
   const splitAcrossDays = todayRecommendation?.plan?.splitAcrossDays ?? false;
   const pumpCostVal = todayRecommendation?.plan?.pumpCost;
   const isPumpMissing = todayRecommendation?.plan?.pumpMissing ?? false;
+  const [isReportingNoPower, setIsReportingNoPower] = useState(false);
+
+  const handleReportNoPower = async () => {
+    if (!todayRecommendation) return;
+    try {
+      setIsReportingNoPower(true);
+      await api.reportNoPower(field.id, todayRecommendation.forDate);
+      onRescheduled?.();
+    } catch (err) {
+      console.error('Failed to report no power:', err);
+    } finally {
+      setIsReportingNoPower(false);
+    }
+  };
 
   let actionSentence = '';
   let detailSentence = '';
@@ -46,10 +64,33 @@ export function TodayAdvisoryCard({
 
       if (runMinutesVal !== null && runMinutesVal !== undefined) {
         const durationFormatted = formatDuration(runMinutesVal, lang);
-        actionSentence = t('fieldDetail.runPumpSentence', {
-          duration: durationFormatted,
-          defaultValue: `Run the pump ${durationFormatted} tonight`,
-        });
+
+        let windowRange = '';
+        const firstSeg = todayRecommendation.plan.pumpSegments?.[0];
+        if (firstSeg) {
+          const startHhmm = firstSeg.start.slice(11, 16);
+          if (startHhmm === '22:00') {
+            windowRange = formatTimeRange('22:00', '06:00', lang);
+          } else if (startHhmm === '06:00') {
+            windowRange = formatTimeRange('06:00', '14:00', lang);
+          } else {
+            const endHhmm = firstSeg.end.slice(11, 16);
+            windowRange = formatTimeRange(startHhmm, endHhmm, lang);
+          }
+        }
+
+        if (windowRange) {
+          actionSentence = t('fieldDetail.runPumpWithWindow', {
+            duration: durationFormatted,
+            window: windowRange,
+            defaultValue: `Run the pump ${durationFormatted}, ${windowRange}`,
+          });
+        } else {
+          actionSentence = t('fieldDetail.runPumpSentence', {
+            duration: durationFormatted,
+            defaultValue: `Run the pump ${durationFormatted} tonight`,
+          });
+        }
         detailSentence = `${litresFormatted} L (${depthFormatted})`;
       } else {
         actionSentence =
@@ -161,6 +202,51 @@ export function TodayAdvisoryCard({
           <div className="text-sm sm:text-base text-slate-200 font-medium flex items-start gap-2.5 pt-2">
             <Sparkles className="w-4 h-4 text-amber-300 flex-shrink-0 mt-1" />
             <span>{reasonText}</span>
+          </div>
+        )}
+
+        {/* High Wind Alert for Sprinklers */}
+        {todayRecommendation?.plan?.notes?.includes('plan.windy') && (
+          <div className="p-3.5 rounded-2xl bg-sky-950/70 border border-sky-600/80 text-sky-200 text-xs sm:text-sm font-medium flex items-center gap-2.5">
+            <Wind className="w-4 h-4 text-sky-400 flex-shrink-0" />
+            <span>{t('dashboard.planWindyWarning')}</span>
+          </div>
+        )}
+
+        {/* Missing Power Window Alert */}
+        {Boolean(todayRecommendation?.plan?.missingMinutes && todayRecommendation.plan.missingMinutes > 0) && (
+          <div className="p-3.5 rounded-2xl bg-amber-950/70 border border-amber-600/80 text-amber-200 text-xs sm:text-sm font-medium flex items-center gap-2.5">
+            <ZapOff className="w-4 h-4 text-amber-400 flex-shrink-0" />
+            <span>
+              {t('dashboard.missingPowerWarning', {
+                missing: todayRecommendation?.plan?.missingMinutes,
+              })}
+            </span>
+          </div>
+        )}
+
+        {/* Power Outage Alert */}
+        {todayRecommendation?.plan?.notes?.includes('plan.no_power') && (
+          <div className="p-3.5 rounded-2xl bg-rose-950/70 border border-rose-600/80 text-rose-200 text-xs sm:text-sm font-medium flex items-center gap-2.5">
+            <ZapOff className="w-4 h-4 text-rose-400 flex-shrink-0" />
+            <span>{t('dashboard.noPowerReportedAlert')}</span>
+          </div>
+        )}
+
+        {/* No Power Action Button */}
+        {isIrrigate && (
+          <div className="flex items-center justify-end pt-1">
+            <button
+              type="button"
+              disabled={isReportingNoPower}
+              onClick={handleReportNoPower}
+              className="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
+            >
+              <ZapOff className="w-3.5 h-3.5" />
+              <span>
+                {isReportingNoPower ? t('dashboard.rescheduling') : t('dashboard.noPowerButton')}
+              </span>
+            </button>
           </div>
         )}
 

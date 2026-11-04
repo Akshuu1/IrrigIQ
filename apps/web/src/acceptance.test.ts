@@ -9,6 +9,12 @@ import {
   runMinutes,
   formatDuration,
   pumpCost,
+  POWER_SCHEDULE_PRESETS,
+  formatTimeRange,
+  formatAdvisoryWithWindow,
+  expandWindows,
+  planPumpSegments,
+  planPumpDay,
 } from '@irrigiq/shared';
 import { formatArea, formatNumber, formatDepthMm } from './utils/formatters.js';
 
@@ -177,6 +183,139 @@ describe('Phase 9 Acceptance: Draw a field, save it, and see recommendations in 
       const longRun = runMinutes(250000, 18000);
       expect(longRun.minutes).toBe(833);
       expect(longRun.splitAcrossDays).toBe(true);
+    });
+  });
+
+  describe('Phase 17 Acceptance: Power Windows and the Pump Schedule', () => {
+    const tomatoRun = runMinutes(31950, 18000); // 107 minutes
+    const nightSchedule = {
+      name: 'Night Schedule',
+      windows: [...POWER_SCHEDULE_PRESETS.night.windows],
+    };
+
+    it('with a night schedule the tomato example shows "Run the pump 1 h 47 min, between 10 pm and 6 am" (English)', () => {
+      setAppLanguage('en');
+      const durationEn = formatDuration(tomatoRun.minutes, 'en');
+      const windowRange = formatTimeRange(
+        nightSchedule.windows[0]!.start,
+        nightSchedule.windows[0]!.end,
+        'en',
+      );
+      expect(windowRange).toBe('between 10 pm and 6 am');
+
+      const sentenceEn = i18n.t('dashboard.runPumpWithWindow', {
+        duration: durationEn,
+        window: windowRange,
+      });
+
+      expect(sentenceEn).toBe('Run the pump 1 h 47 min, between 10 pm and 6 am');
+
+      // Also verify pure shared formatter
+      const sharedSentenceEn = formatAdvisoryWithWindow(durationEn, nightSchedule, 'en');
+      expect(sharedSentenceEn).toBe('Run the pump 1 h 47 min, between 10 pm and 6 am');
+    });
+
+    it('with a night schedule the tomato example shows "आज रात 1 घंटा 47 मिनट पंप चलाएं, रात 10 बजे से सुबह 6 बजे के बीच" (Hindi)', () => {
+      setAppLanguage('hi');
+      const durationHi = formatDuration(tomatoRun.minutes, 'hi');
+      const windowRange = formatTimeRange(
+        nightSchedule.windows[0]!.start,
+        nightSchedule.windows[0]!.end,
+        'hi',
+      );
+      expect(windowRange).toBe('रात 10 बजे से सुबह 6 बजे के बीच');
+
+      const sentenceHi = i18n.t('dashboard.runPumpWithWindow', {
+        duration: durationHi,
+        window: windowRange,
+      });
+
+      expect(sentenceHi).toBe(
+        'आज रात 1 घंटा 47 मिनट पंप चलाएं, रात 10 बजे से सुबह 6 बजे के बीच',
+      );
+
+      // Also verify pure shared formatter
+      const sharedSentenceHi = formatAdvisoryWithWindow(durationHi, nightSchedule, 'hi');
+      expect(sharedSentenceHi).toBe(
+        'आज रात 1 घंटा 47 मिनट पंप चलाएं, रात 10 बजे से सुबह 6 बजे के बीच',
+      );
+    });
+
+    it('correctly splits midnight crossing window 22:00-06:00 into 22:00-24:00 (Day D) and 00:00-06:00 (Day D+1)', () => {
+      const intervals = expandWindows(nightSchedule, '2026-11-04');
+      expect(intervals).toHaveLength(2);
+
+      // Piece 1: 22:00 to 24:00 (120 min)
+      expect(intervals[0]!.start).toBe('2026-11-04T22:00:00+05:30');
+      expect(intervals[0]!.end).toBe('2026-11-05T00:00:00+05:30');
+      expect(intervals[0]!.durationMinutes).toBe(120);
+
+      // Piece 2: 00:00 to 06:00 (360 min)
+      expect(intervals[1]!.start).toBe('2026-11-05T00:00:00+05:30');
+      expect(intervals[1]!.end).toBe('2026-11-05T06:00:00+05:30');
+      expect(intervals[1]!.durationMinutes).toBe(360);
+    });
+
+    it('splits a pump run across intervals when run time exceeds the first interval', () => {
+      const intervals = expandWindows(nightSchedule, '2026-11-04');
+      // 180 min run: fills 120 min piece 1, and 60 min of piece 2
+      const result = planPumpSegments(180, intervals);
+
+      expect(result.segments).toHaveLength(2);
+      expect(result.segments[0]!.durationMinutes).toBe(120);
+      expect(result.segments[1]!.durationMinutes).toBe(60);
+      expect(result.missingMinutes).toBe(0);
+    });
+
+    it('reports missingMinutes when power window is insufficient', () => {
+      const shortSchedule = {
+        name: 'Short Window',
+        windows: [{ days: [0, 1, 2, 3, 4, 5, 6], start: '06:00', end: '08:00' }], // 120 min
+      };
+      const intervals = expandWindows(shortSchedule, '2026-11-04');
+      const result = planPumpSegments(200, intervals);
+
+      expect(result.segments).toHaveLength(1);
+      expect(result.segments[0]!.durationMinutes).toBe(120);
+      expect(result.missingMinutes).toBe(80);
+    });
+
+    it('schedules multiple fields sharing one pump in order of largest deficit first', () => {
+      const intervals = expandWindows(nightSchedule, '2026-11-04');
+      const fieldRuns = [
+        { fieldId: 'field-1', deficitMm: 15, runMinutes: 60 },
+        { fieldId: 'field-2', deficitMm: 35, runMinutes: 90 }, // higher deficit, scheduled first
+        { fieldId: 'field-3', deficitMm: 22, runMinutes: 45 },
+      ];
+
+      const dayPlan = planPumpDay('pump-main', fieldRuns, intervals);
+
+      expect(dayPlan.fieldPlans[0]!.fieldId).toBe('field-2');
+      expect(dayPlan.fieldPlans[1]!.fieldId).toBe('field-3');
+      expect(dayPlan.fieldPlans[2]!.fieldId).toBe('field-1');
+      expect(dayPlan.totalRunMinutes).toBe(195);
+      expect(dayPlan.totalMissingMinutes).toBe(0);
+    });
+
+    it('prioritizes calm night interval and adds plan.windy note for sprinklers in high wind (>20 km/h)', () => {
+      const mixedSchedule = {
+        name: 'Mixed Feeder',
+        windows: [
+          { days: [0, 1, 2, 3, 4, 5, 6], start: '06:00', end: '10:00' }, // Day
+          { days: [0, 1, 2, 3, 4, 5, 6], start: '22:00', end: '24:00' }, // Night
+        ],
+      };
+      const intervals = expandWindows(mixedSchedule, '2026-11-04');
+
+      // High wind: 25 km/h
+      const result = planPumpSegments(60, intervals, {
+        method: 'sprinkler',
+        windSpeedMax: 25,
+      });
+
+      expect(result.notes).toContain('plan.windy');
+      // Starts in calmer night interval (22:00) rather than daytime (06:00)
+      expect(result.segments[0]!.start).toContain('T22:00:00+05:30');
     });
   });
 });

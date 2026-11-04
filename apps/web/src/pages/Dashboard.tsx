@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { api, type Field, type Recommendation } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
 import { formatArea, formatNumber, formatDepthMm } from '../utils/formatters.js';
-import { CROPS_MAP, formatDuration } from '@irrigiq/shared';
+import { CROPS_MAP, formatDuration, formatTimeRange } from '@irrigiq/shared';
 import { PumpModal } from '../components/PumpModal.js';
 import {
   Droplet,
@@ -20,6 +20,8 @@ import {
   ArrowRight,
   Loader2,
   Gauge,
+  ZapOff,
+  Wind,
 } from 'lucide-react';
 
 function FieldRecommendationCard({
@@ -59,6 +61,20 @@ function FieldRecommendationCard({
   const splitAcrossDays = todayRecommendation?.plan?.splitAcrossDays ?? false;
   const pumpCostVal = todayRecommendation?.plan?.pumpCost;
   const isPumpMissing = todayRecommendation?.plan?.pumpMissing ?? false;
+  const [isReportingNoPower, setIsReportingNoPower] = useState(false);
+
+  const handleReportNoPower = async () => {
+    if (!todayRecommendation) return;
+    try {
+      setIsReportingNoPower(true);
+      await api.reportNoPower(field.id, todayRecommendation.forDate);
+      await refetch();
+    } catch (err) {
+      console.error('Failed to report no power:', err);
+    } finally {
+      setIsReportingNoPower(false);
+    }
+  };
 
   // Localized action sentence and detail line
   let actionSentence = '';
@@ -70,10 +86,34 @@ function FieldRecommendationCard({
 
       if (runMinutesVal !== null && runMinutesVal !== undefined) {
         const durationFormatted = formatDuration(runMinutesVal, lang);
-        actionSentence = t('dashboard.runPumpSentence', {
-          duration: durationFormatted,
-          defaultValue: `Run the pump ${durationFormatted} tonight`,
-        });
+
+        let windowRange = '';
+        const firstSeg = todayRecommendation.plan.pumpSegments?.[0];
+        if (firstSeg) {
+          const startHhmm = firstSeg.start.slice(11, 16);
+          if (startHhmm === '22:00') {
+            windowRange = formatTimeRange('22:00', '06:00', lang);
+          } else if (startHhmm === '06:00') {
+            windowRange = formatTimeRange('06:00', '14:00', lang);
+          } else {
+            const endHhmm = firstSeg.end.slice(11, 16);
+            windowRange = formatTimeRange(startHhmm, endHhmm, lang);
+          }
+        }
+
+        if (windowRange) {
+          actionSentence = t('dashboard.runPumpWithWindow', {
+            duration: durationFormatted,
+            window: windowRange,
+            defaultValue: `Run the pump ${durationFormatted}, ${windowRange}`,
+          });
+        } else {
+          actionSentence = t('dashboard.runPumpSentence', {
+            duration: durationFormatted,
+            defaultValue: `Run the pump ${durationFormatted} tonight`,
+          });
+        }
+
         detailSentence = t('dashboard.volumeDetail', {
           litres: litresFormatted,
           depthMm: depthFormatted,
@@ -259,6 +299,51 @@ function FieldRecommendationCard({
               <div className="mt-3.5 text-sm sm:text-base text-slate-300 font-medium flex items-start gap-2 pt-3 border-t border-slate-800/60">
                 <Sparkles className="w-4 h-4 text-amber-400 flex-shrink-0 mt-1" />
                 <span>{reasonText}</span>
+              </div>
+            )}
+
+            {/* High Wind Alert for Sprinklers */}
+            {todayRecommendation.plan.notes?.includes('plan.windy') && (
+              <div className="mt-3 p-3 rounded-xl bg-sky-950/60 border border-sky-800/80 text-sky-200 text-xs flex items-center gap-2">
+                <Wind className="w-4 h-4 text-sky-400 flex-shrink-0" />
+                <span>{t('dashboard.planWindyWarning')}</span>
+              </div>
+            )}
+
+            {/* Missing Power Window Alert */}
+            {Boolean(todayRecommendation.plan.missingMinutes && todayRecommendation.plan.missingMinutes > 0) && (
+              <div className="mt-3 p-3 rounded-xl bg-amber-950/60 border border-amber-800/80 text-amber-200 text-xs flex items-center gap-2">
+                <ZapOff className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <span>
+                  {t('dashboard.missingPowerWarning', {
+                    missing: todayRecommendation.plan.missingMinutes,
+                  })}
+                </span>
+              </div>
+            )}
+
+            {/* Power Outage Alert */}
+            {todayRecommendation.plan.notes?.includes('plan.no_power') && (
+              <div className="mt-3 p-3 rounded-xl bg-rose-950/60 border border-rose-800/80 text-rose-200 text-xs flex items-center gap-2">
+                <ZapOff className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                <span>{t('dashboard.noPowerReportedAlert')}</span>
+              </div>
+            )}
+
+            {/* No Power Action Button */}
+            {isIrrigate && (
+              <div className="mt-3 pt-2 flex items-center justify-end">
+                <button
+                  type="button"
+                  disabled={isReportingNoPower}
+                  onClick={handleReportNoPower}
+                  className="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <ZapOff className="w-3.5 h-3.5" />
+                  <span>
+                    {isReportingNoPower ? t('dashboard.rescheduling') : t('dashboard.noPowerButton')}
+                  </span>
+                </button>
               </div>
             )}
           </div>

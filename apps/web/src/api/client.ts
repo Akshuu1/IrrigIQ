@@ -8,7 +8,12 @@ import type {
   Crop,
   SyncMutation,
   SyncResultItem,
+  PowerSchedule,
+  PowerWindow,
+  CreatePowerScheduleInput,
+  UpdatePowerScheduleInput,
 } from '@irrigiq/shared';
+export type { PowerSchedule, PowerWindow, CreatePowerScheduleInput, UpdatePowerScheduleInput };
 import { CROPS } from '@irrigiq/shared';
 import {
   getCachedFields,
@@ -230,6 +235,9 @@ export interface Recommendation {
     splitAcrossDays?: boolean;
     pumpCost?: number | null;
     pumpMissing?: boolean;
+    pumpSegments?: { start: string; end: string; durationMinutes: number }[];
+    missingMinutes?: number;
+    notes?: string[];
     reasonKey: string;
     reasonParams?: Record<string, string | number>;
     deficitMm: number;
@@ -244,6 +252,7 @@ export interface Pump {
   dischargeLph: number;
   measuredOn?: string;
   costPerHour?: number | null;
+  scheduleId?: string | null;
   createdAt: string;
   updatedAt?: string;
 }
@@ -253,6 +262,7 @@ export interface CreatePumpInput {
   dischargeLph: number;
   measuredOn?: string | Date;
   costPerHour?: number | null;
+  scheduleId?: string | null;
 }
 
 export interface UpdatePumpInput {
@@ -260,6 +270,7 @@ export interface UpdatePumpInput {
   dischargeLph?: number;
   measuredOn?: string | Date;
   costPerHour?: number | null;
+  scheduleId?: string | null;
 }
 
 export interface IrrigationLog {
@@ -837,5 +848,83 @@ export const api = {
     await apiFetch<void>(`/pumps/${id}`, {
       method: 'DELETE',
     });
+  },
+
+  // Power Schedules
+  async getPowerSchedules(): Promise<PowerSchedule[]> {
+    const res = await apiFetch<
+      { status: string; data: { schedules: PowerSchedule[] } } | { schedules: PowerSchedule[] } | PowerSchedule[]
+    >('/power-schedules');
+    if (Array.isArray(res)) return res;
+    if ('data' in res && res.data?.schedules) return res.data.schedules;
+    if ('schedules' in res && res.schedules) return res.schedules;
+    return [];
+  },
+
+  async getPowerSchedule(id: string): Promise<PowerSchedule> {
+    const res = await apiFetch<
+      { status: string; data: { schedule: PowerSchedule } } | { schedule: PowerSchedule } | PowerSchedule
+    >(`/power-schedules/${id}`);
+    if ('data' in res && res.data?.schedule) return res.data.schedule;
+    if ('schedule' in res && res.schedule) return res.schedule;
+    return res as PowerSchedule;
+  },
+
+  async createPowerSchedule(data: CreatePowerScheduleInput): Promise<PowerSchedule> {
+    const res = await apiFetch<
+      { status: string; data: { schedule: PowerSchedule } } | { schedule: PowerSchedule } | PowerSchedule
+    >('/power-schedules', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if ('data' in res && res.data?.schedule) return res.data.schedule;
+    if ('schedule' in res && res.schedule) return res.schedule;
+    return res as PowerSchedule;
+  },
+
+  async ensurePowerSchedulePreset(presetType: 'night' | 'day'): Promise<PowerSchedule> {
+    const res = await apiFetch<
+      { status: string; data: { schedule: PowerSchedule } } | { schedule: PowerSchedule } | PowerSchedule
+    >(`/power-schedules/preset/${presetType}`, {
+      method: 'POST',
+    });
+    if ('data' in res && res.data?.schedule) return res.data.schedule;
+    if ('schedule' in res && res.schedule) return res.schedule;
+    return res as PowerSchedule;
+  },
+
+  async updatePowerSchedule(id: string, data: UpdatePowerScheduleInput): Promise<PowerSchedule> {
+    const res = await apiFetch<
+      { status: string; data: { schedule: PowerSchedule } } | { schedule: PowerSchedule } | PowerSchedule
+    >(`/power-schedules/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+    if ('data' in res && res.data?.schedule) return res.data.schedule;
+    if ('schedule' in res && res.schedule) return res.schedule;
+    return res as PowerSchedule;
+  },
+
+  async deletePowerSchedule(id: string): Promise<void> {
+    await apiFetch<void>(`/power-schedules/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  async reportNoPower(fieldId: string, date?: string): Promise<{
+    currentRecommendation: any;
+    rescheduledRecommendation?: any;
+  }> {
+    const res = await apiFetch<{
+      status: string;
+      data: {
+        currentRecommendation: any;
+        rescheduledRecommendation?: any;
+      };
+    }>(`/fields/${fieldId}/no-power`, {
+      method: 'POST',
+      body: JSON.stringify({ date }),
+    });
+    return res.data;
   },
 };

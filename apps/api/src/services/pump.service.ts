@@ -14,6 +14,7 @@ export class PumpService {
       dischargeLph: input.dischargeLph,
       measuredOn: input.measuredOn ?? new Date(),
       costPerHour: input.costPerHour ?? null,
+      scheduleId: input.scheduleId ? new Types.ObjectId(input.scheduleId) : null,
     });
 
     logger.info({ pumpId: pump._id.toString(), userId }, 'Pump created successfully');
@@ -53,6 +54,9 @@ export class PumpService {
       input.dischargeLph !== undefined && input.dischargeLph !== pump.dischargeLph;
     const costChanged =
       input.costPerHour !== undefined && input.costPerHour !== pump.costPerHour;
+    const scheduleChanged =
+      input.scheduleId !== undefined &&
+      String(input.scheduleId ?? '') !== String(pump.scheduleId ?? '');
 
     if (input.name !== undefined) {
       pump.name = input.name;
@@ -66,11 +70,14 @@ export class PumpService {
     if (input.costPerHour !== undefined) {
       pump.costPerHour = input.costPerHour;
     }
+    if (input.scheduleId !== undefined) {
+      pump.scheduleId = input.scheduleId ? new Types.ObjectId(input.scheduleId) : null;
+    }
 
     await pump.save();
 
     // Recompute recommendations for all fields using this pump when specs change
-    if (dischargeChanged || costChanged) {
+    if (dischargeChanged || costChanged || scheduleChanged) {
       const linkedFields = await FieldModel.find({ pumpId: pump._id, userId: pump.userId });
       for (const field of linkedFields) {
         try {
@@ -117,3 +124,4 @@ export class PumpService {
 }
 
 export const pumpService = new PumpService();
+

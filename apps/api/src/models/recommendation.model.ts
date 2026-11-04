@@ -14,6 +14,9 @@ export interface IRecommendation {
   splitAcrossDays: boolean;
   pumpCost: number | null;
   pumpMissing: boolean;
+  pumpSegments: { start: string; end: string; durationMinutes: number }[];
+  missingMinutes: number;
+  notes: string[];
   reasonKey: string;
   params: Record<string, number | string>;
   deficitMm: number;
@@ -84,6 +87,24 @@ const recommendationSchema = new Schema<IRecommendationDocument>(
     pumpMissing: {
       type: Boolean,
       default: false,
+    },
+    pumpSegments: {
+      type: [
+        {
+          start: { type: String, required: true },
+          end: { type: String, required: true },
+          durationMinutes: { type: Number, required: true },
+        },
+      ],
+      default: [],
+    },
+    missingMinutes: {
+      type: Number,
+      default: 0,
+    },
+    notes: {
+      type: [String],
+      default: [],
     },
     reasonKey: {
       type: String,

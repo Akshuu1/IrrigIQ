@@ -26,6 +26,7 @@ router.post(
   recomputeRateLimiter as unknown as RequestHandler,
   recommendationController.recompute,
 );
+router.post('/:id/no-power', recommendationController.reportNoPower);
 
 // Irrigation Log & Savings routes
 router.post('/:id/logs', irrigationLogController.createLog);
