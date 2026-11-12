@@ -1137,4 +1137,157 @@ export const api = {
       method: 'POST',
     });
   },
+
+  // Agent Today Dashboard & Actions
+  async getAgentTodayDashboard(params?: {
+    date?: string;
+    village?: string;
+    needsWater?: boolean;
+    notYetSent?: boolean;
+    noReply2Days?: boolean;
+    search?: string;
+  }): Promise<AgentTodayDashboardData> {
+    const query = new URLSearchParams();
+    if (params?.date) query.set('date', params.date);
+    if (params?.village) query.set('village', params.village);
+    if (params?.needsWater) query.set('needsWater', 'true');
+    if (params?.notYetSent) query.set('notYetSent', 'true');
+    if (params?.noReply2Days) query.set('noReply2Days', 'true');
+    if (params?.search) query.set('search', params.search);
+
+    const queryString = query.toString();
+    const url = `/agent/today${queryString ? `?${queryString}` : ''}`;
+    const res = await apiFetch<{ status: string; data: AgentTodayDashboardData }>(url);
+    return res.data;
+  },
+
+  async markFarmerStatus(
+    farmerId: string,
+    payload: {
+      fieldId?: string;
+      status: 'followed' | 'not followed' | 'note';
+      reason?: string;
+      text?: string;
+      date?: string;
+    },
+  ): Promise<any> {
+    const res = await apiFetch<{ status: string; data: any }>(
+      `/farmers/${farmerId}/mark-status`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      },
+    );
+    return res.data;
+  },
+
+  async bulkSendPendingAdvisories(): Promise<{
+    totalPending: number;
+    sentCount: number;
+    skippedNoConsentCount: number;
+    skippedNoChannelCount: number;
+  }> {
+    const res = await apiFetch<{
+      status: string;
+      data: {
+        totalPending: number;
+        sentCount: number;
+        skippedNoConsentCount: number;
+        skippedNoChannelCount: number;
+      };
+    }>('/agent/bulk-send', {
+      method: 'POST',
+    });
+    return res.data;
+  },
+
+  async getFarmerTimeline(farmerId: string): Promise<{
+    farmer: any;
+    timeline: TimelineEntry[];
+  }> {
+    const res = await apiFetch<{
+      status: string;
+      data: {
+        farmer: any;
+        timeline: TimelineEntry[];
+      };
+    }>(`/farmers/${farmerId}/timeline`);
+    return res.data;
+  },
+
+  async sendFarmerAdvisory(
+    farmerId: string,
+    payload: { channelId: string; text: string },
+  ): Promise<any> {
+    const res = await apiFetch<{ status: string; data: any }>(
+      `/agent/farmers/${farmerId}/send-advisory`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      },
+    );
+    return res.data;
+  },
 };
+
+export const apiClient = api;
+
+export interface AgentTodayItem {
+  id: string;
+  fieldId: string;
+  fieldName: string;
+  farmerId: string;
+  farmerName: string;
+  farmerPhone: string;
+  village: string;
+  language: string;
+  cropKey: string;
+  cropName: string;
+  areaHa: number;
+  action: 'irrigate' | 'skip';
+  pumpMinutes: number;
+  litres: number;
+  grossMm: number;
+  powerWindow?: { start: string; end: string } | null;
+  adviceStatus: 'not sent' | 'sent' | 'seen' | 'replied' | 'followed' | 'not followed';
+  lastReplyTime?: string | null;
+  lastReplyText?: string | null;
+  notFollowedReason?: string | null;
+  hasConsent: boolean;
+  channelLinked: boolean;
+  channelProvider?: string | null;
+  channelId?: string | null;
+  noReply2Days: boolean;
+  digestText: string;
+  waShareUrl: string;
+}
+
+export interface AgentTodayDashboardData {
+  date: string;
+  summary: {
+    total: number;
+    needsWater: number;
+    pendingSend: number;
+    replied: number;
+    followed: number;
+    notFollowed: number;
+  };
+  villages: string[];
+  items: AgentTodayItem[];
+}
+
+export interface TimelineEntry {
+  id: string;
+  type:
+    | 'advice_sent'
+    | 'whatsapp_shared'
+    | 'reply_received'
+    | 'pump_run'
+    | 'irrigation_logged'
+    | 'note';
+  timestamp: string;
+  title: string;
+  description: string;
+  status?: string;
+  metadata?: Record<string, unknown>;
+}

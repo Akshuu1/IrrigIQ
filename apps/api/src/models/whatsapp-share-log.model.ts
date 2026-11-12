@@ -63,3 +63,4 @@ export const WhatsAppShareLogModel = model<IWhatsAppShareLogDocument>(
   'WhatsAppShareLog',
   WhatsAppShareLogSchema,
 );
+

@@ -71,3 +71,4 @@ const PumpRunLogSchema = new Schema<IPumpRunLogDocument>(
 PumpRunLogSchema.index({ fieldId: 1, date: -1 });
 
 export const PumpRunLogModel = model<IPumpRunLogDocument>('PumpRunLog', PumpRunLogSchema);
+

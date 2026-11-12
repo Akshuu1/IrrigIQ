@@ -14,3 +14,4 @@ export function getConsentTemplateText(version = DEFAULT_CONSENT_VERSION, langua
   const versionTemplates = CONSENT_TEMPLATES[version] || CONSENT_TEMPLATES[DEFAULT_CONSENT_VERSION]!;
   return versionTemplates[language] || versionTemplates['en']!;
 }
+

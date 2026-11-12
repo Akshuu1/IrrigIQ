@@ -3,6 +3,7 @@ import mongoose, { Document, Schema, Types } from 'mongoose';
 export type OutboundMessageStatus =
   | 'queued'
   | 'sent'
+  | 'seen'
   | 'failed'
   | 'skipped_quiet_hours'
   | 'skipped_cap'
@@ -54,6 +55,7 @@ const outboundMessageSchema = new Schema<IOutboundMessageDocument>(
       enum: [
         'queued',
         'sent',
+        'seen',
         'failed',
         'skipped_quiet_hours',
         'skipped_cap',

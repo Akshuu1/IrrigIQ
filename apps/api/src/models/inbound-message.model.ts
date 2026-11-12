@@ -4,6 +4,8 @@ export interface IInboundMessage {
   provider: string;
   updateId: number;
   channelId?: Types.ObjectId;
+  externalIdHash?: string;
+  rawText?: string;
   rawUpdate: Record<string, unknown>;
   replyAction?: string;
   processed: boolean;
@@ -30,6 +32,13 @@ const inboundMessageSchema = new Schema<IInboundMessageDocument>(
       type: Schema.Types.ObjectId,
       ref: 'MessageChannel',
       index: true,
+    },
+    externalIdHash: {
+      type: String,
+      index: true,
+    },
+    rawText: {
+      type: String,
     },
     rawUpdate: {
       type: Schema.Types.Mixed,

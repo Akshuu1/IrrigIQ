@@ -11,6 +11,7 @@ import { Dashboard } from './pages/Dashboard.js';
 import { Settings } from './pages/Settings.js';
 import { FieldWizard } from './pages/FieldWizard.js';
 import { FieldDetail } from './pages/FieldDetail.js';
+import { AgentToday } from './pages/AgentToday.js';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -72,6 +73,22 @@ export function App(): React.JSX.Element {
                 element={
                   <ProtectedRoute>
                     <FieldDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/today"
+                element={
+                  <ProtectedRoute>
+                    <AgentToday />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/agent/today"
+                element={
+                  <ProtectedRoute>
+                    <AgentToday />
                   </ProtectedRoute>
                 }
               />

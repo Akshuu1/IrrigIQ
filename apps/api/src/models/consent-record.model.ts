@@ -74,3 +74,4 @@ const ConsentRecordSchema = new Schema<IConsentRecordDocument>(
 ConsentRecordSchema.index({ farmerId: 1, withdrawnAt: 1 });
 
 export const ConsentRecordModel = model<IConsentRecordDocument>('ConsentRecord', ConsentRecordSchema);
+

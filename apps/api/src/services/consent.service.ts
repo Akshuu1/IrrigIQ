@@ -67,3 +67,4 @@ export class ConsentService {
 }
 
 export const consentService = new ConsentService();
+

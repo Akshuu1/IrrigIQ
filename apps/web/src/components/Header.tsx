@@ -148,6 +148,16 @@ export function Header(): React.JSX.Element {
                 <span className="hidden md:inline">{t('nav.newField')}</span>
               </Link>
 
+              {/* Today Dashboard Link */}
+              <Link
+                to="/today"
+                className="min-h-[40px] sm:min-h-[44px] px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-emerald-500/30 bg-emerald-950/40 hover:bg-emerald-900/50 text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 text-xs sm:text-sm font-bold transition-all focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:outline-none"
+                title="Agent Today Dashboard"
+                aria-label="Today Dashboard"
+              >
+                <span>📅 Today</span>
+              </Link>
+
               {/* Dashboard Link */}
               <Link
                 to="/"

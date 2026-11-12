@@ -1,5 +1,6 @@
 import { Router, RequestHandler } from 'express';
 import { farmerController } from '../controllers/farmer.controller.js';
+import { agentDashboardController } from '../controllers/agent-dashboard.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import { orgMiddleware, requireRole } from '../middleware/org.middleware.js';
 
@@ -22,6 +23,10 @@ router.get('/:id/consent', farmerController.getConsent);
 router.delete('/:id/consent', farmerController.withdrawConsent);
 router.post('/:id/share-whatsapp', farmerController.shareWhatsApp);
 router.post('/:id/whatsapp-share', farmerController.shareWhatsApp);
+
+// Timeline & Status
+router.get('/:id/timeline', agentDashboardController.getFarmerTimeline);
+router.post('/:id/mark-status', agentDashboardController.markStatus);
 
 export { router as farmerRouter };
 
