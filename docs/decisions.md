@@ -663,3 +663,70 @@ Translation fallbacks are configured in `apps/web/src/locales/i18n.ts` based on 
 #### 7. Regional Language Auto-Suggestion
 - In `FieldWizard.tsx`, dropping a pin or selecting a polygon triggers Turf.js spatial lookup (`stateForPoint`) against the bundled simplified India states GeoJSON.
 - `suggestLanguageForState` automatically detects the state (e.g. Maharashtra -> `mr`, Punjab -> `pa`, Telangana/Andhra Pradesh -> `te`) and surfaces an accessible suggestion pill allowing the farmer to switch with one tap.
+
+---
+
+## ADR 007: Why Pilot First (Field Validation Before Scale)
+
+### Context
+Agricultural technology solutions regularly fail when rolled out prematurely to large cohorts. In rural Indian agriculture, laboratory model assumptions frequently clash with physical field realities: pump discharge rates degrade by 20–40% due to worn impellers, 3-phase electricity supply shifts without warning between day and night shifts, and farmers rationally distrust black-box algorithms that tell them to withhold water from their livelihood.
+
+### Decision
+IrrigIQ mandates a phased **5-week field pilot** before any commercial or organizational rollout:
+1. **Week 1 (Onboarding & Baseline Calibration)**: Agents map field polygons, conduct in-person drum discharge tests to measure real litres-per-hour rather than manufacturer nameplate ratings, verify local 3-phase power shifts, and record informed consent.
+2. **Week 2 (Unadvised Shadow Observation)**: Farmers follow their traditional routines unadvised. System tracks local rain gauge data against Open-Meteo forecast grid cells and logs unadvised water application.
+3. **Week 3 (Advisory Launch)**: Agent-assisted sharing begins. Farmers receive daily runtimes in simple minutes mapped to their active electricity window.
+4. **Week 4 (Interactive Diary)**: Farmers reply with pumped minutes, closing the feedback loop and automatically recomputing soil moisture deficits.
+5. **Week 5 (Empirical Audit)**: Generates bilingual PDF Impact Reports and raw CSV telemetry, pairing every water difference with side-by-side rainfall figures and the mandatory *"What This Does Not Prove"* caveat.
+
+---
+
+## ADR 008: Why `wa.me` Deep-Links Instead of the WhatsApp Business API
+
+### Context
+Delivering daily irrigation schedules directly to farmers requires a messaging medium that farmers already check. While WhatsApp is omnipresent in rural India, integrating the enterprise **WhatsApp Business Cloud API** introduces severe operational and financial friction for smallholder extension:
+- Meta's enterprise API requires official corporate business verification, Facebook Business Manager setup, and credit card billing.
+- All outbound messages must conform to rigid, pre-approved Meta message templates; dynamic agricultural agronomic advice often gets rejected or delayed by automated template review bots.
+- Per-conversation messaging fees ($0.05–$0.08 per session in India) would equal or exceed the total software infrastructure budget for low-margin crops.
+
+### Decision
+IrrigIQ adopts **agent-assisted `wa.me` deep-linking** (`https://wa.me/<phone>?text=<encoded_text>`):
+1. **Zero Marginal Cost**: Generates standard WhatsApp URLs containing the farmer's pre-filled telephone number and pre-formatted bilingual advisory text.
+2. **Human-in-the-Loop Oversight**: The local field agent taps **"Share on WhatsApp"** on their mobile 'Today' dashboard, reviews the message, and taps Send from their existing smartphone.
+3. **High Farmer Trust**: Farmers receive the advisory from their familiar local extension agent's verified contact, not an unknown commercial short-code or bot.
+4. **Zero Corporate Bottlenecks**: Cooperative and FPO extension teams can launch field operations immediately without waiting weeks for Meta enterprise approvals.
+
+---
+
+## ADR 009: Why Application Ratio as the Primary Water Metric
+
+### Context
+Evaluating water management efficiency simply by comparing "gross litres applied" between two time periods or between two farms is scientifically invalid. A crop's water demand changes drastically as it progresses from emergence to mid-season vegetative growth, and varies with daily solar radiation, humidity, wind, and ambient temperature. A farmer who pumped 50 mm during dry heat may have provided optimal water, while a farmer who applied 30 mm during overcast, drizzly weather may have severely over-irrigated.
+
+### Decision
+IrrigIQ standardizes on the **Application Ratio** as the primary dimensionless metric of irrigation fidelity:
+
+$$\text{Application Ratio} = \frac{\text{Actual Gross Water Applied } (mm)}{\text{Net Crop Water Need } (mm)}$$
+
+Where:
+- $\text{Net Crop Water Need } (mm) = \max\left(0, \sum (ET_c - P_{\text{eff}})\right)$, derived from FAO-56 Penman-Monteith reference evapotranspiration ($ET_0$), dynamic crop coefficients ($K_c$), and root-zone effective rainfall ($P_{\text{eff}}$).
+- **Ratio $\approx 1.0$**: Optimal water application matched to crop evapotranspirative demand adjusted for distribution efficiency.
+- **Ratio $> 1.3$**: Substantial over-irrigation, indicating groundwater depletion, pumping energy waste, and root disease risk.
+- **Ratio $< 0.85$**: Deficit irrigation, acceptable only during intentional protective hardening periods.
+
+**Strict No-Data State Handling**:  
+If a baseline period has no empirical irrigation records (e.g. newly onboarded farmers), the system strictly refuses to output a speculative number or zero. It outputs `{ status: 'not_enough_data', ratio: null, ratioFormatted: 'Not enough data' }` (or `'डेटा अपर्याप्त'`), preventing false savings claims.
+
+---
+
+## ADR 010: Why Informed Consent Strictly Blocks Outbound Messaging
+
+### Context
+Rural farmers across the Global South are bombarded with unsolicited telemarketing calls, deceptive agricultural loan SMS messages, and commercial input promotions. Sending unrequested automated messages to a farmer's phone—even with well-intentioned advice—damages trust, violates emerging digital privacy regulations (e.g., India's Digital Personal Data Protection Act - DPDPA 2023), and risks farmer alienation.
+
+### Decision
+IrrigIQ enforces a **hard consent gate** in the message dispatch engine:
+1. **Mandatory Versioned Consent**: Every farmer record must have an active `ConsentRecord` with a recorded `textVersion`, `method` (`'in-person' | 'verbal' | 'whatsapp' | 'telegram'`), `recordedBy` agent ID, and `recordedAt` timestamp before any message can be dispatched.
+2. **Hard Dispatch Block**: Both single-send and bulk-send routines (`POST /agent/bulk-send`) check active consent. If `hasConsent === false`, the message is blocked with status `blocked_no_consent` and logged to audit trails.
+3. **Instant Self-Service Opt-Out**: If a farmer replies with **"STOP"**, the inbound webhook parser automatically marks the consent record as withdrawn (`withdrawnAt = new Date()`), transitions the farmer status to `stopped`, and halts all further outbound communications immediately without requiring administrative intervention.
+

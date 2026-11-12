@@ -73,3 +73,4 @@ const UsageLogSchema = new Schema<IUsageLogDocument>(
 UsageLogSchema.index({ orgId: 1, type: 1, date: 1 });
 
 export const UsageLogModel = model<IUsageLogDocument>('UsageLog', UsageLogSchema);
+

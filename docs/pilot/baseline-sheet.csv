@@ -1,0 +1,6 @@
+farmer_name,phone,village,field_name,crop,sowing_date,soil_type,irrigation_method,area_acres,pump_hp,pump_discharge_lph,cost_per_hour_inr,baseline_irrigation_interval_days,baseline_irrigation_depth_mm,baseline_weekly_pump_hours,notes
+"Ramesh Kumar","+919876543210","Karnal","North Plot 1","wheat","2026-10-15","loam","drip",2.5,7.5,28000,45.0,7,45.0,10.0,"Tubewell with drip lateral filtration system"
+"Dnyaneshwar Shinde","+919876543211","Baramati","Sugarcane East","sugarcane","2026-06-01","clay","flood",3.0,10.0,40000,65.0,10,65.0,16.5,"Black cotton soil with canal lift supply"
+"Balwant Singh","+919876543212","Nabha","Canal Gate Field","wheat","2026-10-20","loam","flood",4.0,12.5,50000,75.0,8,50.0,18.0,"Flood irrigation via brick lined channel"
+"Mukesh Patel","+919876543213","Anand","Potato Bed A","potato","2026-10-25","sandy","sprinkler",1.8,5.0,20000,35.0,4,30.0,9.0,"Sandy loam with overhead micro-sprinklers"
+"Srinivas Rao","+919876543214","Warangal","Cotton Plot B","cotton","2026-07-10","clay","drip",2.0,5.0,22000,38.0,6,35.0,8.5,"Subsurface drip irrigation with fertigation unit"

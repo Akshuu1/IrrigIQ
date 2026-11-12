@@ -1,0 +1,12 @@
+date,farmer_name,village,field_name,rain_gauge_mm,advice_action,advice_pump_minutes,actual_pump_minutes,water_applied_mm,cost_inr,status_followed_or_skip,reason_if_not_followed,farmer_reply_raw,notes
+"2026-10-01","Ramesh Kumar","Karnal","North Plot 1",0.0,"-",0,150,42.0,112.5,"baseline_routine","N/A","-","Baseline observation week"
+"2026-10-02","Ramesh Kumar","Karnal","North Plot 1",0.0,"-",0,0,0.0,0.0,"baseline_routine","N/A","-","No pumping"
+"2026-10-08","Ramesh Kumar","Karnal","North Plot 1",2.5,"-",0,140,39.2,105.0,"baseline_routine","N/A","-","Routine scheduled irrigation"
+"2026-10-15","Ramesh Kumar","Karnal","North Plot 1",0.0,"irrigate",110,110,30.8,82.5,"followed","N/A","110","Advised irrigation followed during day power window"
+"2026-10-16","Ramesh Kumar","Karnal","North Plot 1",0.0,"skip",0,0,0.0,0.0,"followed","N/A","-","Skipped per advisory (soil deficit adequate)"
+"2026-10-17","Ramesh Kumar","Karnal","North Plot 1",12.0,"skip",0,0,0.0,0.0,"followed","N/A","-","Skipped due to 12mm rain forecast"
+"2026-10-22","Ramesh Kumar","Karnal","North Plot 1",0.0,"irrigate",100,0,0.0,0.0,"not followed","no electricity","-","3-phase feeder tripped during day schedule"
+"2026-10-23","Ramesh Kumar","Karnal","North Plot 1",0.0,"irrigate",100,100,28.0,75.0,"followed","N/A","१००","Made up irrigation after power restored"
+"2026-10-01","Dnyaneshwar Shinde","Baramati","Sugarcane East",0.0,"-",0,240,64.0,260.0,"baseline_routine","N/A","-","Flood irrigation traditional flood routine"
+"2026-10-15","Dnyaneshwar Shinde","Baramati","Sugarcane East",0.0,"irrigate",180,180,48.0,195.0,"followed","N/A","180","Followed recommended duration"
+"2026-10-25","Dnyaneshwar Shinde","Baramati","Sugarcane East",0.0,"irrigate",170,170,45.3,184.2,"followed","N/A","170","Farmer verified moisture depth at 30cm"
