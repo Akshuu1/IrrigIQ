@@ -3,9 +3,13 @@ import { FieldModel } from '../../models/field.model.js';
 import { RecommendationModel } from '../../models/recommendation.model.js';
 import { IMessageChannelDocument } from '../../models/message-channel.model.js';
 import { LinkCodeModel } from '../../models/link-code.model.js';
+import { FarmerModel } from '../../models/farmer.model.js';
+import { PumpModel } from '../../models/pump.model.js';
+import { PumpRunLogModel } from '../../models/pump-run-log.model.js';
 import { hashLinkCode } from '../../utils/crypto.js';
 import { IrrigationLogService } from '../irrigation-log.service.js';
 import { rescheduleForNoPower } from '../recommendation.service.js';
+import { consentService } from '../consent.service.js';
 import { logger } from '../../config/logger.js';
 import type { InlineButton } from './provider.interface.js';
 
@@ -161,6 +165,21 @@ export async function handleReply(
     channel.optedIn = false;
     await channel.save();
 
+    // Withdraw consent and set farmer status to stopped
+    try {
+      const farmer = await FarmerModel.findOne({
+        $or: [{ phoneHash: channel.externalIdHash }, { userId: channel.userId }],
+        status: { $ne: 'deleted' },
+      });
+      if (farmer) {
+        await consentService.withdrawConsent(farmer._id);
+        farmer.status = 'stopped';
+        await farmer.save();
+      }
+    } catch (err: unknown) {
+      logger.warn({ err, channelId: channel._id }, 'Error updating farmer consent on STOP');
+    }
+
     const stopMsg =
       lang === 'hi'
         ? `आप IrrigIQ दैनिक सलाह सेवा से अलग हो गए हैं। पुनः जुड़ने के लिए कभी भी START भेजें।`
@@ -304,6 +323,108 @@ export async function handleReply(
         : `⚡ Rescheduled! Your irrigation plan has been moved to the next available power window.`;
 
     return { text: noPowerMsg, actionTaken: 'no_power_rescheduled' };
+  }
+
+  // Chat Diary: Numeric pump duration (minutes pumped)
+  // Latin or Devanagari digits already normalised to cleanText
+  if (/^\d+$/.test(cleanText)) {
+    const minutes = parseInt(cleanText, 10);
+
+    // Reject impossible values (over 1440 minutes or <= 0)
+    if (minutes > 1440) {
+      const rejectMsg =
+        lang === 'hi'
+          ? `⚠️ एक दिन में 1440 मिनट (24 घंटे) से अधिक पंप चलाना संभव नहीं है। कृपया सही समय (1-1440 मिनट) दर्ज करें।`
+          : `⚠️ Pump run time cannot exceed 1440 minutes (24 hours) in a day. Please enter a valid duration (1-1440 minutes).`;
+      return {
+        text: rejectMsg,
+        actionTaken: 'rejected_excessive_minutes',
+      };
+    }
+
+    if (minutes <= 0) {
+      const rejectZeroMsg =
+        lang === 'hi'
+          ? `⚠️ कृपया 0 से अधिक मिनट दर्ज करें।`
+          : `⚠️ Please enter a duration greater than 0 minutes.`;
+      return {
+        text: rejectZeroMsg,
+        actionTaken: 'rejected_zero_minutes',
+      };
+    }
+
+    // Look up farmer and associated fields
+    const farmer = await FarmerModel.findOne({
+      $or: [{ phoneHash: channel.externalIdHash }, { userId: channel.userId }],
+      status: { $ne: 'deleted' },
+    });
+
+    const fields = await FieldModel.find({
+      $or: [
+        ...(farmer ? [{ farmerId: farmer._id }] : []),
+        { userId: channel.userId },
+      ],
+    });
+
+    if (!fields.length) {
+      return {
+        text: lang === 'hi' ? 'कोई खेत नहीं मिला।' : 'No fields found for your account.',
+        actionTaken: 'field_missing',
+      };
+    }
+
+    const fieldIds = fields.map((f) => f._id);
+    const recs = await RecommendationModel.find({
+      userId: channel.userId,
+      forDate: todayStr,
+      fieldId: { $in: fieldIds },
+    });
+
+    const activeRec = recs.find((r) => r.action === 'irrigate' || r.grossMm > 0) || recs[0];
+    const targetField =
+      fields.find((f) => String(f._id) === String(activeRec?.fieldId)) || fields[0]!;
+
+    let dischargeLph = 25000;
+    if (targetField.pumpId) {
+      const pump = await PumpModel.findById(targetField.pumpId);
+      if (pump?.dischargeLph && pump.dischargeLph > 0) {
+        dischargeLph = pump.dischargeLph;
+      }
+    }
+
+    // Calculate litres: minutes * (dischargeLph / 60)
+    const litres = Math.round((minutes / 60) * dischargeLph);
+    const areaHa = targetField.areaHa || 1;
+    // 1 mm depth over 1 ha = 10,000 litres
+    const appliedMm = Math.max(1, Number((litres / (areaHa * 10000)).toFixed(1)));
+
+    // Store PumpRunLog
+    await PumpRunLogModel.create({
+      fieldId: targetField._id,
+      farmerId: targetField.farmerId || (farmer ? farmer._id : null),
+      date: todayStr,
+      minutes,
+      litres,
+      source: 'chat',
+    });
+
+    // Store IrrigationLog and recompute plan
+    await irrigationLogService.createLog(String(channel.userId), String(targetField._id), {
+      date: todayStr,
+      appliedMm,
+      source: 'chat',
+      note: `Pump run of ${minutes} minutes (${litres} L) logged via chat`,
+    });
+
+    const successMsg =
+      lang === 'hi'
+        ? `✅ दर्ज किया गया! *${targetField.name}* के लिए ${minutes} मिनट (${litres.toLocaleString()} L) पंप चलना दर्ज किया गया। सिंचाई योजना अपडेट कर दी गई है।`
+        : `✅ Recorded! ${minutes} minutes (${litres.toLocaleString()} L) pumped for *${targetField.name}*. Irrigation plan updated.`;
+
+    return {
+      text: successMsg,
+      actionTaken: 'pump_run_logged',
+    };
   }
 
   // Unknown command: Return friendly fallback

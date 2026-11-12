@@ -5,7 +5,8 @@ export type OutboundMessageStatus =
   | 'sent'
   | 'failed'
   | 'skipped_quiet_hours'
-  | 'skipped_cap';
+  | 'skipped_cap'
+  | 'blocked_no_consent';
 
 export interface IOutboundMessage {
   channelId: Types.ObjectId;
@@ -50,7 +51,14 @@ const outboundMessageSchema = new Schema<IOutboundMessageDocument>(
     },
     status: {
       type: String,
-      enum: ['queued', 'sent', 'failed', 'skipped_quiet_hours', 'skipped_cap'],
+      enum: [
+        'queued',
+        'sent',
+        'failed',
+        'skipped_quiet_hours',
+        'skipped_cap',
+        'blocked_no_consent',
+      ],
       default: 'queued',
       index: true,
     },

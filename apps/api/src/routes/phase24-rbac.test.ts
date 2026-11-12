@@ -264,7 +264,7 @@ describe('Phase 24: Organisation Workspaces, Roles & RBAC', () => {
 
     expect(adminDeleteRes.status).toBe(200);
     const dbFarmer1 = await FarmerModel.findById(farmer1Id);
-    expect(dbFarmer1?.status).toBe('deleted');
+    expect(dbFarmer1).toBeNull();
   });
 
   it('agent sees and manages only fields belonging to their assigned farmers; admin sees all fields in org', async () => {

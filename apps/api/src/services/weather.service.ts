@@ -420,6 +420,16 @@ export async function releaseRedisLock(
     const result = await redis.eval(lua, 1, lockKey, token);
     return result === 1;
   } catch {
+    // Fallback for test mocks or Redis proxies without Lua script support
+    try {
+      const current = await redis.get(lockKey);
+      if (current === token) {
+        await redis.del(lockKey);
+        return true;
+      }
+    } catch {
+      // ignore
+    }
     return false;
   }
 }

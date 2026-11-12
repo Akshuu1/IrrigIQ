@@ -18,3 +18,4 @@ export const updateFarmerSchema = z.object({
   status: z.enum(['active', 'stopped', 'deleted']).optional(),
 });
 export type UpdateFarmerInput = z.infer<typeof updateFarmerSchema>;
+

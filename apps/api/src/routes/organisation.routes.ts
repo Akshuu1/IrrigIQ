@@ -1,5 +1,6 @@
 import { Router, RequestHandler } from 'express';
 import { organisationController } from '../controllers/organisation.controller.js';
+import { farmerRouter } from './farmer.routes.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 
 const router = Router();
@@ -18,4 +19,8 @@ router.post('/:orgId/members', organisationController.addMember);
 router.patch('/:orgId/members/:userId', organisationController.updateMemberRole);
 router.delete('/:orgId/members/:userId', organisationController.removeMember);
 
+// Nested farmers under organisation
+router.use('/:orgId/farmers', farmerRouter);
+
 export { router as organisationRouter };
+

@@ -1,6 +1,15 @@
 import { Types } from 'mongoose';
 import { FarmerModel, IFarmerDocument, FarmerStatus } from '../models/farmer.model.js';
 import { MembershipModel, OrganisationRole } from '../models/membership.model.js';
+import { FieldModel } from '../models/field.model.js';
+import { IrrigationLogModel } from '../models/irrigation-log.model.js';
+import { PumpRunLogModel } from '../models/pump-run-log.model.js';
+import { RecommendationModel } from '../models/recommendation.model.js';
+import { ConsentRecordModel } from '../models/consent-record.model.js';
+import { WhatsAppShareLogModel } from '../models/whatsapp-share-log.model.js';
+import { MessageChannelModel } from '../models/message-channel.model.js';
+import { InboundMessageModel } from '../models/inbound-message.model.js';
+import { OutboundMessageModel } from '../models/outbound-message.model.js';
 import { AppError } from '../errors/AppError.js';
 import { hashExternalId, encryptExternalId } from '../utils/crypto.js';
 
@@ -207,11 +216,43 @@ export class FarmerService {
     }
 
     const farmer = await this.getFarmer(orgId, userId, role, farmerId);
-    farmer.status = 'deleted';
-    await farmer.save();
+
+    // Find all fields associated with this farmer
+    const fields = await FieldModel.find({ farmerId: farmer._id });
+    const fieldIds = fields.map((f) => f._id);
+
+    // 1. Delete irrigation logs, pump run logs, and recommendations
+    if (fieldIds.length > 0) {
+      await IrrigationLogModel.deleteMany({ fieldId: { $in: fieldIds } });
+      await PumpRunLogModel.deleteMany({ fieldId: { $in: fieldIds } });
+      await RecommendationModel.deleteMany({ fieldId: { $in: fieldIds } });
+    }
+    await PumpRunLogModel.deleteMany({ farmerId: farmer._id });
+
+    // 2. Delete fields
+    await FieldModel.deleteMany({ farmerId: farmer._id });
+
+    // 3. Delete consent records
+    await ConsentRecordModel.deleteMany({ farmerId: farmer._id });
+
+    // 4. Delete WhatsApp share logs
+    await WhatsAppShareLogModel.deleteMany({ farmerId: farmer._id });
+
+    // 5. Delete channels and messages
+    if (farmer.phoneHash) {
+      await MessageChannelModel.deleteMany({ externalIdHash: farmer.phoneHash });
+      await InboundMessageModel.deleteMany({ externalIdHash: farmer.phoneHash });
+    }
+    if (farmer.userId) {
+      await OutboundMessageModel.deleteMany({ userId: farmer.userId });
+    }
+
+    // 6. Delete farmer record itself
+    await FarmerModel.findByIdAndDelete(farmer._id);
 
     return { success: true };
   }
 }
 
 export const farmerService = new FarmerService();
+

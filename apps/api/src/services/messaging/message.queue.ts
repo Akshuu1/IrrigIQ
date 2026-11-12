@@ -1,8 +1,11 @@
 import { Queue, Worker, Job } from 'bullmq';
+import { Types } from 'mongoose';
 import { getEnv } from '../../config/env.js';
 import { logger } from '../../config/logger.js';
 import { MessageChannelModel } from '../../models/message-channel.model.js';
 import { OutboundMessageModel } from '../../models/outbound-message.model.js';
+import { FarmerModel } from '../../models/farmer.model.js';
+import { consentService } from '../consent.service.js';
 import { decryptExternalId } from '../../utils/crypto.js';
 import { TelegramProvider } from './telegram.provider.js';
 import { WhatsAppCloudProvider } from './whatsapp.provider.js';
@@ -16,6 +19,7 @@ export interface SendMessageJobData {
   text: string;
   options?: SendMessageOptions;
   ignoreQuietHours?: boolean; // For explicit user-initiated tests
+  farmerId?: string;
 }
 
 export function isWithinQuietHours(
@@ -77,6 +81,40 @@ export async function processOutboundMessage(jobData: SendMessageJobData): Promi
   if (channel.status !== 'active' && !ignoreQuietHours) {
     logger.info({ channelId, status: channel.status }, 'Skipping delivery to inactive channel');
     return { success: false, status: 'channel_inactive' };
+  }
+
+  // Active Consent Check: Block every outbound message to a farmer without active consent
+  let targetFarmerId: Types.ObjectId | null = null;
+  if (jobData.farmerId && Types.ObjectId.isValid(jobData.farmerId)) {
+    targetFarmerId = new Types.ObjectId(jobData.farmerId);
+  } else {
+    const farmer = await FarmerModel.findOne({
+      $or: [{ phoneHash: channel.externalIdHash }, { userId: channel.userId }],
+      status: { $ne: 'deleted' },
+    });
+    if (farmer) {
+      targetFarmerId = farmer._id;
+    }
+  }
+
+  if (targetFarmerId) {
+    const hasConsent = await consentService.hasActiveConsent(targetFarmerId);
+    if (!hasConsent) {
+      logger.warn(
+        { channelId, farmerId: targetFarmerId },
+        'Outbound message blocked due to lack of active consent',
+      );
+      await OutboundMessageModel.create({
+        channelId: channel._id,
+        userId: channel.userId,
+        provider: channel.provider,
+        text,
+        payload: options?.replyMarkup as Record<string, unknown>,
+        status: 'blocked_no_consent',
+        error: 'No active consent record found for farmer',
+      });
+      return { success: false, status: 'blocked_no_consent', error: 'No active consent' };
+    }
   }
 
   const now = new Date();

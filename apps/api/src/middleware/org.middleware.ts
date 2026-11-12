@@ -33,6 +33,7 @@ export async function orgMiddleware(
 
   const requestedOrgHeader =
     req.header('x-org-id') ||
+    req.header('x-organisation-id') ||
     (req.params && typeof req.params.orgId === 'string' ? req.params.orgId : undefined) ||
     (typeof req.query.orgId === 'string' ? req.query.orgId : undefined);
   const requestedOrgId = typeof requestedOrgHeader === 'string' ? requestedOrgHeader.trim() : undefined;
