@@ -86,3 +86,4 @@ FarmerNoteSchema.index({ farmerId: 1, date: -1 });
 FarmerNoteSchema.index({ orgId: 1, date: -1 });
 
 export const FarmerNoteModel = model<IFarmerNoteDocument>('FarmerNote', FarmerNoteSchema);
+

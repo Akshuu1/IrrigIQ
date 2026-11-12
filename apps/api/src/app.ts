@@ -23,6 +23,7 @@ import { messagingRouter } from './routes/messaging.routes.js';
 import { organisationRouter } from './routes/organisation.routes.js';
 import { farmerRouter } from './routes/farmer.routes.js';
 import { agentDashboardRouter } from './routes/agent-dashboard.routes.js';
+import { pilotMetricsRouter } from './routes/pilot-metrics.routes.js';
 import { processDailyRecommendations } from './scheduler/recommendation.scheduler.js';
 
 export function createApp(): Express {
@@ -106,6 +107,8 @@ export function createApp(): Express {
   app.use('/farmers', farmerRouter);
   app.use('/agent', agentDashboardRouter);
   app.use('/organisations/:orgId/agent', agentDashboardRouter);
+  app.use('/pilot-metrics', pilotMetricsRouter);
+  app.use('/organisations/:orgId/pilot-metrics', pilotMetricsRouter);
   app.use('/crops', cropRouter);
   app.use('/sensor-readings', sensorReadingRouter);
   app.use('/sync', syncRouter);

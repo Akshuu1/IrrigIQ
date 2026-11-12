@@ -12,3 +12,4 @@ export * from './soil.js';
 export * from './rainfed.js';
 export * from './formatters.js';
 export * from './pseudo.js';
+export * from './pilot-metrics.js';
