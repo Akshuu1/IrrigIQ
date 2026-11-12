@@ -21,6 +21,8 @@ import { ReportModel, IReportData, IReportDocument } from '../models/report.mode
 import { CreateReportInput } from '../schemas/report.schema.js';
 import { AppError } from '../errors/AppError.js';
 import { logger } from '../config/logger.js';
+import { checkFieldAccess } from './rbac.service.js';
+import { OrganisationRole } from '../models/membership.model.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1101,19 +1103,10 @@ export class ReportService {
     userId: string,
     fieldId: string,
     input: CreateReportInput,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
   ): Promise<{ report: IReportDocument; isInstant: boolean }> {
-    if (!Types.ObjectId.isValid(fieldId)) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
-
-    const field = await FieldModel.findOne({
-      _id: new Types.ObjectId(fieldId),
-      userId: new Types.ObjectId(userId),
-    });
-
-    if (!field) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
+    const field = await checkFieldAccess(fieldId, userId, orgId, role);
 
     // Default dates: last 7 days through today + 6 days if not provided
     const today = new Date();

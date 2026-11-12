@@ -26,6 +26,9 @@ import { InboundMessageModel } from '../models/inbound-message.model.js';
 import { OutboundMessageModel } from '../models/outbound-message.model.js';
 import { PushSubscriptionModel } from '../models/push-subscription.model.js';
 import { RefreshTokenModel } from '../models/refreshToken.model.js';
+import { OrganisationModel } from '../models/organisation.model.js';
+import { MembershipModel } from '../models/membership.model.js';
+import { FarmerModel } from '../models/farmer.model.js';
 
 export interface AuthTokens {
   accessToken: string;
@@ -91,6 +94,27 @@ export class AuthService {
       tokenHash,
       expiresAt,
     });
+
+    // Auto-provision personal organisation, admin membership, and self farmer record
+    try {
+      const org = await OrganisationModel.create({
+        name: `${user.name}'s Farm`,
+      });
+      await MembershipModel.create({
+        orgId: org._id,
+        userId: user._id,
+        role: 'admin',
+      });
+      await FarmerModel.create({
+        orgId: org._id,
+        userId: user._id,
+        name: user.name,
+        language: user.language || 'en',
+        status: 'active',
+      });
+    } catch (orgErr) {
+      logger.warn({ err: orgErr, userId: user.id }, 'Non-fatal: failed to provision default organisation');
+    }
 
     logger.info({ userId: user.id }, 'User registered successfully');
 
@@ -268,6 +292,8 @@ export class AuthService {
       MessageChannelModel.deleteMany({ userId: uid }),
       PushSubscriptionModel.deleteMany({ userId: uid }),
       RefreshTokenModel.deleteMany({ userId: uid }),
+      MembershipModel.deleteMany({ userId: uid }),
+      FarmerModel.deleteMany({ userId: uid }),
       UserModel.deleteOne({ _id: uid }),
     ]);
 

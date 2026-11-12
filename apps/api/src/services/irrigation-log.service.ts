@@ -5,13 +5,14 @@ import {
   IRRIGATION_EFFICIENCY,
   IrrigationMethod,
 } from '@irrigiq/shared';
-import { FieldModel } from '../models/field.model.js';
 import { IrrigationLogModel, IIrrigationLogDocument } from '../models/irrigation-log.model.js';
 import { RecommendationModel } from '../models/recommendation.model.js';
 import { CreateIrrigationLogInput } from '../schemas/irrigation-log.schema.js';
 import { recomputeField } from './recommendation.service.js';
 import { AppError } from '../errors/AppError.js';
 import { logger } from '../config/logger.js';
+import { checkFieldAccess } from './rbac.service.js';
+import { OrganisationRole } from '../models/membership.model.js';
 
 export interface SavingsResponse {
   fieldId: string;
@@ -67,19 +68,10 @@ export class IrrigationLogService {
     userId: string,
     fieldId: string,
     input: CreateIrrigationLogInput,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
   ): Promise<IIrrigationLogDocument> {
-    if (!Types.ObjectId.isValid(fieldId)) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
-
-    const field = await FieldModel.findOne({
-      _id: new Types.ObjectId(fieldId),
-      userId: new Types.ObjectId(userId),
-    });
-
-    if (!field) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
+    const field = await checkFieldAccess(fieldId, userId, orgId, role);
 
     const log = await IrrigationLogModel.create({
       fieldId: field._id,
@@ -107,23 +99,13 @@ export class IrrigationLogService {
     userId: string,
     fieldId: string,
     query?: { from?: string; to?: string },
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
   ): Promise<IIrrigationLogDocument[]> {
-    if (!Types.ObjectId.isValid(fieldId)) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
-
-    const field = await FieldModel.findOne({
-      _id: new Types.ObjectId(fieldId),
-      userId: new Types.ObjectId(userId),
-    });
-
-    if (!field) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
+    const field = await checkFieldAccess(fieldId, userId, orgId, role);
 
     const filter: Record<string, unknown> = {
       fieldId: field._id,
-      userId: new Types.ObjectId(userId),
     };
 
     if (query?.from || query?.to) {
@@ -139,27 +121,22 @@ export class IrrigationLogService {
   /**
    * Deletes an irrigation log and recomputes field recommendations.
    */
-  async deleteLog(userId: string, fieldId: string, logId: string): Promise<void> {
-    if (!Types.ObjectId.isValid(fieldId)) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
+  async deleteLog(
+    userId: string,
+    fieldId: string,
+    logId: string,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
+  ): Promise<void> {
     if (!Types.ObjectId.isValid(logId)) {
       throw new AppError('Irrigation log not found', 404, 'LOG_NOT_FOUND');
     }
 
-    const field = await FieldModel.findOne({
-      _id: new Types.ObjectId(fieldId),
-      userId: new Types.ObjectId(userId),
-    });
-
-    if (!field) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
+    const field = await checkFieldAccess(fieldId, userId, orgId, role);
 
     const log = await IrrigationLogModel.findOneAndDelete({
       _id: new Types.ObjectId(logId),
       fieldId: field._id,
-      userId: new Types.ObjectId(userId),
     });
 
     if (!log) {
@@ -186,19 +163,10 @@ export class IrrigationLogService {
     fieldId: string,
     from: string,
     to: string,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
   ): Promise<SavingsResponse> {
-    if (!Types.ObjectId.isValid(fieldId)) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
-
-    const field = await FieldModel.findOne({
-      _id: new Types.ObjectId(fieldId),
-      userId: new Types.ObjectId(userId),
-    });
-
-    if (!field) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
+    const field = await checkFieldAccess(fieldId, userId, orgId, role);
 
     const daysInRange = calculateDaysInRange(from, to);
 

@@ -9,7 +9,10 @@ import {
 } from '@irrigiq/shared';
 import { AppError } from '../errors/AppError.js';
 import { FieldRepository, fieldRepository } from '../repositories/field.repository.js';
-import { IField, IFieldDocument } from '../models/field.model.js';
+import { FieldModel, IField, IFieldDocument } from '../models/field.model.js';
+import { FarmerModel } from '../models/farmer.model.js';
+import { OrganisationRole } from '../models/membership.model.js';
+import { checkFieldAccess } from './rbac.service.js';
 import { CreateFieldInput, UpdateFieldInput } from '../schemas/field.schema.js';
 import { recomputeField } from './recommendation.service.js';
 import { logger } from '../config/logger.js';
@@ -17,7 +20,12 @@ import { logger } from '../config/logger.js';
 export class FieldService {
   constructor(private readonly repo: FieldRepository = fieldRepository) {}
 
-  async createField(userId: string, input: CreateFieldInput): Promise<IFieldDocument> {
+  async createField(
+    userId: string,
+    input: CreateFieldInput,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
+  ): Promise<IFieldDocument> {
     const hasPolygon =
       input.geometry &&
       Array.isArray(input.geometry.coordinates) &&
@@ -120,8 +128,44 @@ export class FieldService {
       areaWarning = `Field area (${areaHa.toFixed(2)} ha) exceeds ${AREA_CONFIG.largeAreaWarningHa.value} ha. Please verify the entered land size.`;
     }
 
+    let farmerId: Types.ObjectId | null = null;
+    if (orgId) {
+      if (input.farmerId) {
+        const farmer = await FarmerModel.findOne({
+          _id: new Types.ObjectId(input.farmerId),
+          orgId,
+          status: { $ne: 'deleted' },
+        });
+        if (!farmer) {
+          throw new AppError('Farmer not found in this organisation', 404, 'FARMER_NOT_FOUND');
+        }
+        if (role === 'agent' && farmer.assignedAgentId?.toString() !== userId.toString()) {
+          throw new AppError('Forbidden: farmer not assigned to you', 403, 'FORBIDDEN');
+        }
+        farmerId = farmer._id;
+      } else {
+        let farmer = await FarmerModel.findOne({
+          orgId,
+          userId: new Types.ObjectId(userId),
+          status: { $ne: 'deleted' },
+        });
+        if (!farmer) {
+          farmer = await FarmerModel.create({
+            orgId,
+            userId: new Types.ObjectId(userId),
+            name: 'Owner',
+            language: 'en',
+            status: 'active',
+          });
+        }
+        farmerId = farmer._id;
+      }
+    }
+
     const fieldData: Partial<IField> = {
       userId: new Types.ObjectId(userId),
+      orgId: orgId ?? null,
+      farmerId,
       name: input.name,
       locationMode: hasPolygon ? 'polygon' : 'pin',
       geometry,
@@ -156,33 +200,70 @@ export class FieldService {
     return field;
   }
 
-  async getFields(userId: string): Promise<IFieldDocument[]> {
+  async getFields(
+    userId: string,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
+  ): Promise<IFieldDocument[]> {
+    if (orgId) {
+      if (role === 'agent') {
+        const assignedFarmers = await FarmerModel.find({
+          orgId,
+          assignedAgentId: new Types.ObjectId(userId),
+          status: { $ne: 'deleted' },
+        }).select('_id');
+        const farmerIds = assignedFarmers.map((f) => f._id);
+        return FieldModel.find({
+          orgId,
+          farmerId: { $in: farmerIds },
+        }).sort({ updatedAt: -1 });
+      }
+
+      // Admin sees all fields in this organisation
+      return FieldModel.find({ orgId }).sort({ updatedAt: -1 });
+    }
+
     return this.repo.findByUserId(userId);
   }
 
-  async getFieldById(userId: string, fieldId: string): Promise<IFieldDocument> {
-    if (!Types.ObjectId.isValid(fieldId)) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
-
-    const field = await this.repo.findById(fieldId, userId);
-    if (!field) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
-
-    return field;
+  async getFieldById(
+    userId: string,
+    fieldId: string,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
+  ): Promise<IFieldDocument> {
+    return checkFieldAccess(fieldId, userId, orgId, role);
   }
 
   async updateField(
     userId: string,
     fieldId: string,
     input: UpdateFieldInput,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
   ): Promise<IFieldDocument> {
-    if (!Types.ObjectId.isValid(fieldId)) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
+    const existingField = await checkFieldAccess(fieldId, userId, orgId, role);
 
     const updateData: Partial<IField> = {};
+
+    if (input.farmerId !== undefined) {
+      if (role === 'agent' && input.farmerId !== existingField.farmerId?.toString()) {
+        throw new AppError('Forbidden: agents cannot reassign fields to different farmers', 403, 'FORBIDDEN');
+      }
+      if (input.farmerId) {
+        const targetFarmer = await FarmerModel.findOne({
+          _id: new Types.ObjectId(input.farmerId),
+          orgId: existingField.orgId || orgId,
+          status: { $ne: 'deleted' },
+        });
+        if (!targetFarmer) {
+          throw new AppError('Farmer not found in this organisation', 404, 'FARMER_NOT_FOUND');
+        }
+        updateData.farmerId = targetFarmer._id;
+      } else {
+        updateData.farmerId = null;
+      }
+    }
 
     if (input.name !== undefined) {
       updateData.name = input.name;
@@ -281,7 +362,7 @@ export class FieldService {
       }
     }
 
-    const result = await this.repo.updateWithVersion(fieldId, userId, input.version, updateData);
+    const result = await this.repo.updateWithVersion(fieldId, input.version, updateData);
 
     if (result.status === 'NOT_FOUND') {
       throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
@@ -307,12 +388,14 @@ export class FieldService {
     return updatedField;
   }
 
-  async deleteField(userId: string, fieldId: string): Promise<void> {
-    if (!Types.ObjectId.isValid(fieldId)) {
-      throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-    }
-
-    const deleted = await this.repo.delete(fieldId, userId);
+  async deleteField(
+    userId: string,
+    fieldId: string,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
+  ): Promise<void> {
+    const field = await checkFieldAccess(fieldId, userId, orgId, role);
+    const deleted = await this.repo.delete(field._id.toString());
     if (!deleted) {
       throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
     }
@@ -323,8 +406,41 @@ export class FieldService {
     lng: number,
     lat: number,
     km: number,
+    orgId?: Types.ObjectId,
+    role?: OrganisationRole,
   ): Promise<IFieldDocument[]> {
     const maxDistanceMeters = km * 1000;
+    if (orgId) {
+      if (role === 'agent') {
+        const assignedFarmers = await FarmerModel.find({
+          orgId,
+          assignedAgentId: new Types.ObjectId(userId),
+          status: { $ne: 'deleted' },
+        }).select('_id');
+        const farmerIds = assignedFarmers.map((f) => f._id);
+        return FieldModel.find({
+          orgId,
+          farmerId: { $in: farmerIds },
+          centroid: {
+            $nearSphere: {
+              $geometry: { type: 'Point', coordinates: [lng, lat] },
+              $maxDistance: maxDistanceMeters,
+            },
+          },
+        });
+      }
+
+      return FieldModel.find({
+        orgId,
+        centroid: {
+          $nearSphere: {
+            $geometry: { type: 'Point', coordinates: [lng, lat] },
+            $maxDistance: maxDistanceMeters,
+          },
+        },
+      });
+    }
+
     return this.repo.findNearby(userId, lng, lat, maxDistanceMeters);
   }
 }

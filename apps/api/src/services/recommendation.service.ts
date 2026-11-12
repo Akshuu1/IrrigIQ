@@ -30,6 +30,8 @@ import {
 } from './weather.service.js';
 import { AppError } from '../errors/AppError.js';
 import { logger } from '../config/logger.js';
+import { checkFieldAccess } from './rbac.service.js';
+import { OrganisationRole } from '../models/membership.model.js';
 
 export interface RecomputeOptions extends GetWeatherOptions {
   sensorReading?: {
@@ -283,19 +285,10 @@ export async function getRecommendationsForField(
   userId: string,
   fieldId: string,
   days = 7,
+  orgId?: Types.ObjectId,
+  role?: OrganisationRole,
 ): Promise<IRecommendationDocument[]> {
-  if (!Types.ObjectId.isValid(fieldId)) {
-    throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-  }
-
-  const field = await FieldModel.findOne({
-    _id: new Types.ObjectId(fieldId),
-    userId: new Types.ObjectId(userId),
-  });
-
-  if (!field) {
-    throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-  }
+  const field = await checkFieldAccess(fieldId, userId, orgId, role);
 
   const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
   const endDateObj = new Date(`${today}T00:00:00.000Z`);
@@ -304,7 +297,6 @@ export async function getRecommendationsForField(
 
   const recs = await RecommendationModel.find({
     fieldId: field._id,
-    userId: new Types.ObjectId(userId),
     forDate: { $gte: today, $lte: toDate },
   }).sort({ forDate: 1 });
 

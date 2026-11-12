@@ -17,7 +17,13 @@ export class IrrigationLogController {
       }
 
       const validated = createIrrigationLogSchema.parse(req.body);
-      const log = await this.service.createLog(req.user.id, req.params.id as string, validated);
+      const log = await this.service.createLog(
+        req.user.id,
+        req.params.id as string,
+        validated,
+        req.orgId,
+        req.role,
+      );
 
       res.status(201).json({
         status: 'success',
@@ -37,7 +43,13 @@ export class IrrigationLogController {
       }
 
       const query = listLogsQuerySchema.parse(req.query);
-      const logs = await this.service.getLogs(req.user.id, req.params.id as string, query);
+      const logs = await this.service.getLogs(
+        req.user.id,
+        req.params.id as string,
+        query,
+        req.orgId,
+        req.role,
+      );
 
       res.json({
         status: 'success',
@@ -60,6 +72,8 @@ export class IrrigationLogController {
         req.user.id,
         req.params.id as string,
         req.params.logId as string,
+        req.orgId,
+        req.role,
       );
 
       res.json({
@@ -83,6 +97,8 @@ export class IrrigationLogController {
         req.params.id as string,
         from,
         to,
+        req.orgId,
+        req.role,
       );
 
       res.json({

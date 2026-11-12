@@ -5,12 +5,14 @@ import { irrigationLogController } from '../controllers/irrigation-log.controlle
 import { sensorController } from '../controllers/sensor.controller.js';
 import { reportController } from '../controllers/report.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
+import { orgMiddleware } from '../middleware/org.middleware.js';
 import { recomputeRateLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
-// All field routes require authentication
+// All field routes require authentication and organisation context
 router.use(authMiddleware as unknown as RequestHandler);
+router.use(orgMiddleware as unknown as RequestHandler);
 
 router.post('/', fieldController.create);
 router.get('/', fieldController.list);

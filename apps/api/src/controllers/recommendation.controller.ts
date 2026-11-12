@@ -5,9 +5,8 @@ import {
   recomputeField,
   rescheduleForNoPower,
 } from '../services/recommendation.service.js';
-import { FieldModel } from '../models/field.model.js';
+import { checkFieldAccess } from '../services/rbac.service.js';
 import { AppError } from '../errors/AppError.js';
-import { Types } from 'mongoose';
 
 const recommendationsQuerySchema = z.object({
   days: z.coerce.number().int().min(1).max(14).default(7),
@@ -25,6 +24,8 @@ export class RecommendationController {
         req.user.id,
         req.params.id as string,
         days,
+        req.orgId,
+        req.role,
       );
 
       res.json({
@@ -45,20 +46,7 @@ export class RecommendationController {
       }
 
       const fieldId = req.params.id as string;
-      if (!Types.ObjectId.isValid(fieldId)) {
-        throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-      }
-
-      // Strict ownership check
-      const field = await FieldModel.findOne({
-        _id: new Types.ObjectId(fieldId),
-        userId: new Types.ObjectId(req.user.id),
-      });
-
-      if (!field) {
-        throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-      }
-
+      const field = await checkFieldAccess(fieldId, req.user._id, req.orgId, req.role);
       const recommendations = await recomputeField(field._id);
 
       res.json({
@@ -79,18 +67,7 @@ export class RecommendationController {
       }
 
       const fieldId = req.params.id as string;
-      if (!Types.ObjectId.isValid(fieldId)) {
-        throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-      }
-
-      const field = await FieldModel.findOne({
-        _id: new Types.ObjectId(fieldId),
-        userId: new Types.ObjectId(req.user.id),
-      });
-
-      if (!field) {
-        throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-      }
+      const field = await checkFieldAccess(fieldId, req.user._id, req.orgId, req.role);
 
       const date = (req.body?.date as string) || (req.query?.date as string);
       const result = await rescheduleForNoPower(field._id, date);

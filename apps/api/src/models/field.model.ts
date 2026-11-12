@@ -11,6 +11,8 @@ export interface IFieldBaseline {
 
 export interface IField {
   userId: Types.ObjectId;
+  orgId?: Types.ObjectId | null;
+  farmerId?: Types.ObjectId | null;
   name: string;
   locationMode: 'pin' | 'polygon';
   geometry?: GeoJSONPolygon | null;
@@ -82,6 +84,18 @@ const fieldSchema = new Schema<IFieldDocument>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      index: true,
+    },
+    orgId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Organisation',
+      default: null,
+      index: true,
+    },
+    farmerId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Farmer',
+      default: null,
       index: true,
     },
     name: {
@@ -192,6 +206,7 @@ fieldSchema.index({ geometry: '2dsphere' }, { sparse: true });
 fieldSchema.index({ location: '2dsphere' }, { sparse: true });
 fieldSchema.index({ centroid: '2dsphere' }, { sparse: true });
 fieldSchema.index({ userId: 1, updatedAt: -1 });
+fieldSchema.index({ orgId: 1, updatedAt: -1 });
 fieldSchema.index({ pumpId: 1 });
 
 export const FieldModel = mongoose.model<IFieldDocument>('Field', fieldSchema);

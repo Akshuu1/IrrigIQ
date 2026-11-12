@@ -19,7 +19,7 @@ export class FieldController {
       }
 
       const validated = createFieldSchema.parse(req.body);
-      const field = await this.service.createField(req.user.id, validated);
+      const field = await this.service.createField(req.user.id, validated, req.orgId, req.role);
       const plan = await RecommendationModel.find({ fieldId: field._id }).sort({ forDate: 1 });
 
       res.status(201).json({
@@ -40,7 +40,7 @@ export class FieldController {
         throw new AppError('Authentication required', 401, 'UNAUTHORIZED');
       }
 
-      const fields = await this.service.getFields(req.user.id);
+      const fields = await this.service.getFields(req.user.id, req.orgId, req.role);
 
       res.json({
         status: 'success',
@@ -59,7 +59,12 @@ export class FieldController {
         throw new AppError('Authentication required', 401, 'UNAUTHORIZED');
       }
 
-      const field = await this.service.getFieldById(req.user.id, req.params.id as string);
+      const field = await this.service.getFieldById(
+        req.user.id,
+        req.params.id as string,
+        req.orgId,
+        req.role,
+      );
 
       res.json({
         status: 'success',
@@ -79,7 +84,13 @@ export class FieldController {
       }
 
       const validated = updateFieldSchema.parse(req.body);
-      const field = await this.service.updateField(req.user.id, req.params.id as string, validated);
+      const field = await this.service.updateField(
+        req.user.id,
+        req.params.id as string,
+        validated,
+        req.orgId,
+        req.role,
+      );
 
       res.json({
         status: 'success',
@@ -98,7 +109,12 @@ export class FieldController {
         throw new AppError('Authentication required', 401, 'UNAUTHORIZED');
       }
 
-      await this.service.deleteField(req.user.id, req.params.id as string);
+      await this.service.deleteField(
+        req.user.id,
+        req.params.id as string,
+        req.orgId,
+        req.role,
+      );
 
       res.status(200).json({
         status: 'success',
@@ -121,6 +137,8 @@ export class FieldController {
         validatedQuery.lng,
         validatedQuery.lat,
         validatedQuery.km,
+        req.orgId,
+        req.role,
       );
 
       res.json({

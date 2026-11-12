@@ -33,22 +33,32 @@ export class FieldRepository {
 
   async updateWithVersion(
     id: string,
-    userId: string,
-    version: number,
-    updateData: Partial<IField>,
+    versionOrUserId: number | string,
+    updateDataOrVersion: Partial<IField> | number,
+    optionalUpdateData?: Partial<IField>,
   ): Promise<UpdateResult> {
-    if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(userId)) {
+    if (!Types.ObjectId.isValid(id)) {
       return { status: 'NOT_FOUND' };
     }
 
     const objectId = new Types.ObjectId(id);
-    const userObjectId = new Types.ObjectId(userId);
+    let version: number;
+    let updateData: Partial<IField>;
+    const query: Record<string, unknown> = { _id: objectId };
 
-    // First check if the field exists for this user
-    const existing = await FieldModel.findOne({
-      _id: objectId,
-      userId: userObjectId,
-    });
+    if (typeof versionOrUserId === 'string') {
+      if (Types.ObjectId.isValid(versionOrUserId)) {
+        query.userId = new Types.ObjectId(versionOrUserId);
+      }
+      version = updateDataOrVersion as number;
+      updateData = optionalUpdateData || {};
+    } else {
+      version = versionOrUserId;
+      updateData = updateDataOrVersion as Partial<IField>;
+    }
+
+    // First check if the field exists
+    const existing = await FieldModel.findOne(query);
 
     if (!existing) {
       return { status: 'NOT_FOUND' };
@@ -62,8 +72,7 @@ export class FieldRepository {
     // Atomically increment version while updating
     const updated = await FieldModel.findOneAndUpdate(
       {
-        _id: objectId,
-        userId: userObjectId,
+        ...query,
         version,
       },
       {
@@ -78,21 +87,22 @@ export class FieldRepository {
 
     if (!updated) {
       // Race condition occurred between find and findOneAndUpdate
-      const fresh = await FieldModel.findOne({ _id: objectId, userId: userObjectId });
+      const fresh = await FieldModel.findOne(query);
       return { status: 'CONFLICT', currentVersion: fresh?.version ?? version };
     }
 
     return { status: 'SUCCESS', field: updated };
   }
 
-  async delete(id: string, userId: string): Promise<boolean> {
-    if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(userId)) {
+  async delete(id: string, userId?: string): Promise<boolean> {
+    if (!Types.ObjectId.isValid(id)) {
       return false;
     }
-    const result = await FieldModel.deleteOne({
-      _id: new Types.ObjectId(id),
-      userId: new Types.ObjectId(userId),
-    });
+    const query: Record<string, unknown> = { _id: new Types.ObjectId(id) };
+    if (userId && Types.ObjectId.isValid(userId)) {
+      query.userId = new Types.ObjectId(userId);
+    }
+    const result = await FieldModel.deleteOne(query);
     return (result.deletedCount ?? 0) > 0;
   }
 

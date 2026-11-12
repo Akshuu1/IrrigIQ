@@ -3,9 +3,7 @@ import { reportService } from '../services/report.service.js';
 import { scheduleOrRunReportGeneration } from '../scheduler/report.scheduler.js';
 import { createReportSchema } from '../schemas/report.schema.js';
 import { ReportModel } from '../models/report.model.js';
-import { FieldModel } from '../models/field.model.js';
-import { AppError } from '../errors/AppError.js';
-import { Types } from 'mongoose';
+import { checkFieldAccess } from '../services/rbac.service.js';
 
 export class ReportController {
   async createReport(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -14,7 +12,13 @@ export class ReportController {
       const parsedBody = createReportSchema.parse(req.body);
       const userId = req.user!.id;
 
-      const { report } = await reportService.createReport(userId, fieldId, parsedBody);
+      const { report } = await reportService.createReport(
+        userId,
+        fieldId,
+        parsedBody,
+        req.orgId,
+        req.role,
+      );
       const generated = await scheduleOrRunReportGeneration(report._id.toString());
 
       if (generated.status === 'completed') {
@@ -89,24 +93,10 @@ export class ReportController {
   async listFieldReports(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const fieldId = req.params.id as string;
-      const userId = req.user!.id;
-
-      if (!Types.ObjectId.isValid(fieldId)) {
-        throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-      }
-
-      const field = await FieldModel.findOne({
-        _id: new Types.ObjectId(fieldId),
-        userId: new Types.ObjectId(userId),
-      });
-
-      if (!field) {
-        throw new AppError('Field not found', 404, 'FIELD_NOT_FOUND');
-      }
+      const field = await checkFieldAccess(fieldId, req.user!._id, req.orgId, req.role);
 
       const reports = await ReportModel.find({
         fieldId: field._id,
-        userId: new Types.ObjectId(userId),
       })
         .select('-pdfBuffer')
         .sort({ createdAt: -1 })
