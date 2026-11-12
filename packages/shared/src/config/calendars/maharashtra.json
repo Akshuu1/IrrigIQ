@@ -1,6 +1,13 @@
 {
   "state": "Maharashtra",
-  "source": "ICAR-CRIDA State Contingency Plan: Maharashtra (Vidarbha, Marathwada & Western Maharashtra Agro-climatic Zones)",
+  "source": {
+    "document": "ICAR-CRIDA State Contingency Plan: Maharashtra",
+    "tableOrPage": "Vidarbha, Marathwada & Western Maharashtra Agro-climatic Zones",
+    "url": "http://crida.in/",
+    "retrievedOn": "2026-11-04",
+    "checkedBy": null,
+    "status": "ai-suggested"
+  },
   "verified": false,
   "crops": [
     {
@@ -10,7 +17,14 @@
       "sowFrom": "06-15",
       "sowTo": "07-15",
       "sowingRainMm": 75,
-      "source": "Dr. Panjabrao Deshmukh Krishi Vidyapeeth (PDKV) Akola Cotton Advisory",
+      "source": {
+        "document": "Dr. Panjabrao Deshmukh Krishi Vidyapeeth (PDKV) Akola Cotton Advisory",
+        "tableOrPage": "Cotton Sowing Package",
+        "url": "https://www.pdkv.ac.in/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -20,7 +34,14 @@
       "sowFrom": "06-20",
       "sowTo": "07-20",
       "sowingRainMm": 75,
-      "source": "Vasantrao Naik Marathwada Krishi Vidyapeeth (VNMKV) Parbhani Maize Calendar",
+      "source": {
+        "document": "Vasantrao Naik Marathwada Krishi Vidyapeeth (VNMKV) Parbhani Maize Calendar",
+        "tableOrPage": "Kharif Maize Advisory",
+        "url": "https://www.vnmkv.ac.in/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -30,7 +51,14 @@
       "sowFrom": "06-10",
       "sowTo": "07-10",
       "sowingRainMm": 100,
-      "source": "Dr. Balasaheb Sawant Konkan Krishi Vidyapeeth (DBSKKV) Dapoli Rice Calendar",
+      "source": {
+        "document": "Dr. Balasaheb Sawant Konkan Krishi Vidyapeeth (DBSKKV) Dapoli Rice Calendar",
+        "tableOrPage": "Konkan Coastal Rice Advisory",
+        "url": "https://www.dbskkv.org/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -40,7 +68,14 @@
       "sowFrom": "06-15",
       "sowTo": "07-31",
       "sowingRainMm": 60,
-      "source": "Mahatma Phule Krishi Vidyapeeth (MPKV) Rahuri Vegetable Sowing Guide",
+      "source": {
+        "document": "Mahatma Phule Krishi Vidyapeeth (MPKV) Rahuri Vegetable Sowing Guide",
+        "tableOrPage": "Vegetable Package of Practices",
+        "url": "https://mpkv.ac.in/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -50,9 +85,15 @@
       "sowFrom": "10-25",
       "sowTo": "11-20",
       "sowingRainMm": 40,
-      "source": "MPKV Rahuri Rabi Wheat Contingency Recommendations",
+      "source": {
+        "document": "MPKV Rahuri Rabi Wheat Contingency Recommendations",
+        "tableOrPage": "Rabi Wheat Sowing Window",
+        "url": "https://mpkv.ac.in/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     }
   ]
 }
-

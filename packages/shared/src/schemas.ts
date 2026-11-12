@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { CROPS_MAP } from './crops.js';
-import type { SoilType, IrrigationMethod } from './science.js';
 import { PUMP_CONFIG } from './pump.js';
 
 export const SUPPORTED_LANGUAGES = ['en', 'hi', 'mr', 'pa', 'te'] as const;
@@ -53,7 +52,7 @@ export const UpdateProfileSchema = z
     numberingSystem: NumberingSystemSchema.optional(),
     useNativeDigits: z.boolean().optional(),
   })
-  .strict('Only name, language, areaUnit, numberingSystem, and useNativeDigits can be updated');
+  .strict();
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;
 
 // Field schemas
@@ -96,16 +95,13 @@ export const baselineSchema = z.object({
 });
 export type BaselineInput = z.infer<typeof baselineSchema>;
 
-export const SoilTypeSchema: z.ZodType<SoilType> = z.enum(['sandy', 'loam', 'clay'], {
-  errorMap: () => ({ message: 'Soil type must be sandy, loam, or clay' }),
+export const SoilTypeSchema = z.enum(['sandy', 'loam', 'clay'], {
+  message: 'Soil type must be sandy, loam, or clay',
 });
 
-export const IrrigationMethodSchema: z.ZodType<IrrigationMethod> = z.enum(
-  ['drip', 'sprinkler', 'flood'],
-  {
-    errorMap: () => ({ message: 'Irrigation method must be drip, sprinkler, or flood' }),
-  },
-);
+export const IrrigationMethodSchema = z.enum(['drip', 'sprinkler', 'flood'], {
+  message: 'Irrigation method must be drip, sprinkler, or flood',
+});
 
 export const pumpIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid pump ID');
 
@@ -134,7 +130,7 @@ export type CreateFieldInput = z.input<typeof createFieldSchema>;
 
 export const updateFieldSchema = z.object({
   version: z
-    .number({ required_error: 'Version is required for optimistic concurrency control' })
+    .number({ message: 'Version is required for optimistic concurrency control' })
     .int('Version must be an integer'),
   name: z
     .string()
@@ -167,7 +163,7 @@ export const createPumpSchema = z.object({
     .min(1, 'Pump name is required')
     .max(100, 'Pump name must not exceed 100 characters'),
   dischargeLph: z
-    .number({ required_error: 'Discharge rate is required' })
+    .number({ message: 'Discharge rate is required' })
     .min(PUMP_CONFIG.minDischargeLph.value, `Discharge must be at least ${PUMP_CONFIG.minDischargeLph.value} L/h`)
     .max(PUMP_CONFIG.maxDischargeLph.value, `Discharge must not exceed ${PUMP_CONFIG.maxDischargeLph.value} L/h`),
   measuredOn: z

@@ -9,6 +9,8 @@ import { requestIdMiddleware } from './middleware/requestId.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { healthRouter } from './routes/health.routes.js';
 import { authRouter } from './routes/auth.routes.js';
+import { authController } from './controllers/auth.controller.js';
+import { authMiddleware } from './middleware/auth.middleware.js';
 import { fieldRouter } from './routes/field.routes.js';
 import { cropRouter } from './routes/crop.routes.js';
 import { sensorReadingRouter } from './routes/sensor-reading.routes.js';
@@ -92,6 +94,9 @@ export function createApp(): Express {
   // Mount routes
   app.use('/', healthRouter);
   app.use('/auth', authRouter);
+  app.delete('/me', authMiddleware, (req, res, next) =>
+    authController.deleteMe(req, res, next),
+  );
   app.use('/fields', fieldRouter);
   app.use('/crops', cropRouter);
   app.use('/sensor-readings', sensorReadingRouter);

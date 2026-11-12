@@ -1,7 +1,8 @@
+import crypto from 'node:crypto';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { TelegramProvider } from './telegram.provider.js';
 
-describe('TelegramProvider Unit Tests', () => {
+describe('[Mocked] TelegramProvider Unit Tests', () => {
   const provider = new TelegramProvider();
 
   beforeEach(() => {
@@ -39,6 +40,34 @@ describe('TelegramProvider Unit Tests', () => {
           },
         }),
       ).toBe(false);
+    });
+
+    it('guarantees crypto.timingSafeEqual is never called with unequal lengths', () => {
+      const timingSafeEqualSpy = vi.spyOn(crypto, 'timingSafeEqual');
+
+      // Shorter header (length unequal)
+      provider.verifyInbound({
+        headers: { 'x-telegram-bot-api-secret-token': 'short' },
+      });
+      expect(timingSafeEqualSpy).not.toHaveBeenCalled();
+
+      // Longer header (length unequal)
+      provider.verifyInbound({
+        headers: { 'x-telegram-bot-api-secret-token': 'a'.repeat(100) },
+      });
+      expect(timingSafeEqualSpy).not.toHaveBeenCalled();
+
+      // Missing header
+      provider.verifyInbound({ headers: {} });
+      expect(timingSafeEqualSpy).not.toHaveBeenCalled();
+
+      // Equal length but incorrect value: calls timingSafeEqual safely
+      const sameLengthWrong = 'x'.repeat('irrigiq-telegram-webhook-secret-token'.length);
+      const res = provider.verifyInbound({
+        headers: { 'x-telegram-bot-api-secret-token': sameLengthWrong },
+      });
+      expect(res).toBe(false);
+      expect(timingSafeEqualSpy).toHaveBeenCalledTimes(1);
     });
   });
 

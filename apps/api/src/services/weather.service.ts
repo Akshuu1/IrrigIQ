@@ -374,11 +374,21 @@ export async function acquireRedisLock(
   waitTimeoutMs = 6000,
 ): Promise<string | null> {
   const token = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
+  if (redis.status !== 'ready') {
+    return token;
+  }
   const startTime = Date.now();
 
   while (Date.now() - startTime < waitTimeoutMs) {
-    const res = await redis.set(lockKey, token, 'PX', ttlMs, 'NX');
-    if (res === 'OK') {
+    if (redis.status !== 'ready') {
+      return token;
+    }
+    try {
+      const res = await redis.set(lockKey, token, 'PX', ttlMs, 'NX');
+      if (res === 'OK') {
+        return token;
+      }
+    } catch {
       return token;
     }
     // Sleep briefly before next attempt
@@ -396,6 +406,9 @@ export async function releaseRedisLock(
   lockKey: string,
   token: string,
 ): Promise<boolean> {
+  if (redis.status !== 'ready') {
+    return true;
+  }
   const lua = `
     if redis.call("get", KEYS[1]) == ARGV[1] then
       return redis.call("del", KEYS[1])

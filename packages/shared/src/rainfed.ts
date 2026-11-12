@@ -7,6 +7,15 @@ import maharashtraCalendarJson from './config/calendars/maharashtra.json' with {
 import karnatakaCalendarJson from './config/calendars/karnataka.json' with { type: 'json' };
 import rajasthanCalendarJson from './config/calendars/rajasthan.json' with { type: 'json' };
 
+export interface AgronomySource {
+  document: string;
+  tableOrPage: string;
+  url: string;
+  retrievedOn: string;
+  checkedBy: string | null;
+  status: 'ai-suggested' | 'human-checked';
+}
+
 export interface SowingCalendarEntry {
   state: string;
   crop: string;
@@ -14,13 +23,13 @@ export interface SowingCalendarEntry {
   sowFrom: string; // 'MM-DD'
   sowTo: string; // 'MM-DD'
   sowingRainMm?: number;
-  source: string;
+  source: AgronomySource | string;
   verified: boolean;
 }
 
 export interface StateCalendar {
   state: string;
-  source: string;
+  source: AgronomySource | string;
   verified: boolean;
   crops: SowingCalendarEntry[];
 }

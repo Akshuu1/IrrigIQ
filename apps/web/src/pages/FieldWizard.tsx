@@ -352,6 +352,52 @@ export function FieldWizard(): React.JSX.Element {
     }
   };
 
+  // Quick preset sample field in Haryana/Punjab region (approx 1.2 ha)
+  const handleQuickSampleField = () => {
+    setLocationMode('polygon');
+    const sampleCoords: [number, number][] = [
+      [76.985, 29.69],
+      [76.988, 29.69],
+      [76.988, 29.694],
+      [76.985, 29.694],
+      [76.985, 29.69],
+    ];
+
+    const geoJson: GeoJsonPolygon = {
+      type: 'Polygon',
+      coordinates: [sampleCoords],
+    };
+
+    const area = polygonAreaHa(geoJson);
+    setCalculatedAreaHa(area);
+    setPolygon(geoJson);
+    setName((prev) => prev || (lang === 'hi' ? 'करनाल गेहूं का खेत' : 'Quality Gate Wheat Field'));
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.polygon;
+      delete next.location;
+      return next;
+    });
+
+    if (mapRef.current) {
+      const map = mapRef.current;
+      if (drawnLayerRef.current) {
+        map.removeLayer(drawnLayerRef.current);
+      }
+      const latlngs: L.LatLngExpression[] = sampleCoords.map((c) => [c[1], c[0]]);
+      const polygonLayer = L.polygon(latlngs, {
+        color: '#10b981',
+        fillColor: '#10b981',
+        fillOpacity: 0.35,
+      }).addTo(map);
+
+      drawnLayerRef.current = polygonLayer;
+      map.fitBounds(polygonLayer.getBounds(), { padding: [40, 40] });
+    }
+
+    handleSetPin(76.9865, 29.692);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
@@ -531,6 +577,15 @@ export function FieldWizard(): React.JSX.Element {
 
           {/* Quick Action Tools: GPS, Village Search */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <button
+              type="button"
+              onClick={handleQuickSampleField}
+              className="px-4 py-2.5 rounded-xl border border-emerald-500/50 bg-emerald-950/40 hover:bg-emerald-950 text-emerald-300 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span>{lang === 'hi' ? 'नमूना खेत जोड़ें' : 'Use Sample Field'}</span>
+            </button>
+
             <button
               type="button"
               onClick={handleLocateCurrentPosition}

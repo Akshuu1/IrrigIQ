@@ -15,7 +15,7 @@ test.describe('Phase 11 Acceptance: Offline-First PWA, IndexedDB & Sync Queue', 
 
     // Wait for redirect to Dashboard
     await page.waitForURL('/');
-    expect(page.url()).toBe('http://localhost:3000/');
+    expect(page.url()).toMatch(/^http:\/\/(localhost|127\.0\.0\.1):3000\/$/);
 
     // 2. Create a field via FieldWizard (client-side SPA navigation)
     const addFieldLink = page.locator('a[href="/fields/new"]').first();

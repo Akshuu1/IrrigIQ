@@ -81,15 +81,26 @@ export class ApiError extends Error {
 }
 
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let refreshSubscribers: {
+  resolve: (token: string) => void;
+  reject: (err: unknown) => void;
+}[] = [];
 
 function onRefreshed(token: string) {
-  refreshSubscribers.forEach((callback) => callback(token));
+  refreshSubscribers.forEach((sub) => sub.resolve(token));
   refreshSubscribers = [];
 }
 
-function addRefreshSubscriber(callback: (token: string) => void) {
-  refreshSubscribers.push(callback);
+function onRefreshFailed(err: unknown) {
+  refreshSubscribers.forEach((sub) => sub.reject(err));
+  refreshSubscribers = [];
+}
+
+function addRefreshSubscriber(
+  resolve: (token: string) => void,
+  reject: (err: unknown) => void,
+) {
+  refreshSubscribers.push({ resolve, reject });
 }
 
 export async function apiFetch<T>(
@@ -115,7 +126,13 @@ export async function apiFetch<T>(
   });
 
   // Handle 401 Unauthorized -> try refresh token rotation once
-  if (response.status === 401 && !isRetry && !endpoint.startsWith('/auth/login') && !endpoint.startsWith('/auth/register')) {
+  if (
+    response.status === 401 &&
+    !isRetry &&
+    !endpoint.startsWith('/auth/login') &&
+    !endpoint.startsWith('/auth/register') &&
+    !endpoint.startsWith('/auth/refresh')
+  ) {
     if (!isRefreshing) {
       isRefreshing = true;
       try {
@@ -146,6 +163,7 @@ export async function apiFetch<T>(
 
       isRefreshing = false;
       setAccessToken(null);
+      onRefreshFailed(new ApiError(401, 'Session expired'));
       // Trigger logout event or redirect if in browser
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('auth:expired'));
@@ -153,13 +171,16 @@ export async function apiFetch<T>(
     } else {
       // Another request is already refreshing, wait for it
       return new Promise<T>((resolve, reject) => {
-        addRefreshSubscriber((token) => {
-          const retryHeaders = new Headers(options.headers || {});
-          retryHeaders.set('Authorization', `Bearer ${token}`);
-          apiFetch<T>(endpoint, { ...options, headers: retryHeaders }, true)
-            .then(resolve)
-            .catch(reject);
-        });
+        addRefreshSubscriber(
+          (token) => {
+            const retryHeaders = new Headers(options.headers || {});
+            retryHeaders.set('Authorization', `Bearer ${token}`);
+            apiFetch<T>(endpoint, { ...options, headers: retryHeaders }, true)
+              .then(resolve)
+              .catch(reject);
+          },
+          (err) => reject(err),
+        );
       });
     }
   }

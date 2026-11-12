@@ -65,11 +65,35 @@ export function decryptExternalId(encryptedPayload: string): string {
   return decrypted;
 }
 
+function getIndexKey(): Buffer {
+  const env = getEnv();
+  const rawKey = env.CHAT_INDEX_KEY;
+  if (/^[0-9a-fA-F]{64}$/.test(rawKey)) {
+    return Buffer.from(rawKey, 'hex');
+  }
+  return crypto.createHash('sha256').update(rawKey).digest();
+}
+
 /**
- * Deterministic SHA-256 hash used for database queries without exposing plain IDs in logs or indexes.
+ * Blind index using HMAC-SHA256 with CHAT_INDEX_KEY.
+ * Prevents dictionary, offline rainbow table, and frequency attacks against identifiers in database indexes.
  */
-export function hashExternalId(externalId: string): string {
-  return crypto.createHash('sha256').update(externalId.trim()).digest('hex');
+export function hashExternalId(externalId: string, customKey?: string | Buffer): string {
+  if (!externalId) {
+    throw new Error('Cannot hash empty external identifier');
+  }
+  const key = customKey
+    ? typeof customKey === 'string'
+      ? /^[0-9a-fA-F]{64}$/.test(customKey)
+        ? Buffer.from(customKey, 'hex')
+        : crypto.createHash('sha256').update(customKey).digest()
+      : customKey
+    : getIndexKey();
+
+  return crypto
+    .createHmac('sha256', key)
+    .update(externalId.trim())
+    .digest('hex');
 }
 
 /**

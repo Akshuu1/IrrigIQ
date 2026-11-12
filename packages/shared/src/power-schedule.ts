@@ -4,12 +4,26 @@ export const POWER_SCHEDULE_CONFIG = {
   version: '1.0.0',
   windLimitKmh: {
     value: 20,
-    source: 'FAO-56 Irrigation and Drainage Paper No. 56 / Sprinkler droplet drift threshold (starter 20 km/h)',
+    source: {
+      document: 'Operational sprinkler spray drift limit assumption',
+      tableOrPage: 'Engineering baseline assumption',
+      url: '',
+      retrievedOn: '2026-11-04',
+      checkedBy: null,
+      status: 'ai-suggested',
+    },
     verified: false,
   },
   defaultMaxSplits: {
     value: 2,
-    source: 'Phase 17 specifications / Maximum 2 operational splits per daily irrigation plan',
+    source: {
+      document: 'Operational pump schedule assumption',
+      tableOrPage: 'Maximum 2 operational splits per daily plan',
+      url: '',
+      retrievedOn: '2026-11-04',
+      checkedBy: null,
+      status: 'ai-suggested',
+    },
     verified: false,
   },
 } as const;

@@ -39,11 +39,25 @@ describe('Irrigation Log & Savings Service Integration Tests', () => {
 
   beforeEach(async () => {
     nock.cleanAll();
+    nock.enableNetConnect();
     await UserModel.deleteMany({});
     await FieldModel.deleteMany({});
     await RecommendationModel.deleteMany({});
     await IrrigationLogModel.deleteMany({});
     await WeatherDayModel.deleteMany({});
+
+    // Seed cached weather fallback so test never hangs on external network
+    const today = new Date().toISOString().split('T')[0]!;
+    await WeatherDayModel.create({
+      cellKey: '26.9_75.8',
+      date: today,
+      tmaxC: 30,
+      tminC: 18,
+      rainMm: 0,
+      et0Mm: 4.5,
+      source: 'open-meteo',
+      fetchedAt: new Date(),
+    });
   });
 
   async function createTestUser(email: string, name = 'Farmer Ram') {

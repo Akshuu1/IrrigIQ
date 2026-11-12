@@ -32,7 +32,7 @@ export const SyncMutationSchema = z.object({
   type: z.enum(['create_irrigation_log', 'update_field', 'create_field']),
   fieldId: z.string().optional(),
   baseVersion: z.number().int().nonnegative().optional(),
-  payload: z.record(z.any()),
+  payload: z.record(z.string(), z.any()),
   timestamp: z.number().int().positive().optional(),
 });
 

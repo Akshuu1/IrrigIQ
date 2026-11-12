@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 import { WhatsAppCloudProvider } from './whatsapp.provider.js';
 import * as envModule from '../../config/env.js';
 
-describe('WhatsAppCloudProvider Unit Tests', () => {
+describe('[Mocked] WhatsAppCloudProvider Unit Tests', () => {
   const provider = new WhatsAppCloudProvider();
   const mockSecret = 'test_whatsapp_app_secret_123';
   const mockVerifyToken = 'test_webhook_verify_token_456';
@@ -108,6 +108,65 @@ describe('WhatsAppCloudProvider Unit Tests', () => {
           rawBody,
         }),
       ).toBe(false);
+    });
+
+    it('guarantees timingSafeEqual is never called with unequal lengths and rejects malformed signature headers', () => {
+      vi.spyOn(envModule, 'getEnv').mockReturnValue({
+        ...envModule.getEnv(),
+        WHATSAPP_APP_SECRET: mockSecret,
+      });
+
+      const timingSafeEqualSpy = vi.spyOn(crypto, 'timingSafeEqual');
+      const rawBody = Buffer.from(JSON.stringify({ object: 'whatsapp_business_account' }));
+
+      // 1. Missing header
+      expect(provider.verifyInbound({ headers: {}, rawBody })).toBe(false);
+      expect(timingSafeEqualSpy).not.toHaveBeenCalled();
+
+      // 2. Malformed prefix (e.g. md5= or missing sha256=)
+      expect(
+        provider.verifyInbound({
+          headers: { 'x-hub-signature-256': 'md5=abcdef123456' },
+          rawBody,
+        }),
+      ).toBe(false);
+      expect(timingSafeEqualSpy).not.toHaveBeenCalled();
+
+      expect(
+        provider.verifyInbound({
+          headers: { 'x-hub-signature-256': 'not-a-valid-prefix' },
+          rawBody,
+        }),
+      ).toBe(false);
+      expect(timingSafeEqualSpy).not.toHaveBeenCalled();
+
+      // 3. Shorter signature (unequal length)
+      expect(
+        provider.verifyInbound({
+          headers: { 'x-hub-signature-256': 'sha256=12345' },
+          rawBody,
+        }),
+      ).toBe(false);
+      expect(timingSafeEqualSpy).not.toHaveBeenCalled();
+
+      // 4. Longer signature (unequal length)
+      expect(
+        provider.verifyInbound({
+          headers: { 'x-hub-signature-256': `sha256=${'f'.repeat(128)}` },
+          rawBody,
+        }),
+      ).toBe(false);
+      expect(timingSafeEqualSpy).not.toHaveBeenCalled();
+
+      // 5. Valid length (64 hex chars) but mismatched: calls timingSafeEqual safely
+      const mismatchedSameLen = '0'.repeat(64);
+      expect(
+        provider.verifyInbound({
+          headers: { 'x-hub-signature-256': `sha256=${mismatchedSameLen}` },
+          rawBody,
+        }),
+      ).toBe(false);
+      expect(timingSafeEqualSpy).toHaveBeenCalledTimes(1);
     });
   });
 

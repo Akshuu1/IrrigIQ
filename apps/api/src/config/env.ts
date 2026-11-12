@@ -26,6 +26,7 @@ export const EnvSchema = z.object({
   TELEGRAM_BOT_USERNAME: z.string().default('IrrigIQBot'),
   TELEGRAM_WEBHOOK_SECRET: z.string().default('irrigiq-telegram-webhook-secret-token'),
   CHAT_ENCRYPTION_KEY: z.string().min(32).default('0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'),
+  CHAT_INDEX_KEY: z.string().min(32).default('fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210'),
   // Phase 21: WhatsApp Cloud API (optional, enabled only when set)
   WHATSAPP_PHONE_NUMBER_ID: z.string().optional(),
   WHATSAPP_ACCESS_TOKEN: z.string().optional(),

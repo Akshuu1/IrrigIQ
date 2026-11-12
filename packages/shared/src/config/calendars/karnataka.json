@@ -1,6 +1,13 @@
 {
   "state": "Karnataka",
-  "source": "ICAR-CRIDA State Contingency Plan: Karnataka (Northern Dry Zone & Southern Transition Zone)",
+  "source": {
+    "document": "ICAR-CRIDA State Contingency Plan: Karnataka",
+    "tableOrPage": "Northern Dry Zone & Southern Transition Zone",
+    "url": "http://crida.in/",
+    "retrievedOn": "2026-11-04",
+    "checkedBy": null,
+    "status": "ai-suggested"
+  },
   "verified": false,
   "crops": [
     {
@@ -10,7 +17,14 @@
       "sowFrom": "06-01",
       "sowTo": "07-10",
       "sowingRainMm": 75,
-      "source": "University of Agricultural Sciences (UAS) Dharwad Rainfed Cotton Guide",
+      "source": {
+        "document": "University of Agricultural Sciences (UAS) Dharwad Rainfed Cotton Guide",
+        "tableOrPage": "Kharif Cotton Advisory",
+        "url": "https://uasd.edu/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -20,7 +34,14 @@
       "sowFrom": "06-15",
       "sowTo": "07-20",
       "sowingRainMm": 70,
-      "source": "UAS Bangalore Package of Practices for Rainfed Maize",
+      "source": {
+        "document": "UAS Bangalore Package of Practices for Rainfed Maize",
+        "tableOrPage": "Maize Package of Practices",
+        "url": "https://uasbangalore.edu.in/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -30,7 +51,14 @@
       "sowFrom": "06-01",
       "sowTo": "07-15",
       "sowingRainMm": 100,
-      "source": "UAS Shimoga Direct Seeded Upland Rice Guidelines",
+      "source": {
+        "document": "UAS Shimoga Direct Seeded Upland Rice Guidelines",
+        "tableOrPage": "Upland Rice Sowing Advisory",
+        "url": "https://uahs.edu.in/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -40,7 +68,14 @@
       "sowFrom": "06-15",
       "sowTo": "08-10",
       "sowingRainMm": 60,
-      "source": "Indian Institute of Horticultural Research (IIHR) Bengaluru Tomato Guide",
+      "source": {
+        "document": "Indian Institute of Horticultural Research (IIHR) Bengaluru Tomato Guide",
+        "tableOrPage": "Tomato Package of Practices",
+        "url": "https://iihr.res.in/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -50,9 +85,15 @@
       "sowFrom": "10-15",
       "sowTo": "11-15",
       "sowingRainMm": 40,
-      "source": "UAS Dharwad Durum and Bread Wheat Sowing Window Advisory",
+      "source": {
+        "document": "UAS Dharwad Durum and Bread Wheat Sowing Window Advisory",
+        "tableOrPage": "Rabi Wheat Sowing Window",
+        "url": "https://uasd.edu/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     }
   ]
 }
-

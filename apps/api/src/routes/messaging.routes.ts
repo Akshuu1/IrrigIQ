@@ -142,7 +142,10 @@ messagingRouter.post('/test-message', async (req: Request, res: Response): Promi
   }
 
   const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
-  const digest = await buildDigest(user, todayStr);
+  const digest = await buildDigest(
+    { _id: user._id, language: user.language, name: user.name },
+    todayStr,
+  );
 
   const result = await processOutboundMessage({
     channelId: String(channel._id),

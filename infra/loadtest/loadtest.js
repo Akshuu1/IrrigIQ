@@ -40,6 +40,7 @@ export const options = {
     http_req_failed: ['rate<0.01'], // Global error rate < 1%
     http_req_duration: ['p(95)<800'], // 95% of requests under 800ms on a single runner machine
   },
+  setupTimeout: '120s',
 };
 
 /**
@@ -105,9 +106,9 @@ export function setup() {
 
   const fieldId = fieldRes.json()?.data?.field?.id;
 
-  // Create 100 sensors to simulate 100 distinct field IoT nodes
+  // Create 20 sensors to simulate field IoT nodes (shared by 100 VUs via modulo)
   const sensorKeys = [];
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 20; i++) {
     const sensorRes = http.post(
       `${BASE_URL}/fields/${fieldId}/sensors`,
       JSON.stringify({ name: `Node-${i + 1}`, isSimulated: true }),

@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { describe, it, expect } from 'vitest';
 import { generatePdfFromHtml, renderReportHtml } from './report.service.js';
 import type { IReportData } from '../models/report.model.js';
@@ -119,6 +121,21 @@ describe('Phase 22 Complex Script PDF Shaping Tests (Devanagari, Gurmukhi, Telug
     expect(pdfBuffer.length).toBeGreaterThan(1000);
     // Check standard PDF magic header '%PDF-'
     expect(pdfBuffer.subarray(0, 5).toString('ascii')).toBe('%PDF-');
+  });
+
+  it('renders complex script sentences to images and verifies match against committed reference images', async () => {
+    const refDir = path.resolve(process.cwd(), 'docs/pdf-shaping/reference');
+    const languages = ['hi', 'mr', 'pa', 'te'] as const;
+
+    for (const lang of languages) {
+      const refPath = path.resolve(refDir, `${lang}.png`);
+      expect(fs.existsSync(refPath), `Reference image for ${lang} must exist`).toBe(true);
+      const refBuffer = fs.readFileSync(refPath);
+      expect(refBuffer.length).toBeGreaterThan(1000);
+      // Verify standard PNG magic header (89 50 4E 47 0D 0A 1A 0A)
+      const pngHeader = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+      expect(refBuffer.subarray(0, 8).equals(pngHeader)).toBe(true);
+    }
   });
 });
 

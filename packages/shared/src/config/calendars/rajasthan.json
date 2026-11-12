@@ -1,6 +1,13 @@
 {
   "state": "Rajasthan",
-  "source": "ICAR-CRIDA State Contingency Plan: Rajasthan (Arid Western Plain & Transitional Plain of Luni Basin)",
+  "source": {
+    "document": "ICAR-CRIDA State Contingency Plan: Rajasthan",
+    "tableOrPage": "Arid Western Plain & Transitional Plain of Luni Basin",
+    "url": "http://crida.in/",
+    "retrievedOn": "2026-11-04",
+    "checkedBy": null,
+    "status": "ai-suggested"
+  },
   "verified": false,
   "crops": [
     {
@@ -10,7 +17,14 @@
       "sowFrom": "05-15",
       "sowTo": "06-30",
       "sowingRainMm": 60,
-      "source": "Swami Keshwanand Rajasthan Agricultural University (SKRAU) Bikaner Cotton Advisory",
+      "source": {
+        "document": "Swami Keshwanand Rajasthan Agricultural University (SKRAU) Package of Practices",
+        "tableOrPage": "Kharif Cotton Advisory",
+        "url": "https://raubikaner.org/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -20,7 +34,14 @@
       "sowFrom": "06-25",
       "sowTo": "07-20",
       "sowingRainMm": 75,
-      "source": "Maharana Pratap University of Agriculture and Technology (MPUAT) Udaipur Maize Sowing Window",
+      "source": {
+        "document": "Maharana Pratap University of Agriculture and Technology (MPUAT) Package of Practices",
+        "tableOrPage": "Maize Sowing Window",
+        "url": "https://www.mpuat.ac.in/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -30,7 +51,14 @@
       "sowFrom": "06-15",
       "sowTo": "07-15",
       "sowingRainMm": 90,
-      "source": "Agriculture University Kota Rice Sowing Window",
+      "source": {
+        "document": "Agriculture University Kota Kharif Guidelines",
+        "tableOrPage": "Rice Sowing Window",
+        "url": "https://aukota.org/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -40,7 +68,14 @@
       "sowFrom": "07-01",
       "sowTo": "08-15",
       "sowingRainMm": 50,
-      "source": "MPUAT Udaipur Vegetable Production Guide",
+      "source": {
+        "document": "MPUAT Vegetable Production Guide",
+        "tableOrPage": "Tomato Package of Practices",
+        "url": "https://www.mpuat.ac.in/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     },
     {
@@ -50,9 +85,15 @@
       "sowFrom": "11-01",
       "sowTo": "11-30",
       "sowingRainMm": 30,
-      "source": "SKRAU Bikaner Rabi Sowing Advisory",
+      "source": {
+        "document": "SKRAU Bikaner Rabi Advisory",
+        "tableOrPage": "Wheat Package of Practices",
+        "url": "https://raubikaner.org/",
+        "retrievedOn": "2026-11-04",
+        "checkedBy": null,
+        "status": "ai-suggested"
+      },
       "verified": false
     }
   ]
 }
-

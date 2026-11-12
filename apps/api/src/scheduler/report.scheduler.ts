@@ -3,6 +3,7 @@ import { reportService } from '../services/report.service.js';
 import { ReportModel, IReportDocument } from '../models/report.model.js';
 import { getEnv } from '../config/env.js';
 import { logger } from '../config/logger.js';
+import { getRedisClient } from '../infra/redis.js';
 
 export const REPORT_QUEUE_NAME = 'reports';
 
@@ -81,29 +82,39 @@ export function initReportQueue(): {
  */
 export async function scheduleOrRunReportGeneration(reportId: string): Promise<IReportDocument> {
   const env = getEnv();
-  const queueObj = initReportQueue();
+  const redis = getRedisClient();
 
-  if (!queueObj || env.NODE_ENV === 'test') {
-    // In-process generation for test environment or when Redis queue is disabled
+  if (redis.status !== 'ready' || env.NODE_ENV === 'test') {
+    // In-process generation when Redis is unavailable or in test mode
     return await reportService.processReportGeneration(reportId);
   }
 
-  const { queue, events } = queueObj;
-  const job = await queue.add('generate-report', { reportId });
-
-  try {
-    // Wait up to 2000 ms for completion per requirement
-    await job.waitUntilFinished(events, 2000);
-    const finished = await ReportModel.findById(reportId);
-    if (finished && finished.status === 'completed') {
-      return finished;
-    }
-  } catch {
-    logger.info({ reportId }, 'Report generation taking >2s, continuing asynchronously in BullMQ');
+  const queueObj = initReportQueue();
+  if (!queueObj) {
+    return await reportService.processReportGeneration(reportId);
   }
 
-  const current = await ReportModel.findById(reportId);
-  return current!;
+  try {
+    const { queue, events } = queueObj;
+    const job = await queue.add('generate-report', { reportId });
+
+    try {
+      // Wait up to 2000 ms for completion per requirement
+      await job.waitUntilFinished(events, 2000);
+      const finished = await ReportModel.findById(reportId);
+      if (finished && finished.status === 'completed') {
+        return finished;
+      }
+    } catch {
+      logger.info({ reportId }, 'Report generation taking >2s, continuing asynchronously in BullMQ');
+    }
+
+    const current = await ReportModel.findById(reportId);
+    return current!;
+  } catch (err) {
+    logger.warn({ err, reportId }, 'BullMQ unavailable or failed, falling back to in-process report generation');
+    return await reportService.processReportGeneration(reportId);
+  }
 }
 
 export async function closeReportQueue(): Promise<void> {

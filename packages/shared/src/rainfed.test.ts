@@ -290,6 +290,9 @@ describe('Phase 19: Rain-fed Mode Pure Functions', () => {
   describe('Config Integrity Rule', () => {
     it('verifies all config values have source and verified fields', () => {
       expect(RAINFED_CONFIG.rainyDayMm.source).toBeDefined();
+      expect(typeof RAINFED_CONFIG.rainyDayMm.source).toBe('object');
+      expect((RAINFED_CONFIG.rainyDayMm.source as any).status).toBe('ai-suggested');
+      expect((RAINFED_CONFIG.rainyDayMm.source as any).document).toContain('IMD');
       expect(RAINFED_CONFIG.rainyDayMm.verified).toBe(false);
       expect(RAINFED_CONFIG.sowingRainMm.source).toBeDefined();
       expect(RAINFED_CONFIG.sowingRainMm.verified).toBe(false);

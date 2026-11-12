@@ -13,11 +13,11 @@ export const webhookRouter = Router();
 
 const telegramProvider = new TelegramProvider();
 
-// In-memory fallback dedupe set for testing or when Redis is offline
-const memoryDedupeSet = new Set<number>();
+// In-memory fallback dedupe map for testing or when Redis is offline (stores 'processing' | 'done')
+const memoryDedupeMap = new Map<string | number, 'processing' | 'done'>();
 
 export async function clearMemoryDedupe(): Promise<void> {
-  memoryDedupeSet.clear();
+  memoryDedupeMap.clear();
   try {
     const redis = getRedisClient();
     const keys = await redis.keys('dedupe:telegram:*');
@@ -63,26 +63,34 @@ webhookRouter.post(
       return;
     }
 
-    // 3. Deduplicate by update_id with Redis SET NX for 48 hours (172800s)
+    // 3. Deduplicate by update_id with Redis SET NX for 48 hours (172800s) tracking processing & done
     const dedupeKey = `dedupe:telegram:${parsed.updateId}`;
     let isDuplicate = false;
 
     try {
       const redis = getRedisClient();
-      const setRes = await redis.set(dedupeKey, '1', 'EX', 172800, 'NX');
-      if (!setRes) {
-        isDuplicate = true;
+      if (redis.status === 'ready') {
+        const setRes = await redis.set(dedupeKey, 'processing', 'EX', 172800, 'NX');
+        if (!setRes) {
+          const state = await redis.get(dedupeKey);
+          if (state === 'done' || state === 'processing') {
+            isDuplicate = true;
+          }
+        }
+      } else {
+        throw new Error('Redis not ready');
       }
     } catch {
       // In-memory fallback
-      if (memoryDedupeSet.has(parsed.updateId)) {
+      const state = memoryDedupeMap.get(parsed.updateId);
+      if (state === 'done' || state === 'processing') {
         isDuplicate = true;
       } else {
-        memoryDedupeSet.add(parsed.updateId);
+        memoryDedupeMap.set(parsed.updateId, 'processing');
         // Evict after 48h limit
-        if (memoryDedupeSet.size > 50000) {
-          const first = memoryDedupeSet.values().next().value;
-          if (first !== undefined) memoryDedupeSet.delete(first);
+        if (memoryDedupeMap.size > 50000) {
+          const first = memoryDedupeMap.keys().next().value;
+          if (first !== undefined) memoryDedupeMap.delete(first);
         }
       }
     }
@@ -159,8 +167,31 @@ webhookRouter.post(
             '🌾 Welcome to IrrigIQ!\nPlease generate a linking code in your IrrigIQ app dashboard to link your farmer advisory account.';
           await telegramProvider.send(parsed.externalId, unlinkedMsg);
         }
+
+        // Processing completed successfully: mark state as 'done'
+        try {
+          const redis = getRedisClient();
+          if (redis.status === 'ready') {
+            await redis.set(dedupeKey, 'done', 'EX', 172800);
+          } else {
+            memoryDedupeMap.set(parsed.updateId, 'done');
+          }
+        } catch {
+          memoryDedupeMap.set(parsed.updateId, 'done');
+        }
       } catch (err: unknown) {
         logger.error({ err, updateId: parsed.updateId }, 'Error processing Telegram update in background');
+        // Clear dedupe state so a crash does not lose the message on retry
+        try {
+          const redis = getRedisClient();
+          if (redis.status === 'ready') {
+            await redis.del(dedupeKey);
+          } else {
+            memoryDedupeMap.delete(parsed.updateId);
+          }
+        } catch {
+          memoryDedupeMap.delete(parsed.updateId);
+        }
       }
     });
   },

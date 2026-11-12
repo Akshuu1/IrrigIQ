@@ -176,11 +176,14 @@ describe('Telegram Inbound Webhook and Acceptance Flow', () => {
         },
       });
 
-    // Allow setImmediate background task to execute
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    // Allow setImmediate background task to execute (poll for creation)
+    let channel = await MessageChannelModel.findOne({ userId: user._id });
+    for (let i = 0; i < 40 && !channel; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      channel = await MessageChannelModel.findOne({ userId: user._id });
+    }
 
     // Verify channel was created in pending_opt_in
-    const channel = await MessageChannelModel.findOne({ userId: user._id });
     expect(channel).toBeDefined();
     expect(channel?.status).toBe('pending_opt_in');
     expect(channel?.optedIn).toBe(false);
@@ -202,9 +205,11 @@ describe('Telegram Inbound Webhook and Acceptance Flow', () => {
         },
       });
 
-    await new Promise((resolve) => setTimeout(resolve, 50));
-
-    const activeChannel = await MessageChannelModel.findOne({ userId: user._id });
+    let activeChannel = await MessageChannelModel.findOne({ userId: user._id });
+    for (let i = 0; i < 40 && (!activeChannel || activeChannel.status !== 'active'); i++) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      activeChannel = await MessageChannelModel.findOne({ userId: user._id });
+    }
     expect(activeChannel?.status).toBe('active');
     expect(activeChannel?.optedIn).toBe(true);
 
@@ -225,10 +230,13 @@ describe('Telegram Inbound Webhook and Acceptance Flow', () => {
         },
       });
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    let logs = await IrrigationLogModel.find({ fieldId: field._id });
+    for (let i = 0; i < 40 && logs.length === 0; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      logs = await IrrigationLogModel.find({ fieldId: field._id });
+    }
 
     // 6. Verify IrrigationLog was created in MongoDB with source: 'chat'
-    const logs = await IrrigationLogModel.find({ fieldId: field._id });
     expect(logs.length).toBeGreaterThanOrEqual(1);
 
     const chatLog = logs.find((l) => l.source === 'chat');

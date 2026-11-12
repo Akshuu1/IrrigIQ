@@ -5,6 +5,19 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { createApp } from '../app.js';
 import { UserModel } from '../models/user.model.js';
 import { RefreshTokenModel } from '../models/refreshToken.model.js';
+import { FieldModel } from '../models/field.model.js';
+import { PumpModel } from '../models/pump.model.js';
+import { MessageChannelModel } from '../models/message-channel.model.js';
+import { IrrigationLogModel } from '../models/irrigation-log.model.js';
+import { RecommendationModel } from '../models/recommendation.model.js';
+import { LinkCodeModel } from '../models/link-code.model.js';
+import { SensorModel } from '../models/sensor.model.js';
+import { SensorReadingModel } from '../models/sensor-reading.model.js';
+import { ReportModel } from '../models/report.model.js';
+import { PowerScheduleModel } from '../models/powerSchedule.model.js';
+import { InboundMessageModel } from '../models/inbound-message.model.js';
+import { OutboundMessageModel } from '../models/outbound-message.model.js';
+import { PushSubscriptionModel } from '../models/push-subscription.model.js';
 
 describe('Auth Integration Tests (MongoDB 7+)', () => {
   let mongod: MongoMemoryServer;
@@ -400,6 +413,287 @@ describe('Auth Integration Tests (MongoDB 7+)', () => {
         .set('Cookie', `refreshToken=${refreshToken}`);
 
       expect(refreshAfterLogout.status).toBe(401);
+    });
+  });
+
+  describe('DELETE /auth/me and DELETE /me (Complete Account Deletion)', () => {
+    it('removes fields, logs, recommendations, sensors, readings, reports, pumps, channels, link codes, inbound/outbound messages, and user', async () => {
+      // 1. Register User A
+      const userARes = await request(app).post('/auth/register').send({
+        email: 'farmer-a@example.com',
+        password: 'Password123!',
+        name: 'Farmer A',
+      });
+      const userAToken = userARes.body.data.accessToken;
+      const userAId = new mongoose.Types.ObjectId(userARes.body.data.user.id);
+
+      // 2. Register User B
+      const userBRes = await request(app).post('/auth/register').send({
+        email: 'farmer-b@example.com',
+        password: 'Password123!',
+        name: 'Farmer B',
+      });
+      const userBId = new mongoose.Types.ObjectId(userBRes.body.data.user.id);
+
+      // 3. Create User A's data
+      const fieldA = await FieldModel.create({
+        userId: userAId,
+        name: 'Field A',
+        locationMode: 'pin',
+        centroid: { type: 'Point', coordinates: [75.8, 26.9] },
+        areaHa: 1.5,
+        cropKey: 'wheat',
+        sowingDate: new Date('2024-11-01'),
+        soilType: 'loam',
+        method: 'drip',
+        baseline: { everyDays: 3, depthMm: 25 },
+        waterMode: 'irrigated',
+        hasProtectiveWater: false,
+      });
+
+      await PumpModel.create({
+        userId: userAId,
+        name: 'Pump A',
+        dischargeLph: 12000,
+        measuredOn: new Date(),
+        costPerHour: 50,
+      });
+
+      const sensorA = await SensorModel.create({
+        userId: userAId,
+        fieldId: fieldA._id,
+        name: 'Sensor A',
+        apiKeyHash: 'hash_sensor_a_12345',
+        isSimulated: false,
+      });
+
+      await SensorReadingModel.create({
+        timestamp: new Date(),
+        tempC: 28,
+        moisturePct: 32,
+        metadata: { sensorId: sensorA._id, fieldId: fieldA._id },
+      });
+
+      await IrrigationLogModel.create({
+        userId: userAId,
+        fieldId: fieldA._id,
+        date: '2024-11-10',
+        appliedMm: 20,
+        source: 'manual',
+      });
+
+      await RecommendationModel.create({
+        fieldId: fieldA._id,
+        userId: userAId,
+        forDate: '2024-11-11',
+        action: 'irrigate',
+        netMm: 15,
+        grossMm: 20,
+        litres: 30000,
+        runMinutes: 150,
+        splitAcrossDays: false,
+        pumpCost: 125,
+        pumpMissing: false,
+        pumpSegments: [],
+        missingMinutes: 0,
+        notes: [],
+        reasonKey: 'depletion',
+        params: {},
+        deficitMm: 15,
+        et0Mm: 4.5,
+        kc: 1.1,
+        etcMm: 4.95,
+        rainMm: 0,
+        effectiveRainMm: 0,
+        staleWeather: false,
+        computedAt: new Date(),
+      });
+
+      await ReportModel.create({
+        userId: userAId,
+        fieldId: fieldA._id,
+        status: 'completed',
+        from: '2024-11-01',
+        to: '2024-11-07',
+        language: 'hi',
+        data: {
+          field: {
+            id: fieldA._id.toString(),
+            name: 'Field A',
+            farmerName: 'Farmer A',
+            cropKey: 'wheat',
+            cropNameEn: 'Wheat',
+            cropNameHi: 'गेहूं',
+            cropName: 'Wheat',
+            sowingDate: '2024-11-01',
+            soilType: 'loam',
+            irrigationMethod: 'drip',
+            areaHa: 1.5,
+          },
+          assumptions: {
+            method: 'drip',
+            efficiency: 0.9,
+            areaHa: 1.5,
+            baselineEveryDays: 3,
+            baselineDepthMm: 25,
+            dataSources: 'FAO-56',
+            baselineNote: '',
+            disclaimer: '',
+          },
+          totals: {
+            baseline: { count: 10, depthMm: 250, totalMm: 250, litres: 375000 },
+            recommended: { count: 8, totalMm: 180, litres: 270000 },
+            savings: { depthMm: 70, litres: 105000, percent: 28 },
+          },
+          days: [],
+          chartData: [],
+        },
+      });
+
+      await PowerScheduleModel.create({
+        userId: userAId,
+        name: 'Schedule A',
+        type: 'day',
+        windows: [{ days: [1, 2, 3, 4, 5], start: '06:00', end: '12:00' }],
+      });
+
+      const channelA = await MessageChannelModel.create({
+        userId: userAId,
+        provider: 'telegram',
+        externalIdEncrypted: 'enc_chat_id_a',
+        externalIdHash: 'hash_chat_id_a',
+        optedIn: true,
+        status: 'active',
+        sendTime: '06:30',
+        quietHours: { start: '22:00', end: '06:00' },
+        dailyCap: 3,
+        messagesSentToday: 1,
+        planChangeAlertsEnabled: true,
+      });
+
+      await LinkCodeModel.create({
+        userId: userAId,
+        codeHash: 'hash_link_del_99',
+        expiresAt: new Date(Date.now() + 600000),
+      });
+
+      await InboundMessageModel.create({
+        provider: 'telegram',
+        updateId: 998877,
+        channelId: channelA._id,
+        rawUpdate: { update_id: 998877, message: { text: 'Done' } },
+        processed: true,
+      });
+
+      await OutboundMessageModel.create({
+        channelId: channelA._id,
+        userId: userAId,
+        provider: 'telegram',
+        text: 'Daily recommendation for Field A',
+        status: 'sent',
+      });
+
+      await PushSubscriptionModel.create({
+        userId: userAId,
+        endpoint: 'https://fcm.googleapis.com/fcm/send/del-test-token',
+        keys: { p256dh: 'p256key', auth: 'authkey' },
+      });
+
+      // 4. Create User B's data (must survive User A deletion)
+      const fieldB = await FieldModel.create({
+        userId: userBId,
+        name: 'Field B',
+        locationMode: 'pin',
+        centroid: { type: 'Point', coordinates: [75.9, 26.8] },
+        areaHa: 2.0,
+        cropKey: 'mustard',
+        sowingDate: new Date('2024-11-01'),
+        soilType: 'clay',
+        method: 'flood',
+        baseline: { everyDays: 7, depthMm: 50 },
+        waterMode: 'irrigated',
+        hasProtectiveWater: false,
+      });
+
+      const pumpB = await PumpModel.create({
+        userId: userBId,
+        name: 'Pump B',
+        dischargeLph: 20000,
+        measuredOn: new Date(),
+        costPerHour: 80,
+      });
+
+      // 5. Delete User A's account via DELETE /auth/me
+      const delRes = await request(app)
+        .delete('/auth/me')
+        .set('Authorization', `Bearer ${userAToken}`);
+
+      expect(delRes.status).toBe(200);
+      expect(delRes.body.status).toBe('success');
+      expect(delRes.body.data.success).toBe(true);
+      expect(delRes.body.data.deletedCounts.fields).toBe(1);
+      expect(delRes.body.data.deletedCounts.pumps).toBe(1);
+      expect(delRes.body.data.deletedCounts.sensors).toBe(1);
+      expect(delRes.body.data.deletedCounts.readings).toBe(1);
+      expect(delRes.body.data.deletedCounts.logs).toBe(1);
+      expect(delRes.body.data.deletedCounts.recommendations).toBe(1);
+      expect(delRes.body.data.deletedCounts.reports).toBe(1);
+      expect(delRes.body.data.deletedCounts.channels).toBe(1);
+      expect(delRes.body.data.deletedCounts.linkCodes).toBe(1);
+      expect(delRes.body.data.deletedCounts.inboundMessages).toBe(1);
+      expect(delRes.body.data.deletedCounts.outboundMessages).toBe(1);
+      expect(delRes.body.data.deletedCounts.pushSubscriptions).toBe(1);
+      expect(delRes.body.data.deletedCounts.user).toBe(1);
+
+      // 6. Assert User A data is completely wiped
+      expect(await UserModel.findById(userAId)).toBeNull();
+      expect(await RefreshTokenModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await FieldModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await PumpModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await SensorModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await SensorReadingModel.countDocuments({ 'metadata.fieldId': fieldA._id })).toBe(0);
+      expect(await IrrigationLogModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await RecommendationModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await ReportModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await PowerScheduleModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await MessageChannelModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await LinkCodeModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await InboundMessageModel.countDocuments({ channelId: channelA._id })).toBe(0);
+      expect(await OutboundMessageModel.countDocuments({ userId: userAId })).toBe(0);
+      expect(await PushSubscriptionModel.countDocuments({ userId: userAId })).toBe(0);
+
+      // 7. Assert User B data remains intact
+      const survivingField = await FieldModel.findById(fieldB._id);
+      expect(survivingField).not.toBeNull();
+      expect(survivingField?.userId.toString()).toBe(userBId.toString());
+
+      const survivingPump = await PumpModel.findById(pumpB._id);
+      expect(survivingPump).not.toBeNull();
+      expect(survivingPump?.userId.toString()).toBe(userBId.toString());
+    });
+
+    it('DELETE /me alias route works identically with valid authentication', async () => {
+      const regRes = await request(app).post('/auth/register').send({
+        email: 'farmer-alias@example.com',
+        password: 'Password123!',
+        name: 'Alias Farmer',
+      });
+      const token = regRes.body.data.accessToken;
+      const uid = regRes.body.data.user.id;
+
+      const delRes = await request(app)
+        .delete('/me')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(delRes.status).toBe(200);
+      expect(delRes.body.status).toBe('success');
+      expect(await UserModel.findById(uid)).toBeNull();
+    });
+
+    it('rejects unauthenticated DELETE /me requests with 401', async () => {
+      const res = await request(app).delete('/me');
+      expect(res.status).toBe(401);
+      expect(res.body.code).toBe('UNAUTHORIZED');
     });
   });
 });

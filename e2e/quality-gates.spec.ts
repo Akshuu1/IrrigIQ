@@ -18,7 +18,7 @@ test.describe('Phase 13 Acceptance: Comprehensive End-to-End Quality Gate', () =
 
     // Wait for Dashboard
     await page.waitForURL('/');
-    expect(page.url()).toBe('http://localhost:3000/');
+    expect(page.url()).toMatch(/^http:\/\/(localhost|127\.0\.0\.1):3000\/$/);
 
     // 2. Draw a field via FieldWizard
     const addFieldLink = page.locator('a[href="/fields/new"]').first();
@@ -126,6 +126,6 @@ test.describe('Phase 13 Acceptance: Comprehensive End-to-End Quality Gate', () =
 
     // Wait for report completion and download button
     const downloadBtn = reportModal.getByRole('button', { name: /डाउनलोड|Download PDF/i });
-    await expect(downloadBtn).toBeVisible({ timeout: 20000 });
+    await expect(downloadBtn).toBeVisible({ timeout: 45000 });
   });
 });

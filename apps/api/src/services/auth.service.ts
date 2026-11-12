@@ -11,7 +11,21 @@ import {
   refreshTokenRepository,
 } from '../repositories/refreshToken.repository.js';
 import { RegisterInput, LoginInput, UpdateProfileInput } from '../schemas/auth.schema.js';
-import { IUserDocument } from '../models/user.model.js';
+import { IUserDocument, UserModel } from '../models/user.model.js';
+import { FieldModel } from '../models/field.model.js';
+import { IrrigationLogModel } from '../models/irrigation-log.model.js';
+import { RecommendationModel } from '../models/recommendation.model.js';
+import { SensorModel } from '../models/sensor.model.js';
+import { SensorReadingModel } from '../models/sensor-reading.model.js';
+import { ReportModel } from '../models/report.model.js';
+import { PumpModel } from '../models/pump.model.js';
+import { PowerScheduleModel } from '../models/powerSchedule.model.js';
+import { MessageChannelModel } from '../models/message-channel.model.js';
+import { LinkCodeModel } from '../models/link-code.model.js';
+import { InboundMessageModel } from '../models/inbound-message.model.js';
+import { OutboundMessageModel } from '../models/outbound-message.model.js';
+import { PushSubscriptionModel } from '../models/push-subscription.model.js';
+import { RefreshTokenModel } from '../models/refreshToken.model.js';
 
 export interface AuthTokens {
   accessToken: string;
@@ -205,6 +219,87 @@ export class AuthService {
       throw new AppError('User not found', 404, 'USER_NOT_FOUND');
     }
     return user;
+  }
+
+  async deleteAccount(
+    userId: string | Types.ObjectId,
+  ): Promise<{ success: boolean; deletedCounts: Record<string, number> }> {
+    const uid = typeof userId === 'string' ? new Types.ObjectId(userId) : userId;
+
+    // 1. Gather fields owned by user
+    const fields = await FieldModel.find({ userId: uid }).select('_id');
+    const fieldIds = fields.map((f) => f._id);
+
+    // 2. Gather message channels
+    const channels = await MessageChannelModel.find({ userId: uid }).select('_id');
+    const channelIds = channels.map((c) => c._id);
+
+    // 3. Cascade deletions across all associated personal and operational models
+    const [
+      sensorReadings,
+      sensors,
+      logs,
+      recommendations,
+      reports,
+      fieldsResult,
+      pumps,
+      powerSchedules,
+      inboundMsgs,
+      outboundMsgs,
+      linkCodes,
+      channelsResult,
+      pushSubs,
+      tokens,
+      userResult,
+    ] = await Promise.all([
+      SensorReadingModel.deleteMany({ 'metadata.fieldId': { $in: fieldIds } }),
+      SensorModel.deleteMany({ userId: uid }),
+      IrrigationLogModel.deleteMany({ $or: [{ userId: uid }, { fieldId: { $in: fieldIds } }] }),
+      RecommendationModel.deleteMany({ $or: [{ userId: uid }, { fieldId: { $in: fieldIds } }] }),
+      ReportModel.deleteMany({ userId: uid }),
+      FieldModel.deleteMany({ userId: uid }),
+      PumpModel.deleteMany({ userId: uid }),
+      PowerScheduleModel.deleteMany({ userId: uid }),
+      InboundMessageModel.deleteMany({ channelId: { $in: channelIds } }),
+      OutboundMessageModel.deleteMany({
+        $or: [{ userId: uid }, { channelId: { $in: channelIds } }],
+      }),
+      LinkCodeModel.deleteMany({ userId: uid }),
+      MessageChannelModel.deleteMany({ userId: uid }),
+      PushSubscriptionModel.deleteMany({ userId: uid }),
+      RefreshTokenModel.deleteMany({ userId: uid }),
+      UserModel.deleteOne({ _id: uid }),
+    ]);
+
+    logger.info(
+      {
+        userId: uid.toString(),
+        deletedFields: fieldsResult.deletedCount,
+        deletedChannels: channelsResult.deletedCount,
+      },
+      'User account and all personal and operational data successfully deleted (DELETE /me)',
+    );
+
+    return {
+      success: true,
+      deletedCounts: {
+        fields: fieldsResult.deletedCount,
+        logs: logs.deletedCount,
+        recommendations: recommendations.deletedCount,
+        sensors: sensors.deletedCount,
+        readings: sensorReadings.deletedCount,
+        reports: reports.deletedCount,
+        pumps: pumps.deletedCount,
+        powerSchedules: powerSchedules.deletedCount,
+        channels: channelsResult.deletedCount,
+        linkCodes: linkCodes.deletedCount,
+        inboundMessages: inboundMsgs.deletedCount,
+        outboundMessages: outboundMsgs.deletedCount,
+        pushSubscriptions: pushSubs.deletedCount,
+        tokens: tokens.deletedCount,
+        user: userResult.deletedCount,
+      },
+    };
   }
 }
 

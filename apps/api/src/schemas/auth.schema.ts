@@ -28,6 +28,6 @@ export const UpdateProfileSchema = z
     numberingSystem: NumberingSystemSchema.optional(),
     useNativeDigits: z.boolean().optional(),
   })
-  .strict('Only name, language, areaUnit, numberingSystem, and useNativeDigits can be updated');
+  .strict();
 
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;

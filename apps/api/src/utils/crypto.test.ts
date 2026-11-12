@@ -39,7 +39,7 @@ describe('AES-256-GCM Crypto and Personal Data Utilities', () => {
     expect(() => decryptExternalId(tampered)).toThrow();
   });
 
-  it('creates deterministic sha256 hash for external identifier lookups', () => {
+  it('creates deterministic HMAC-SHA256 blind index with CHAT_INDEX_KEY', () => {
     const rawChatId = '  5544332211  ';
     const hash1 = hashExternalId(rawChatId);
     const hash2 = hashExternalId('5544332211');
@@ -47,6 +47,15 @@ describe('AES-256-GCM Crypto and Personal Data Utilities', () => {
     expect(hash1).toBe(hash2);
     expect(hash1).toMatch(/^[0-9a-f]{64}$/);
     expect(hash1).not.toContain('5544332211');
+
+    // Different secret key produces a completely different blind index
+    const otherKey = 'a'.repeat(64);
+    const hashOther = hashExternalId('5544332211', otherKey);
+    expect(hashOther).not.toBe(hash1);
+    expect(hashOther).toMatch(/^[0-9a-f]{64}$/);
+
+    // Empty identifier throws
+    expect(() => hashExternalId('')).toThrow('Cannot hash empty external identifier');
   });
 
   it('generates 6-digit numeric link codes', () => {

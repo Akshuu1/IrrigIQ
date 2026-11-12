@@ -19,3 +19,6 @@ authRouter.get('/me', authMiddleware, (req, res, next) => authController.getMe(r
 authRouter.patch('/me', authMiddleware, (req, res, next) =>
   authController.updateMe(req, res, next),
 );
+authRouter.delete('/me', authMiddleware, (req, res, next) =>
+  authController.deleteMe(req, res, next),
+);

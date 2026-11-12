@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createSensorSchema = z.object({
-  name: z.string({ required_error: 'Sensor name is required' }).trim().min(1).max(100),
+  name: z.string({ message: 'Sensor name is required' }).trim().min(1).max(100),
   isSimulated: z.boolean().default(true),
 });
 
@@ -9,11 +9,11 @@ export type CreateSensorInput = z.infer<typeof createSensorSchema>;
 
 const baseReadingSchema = z.object({
   moisturePct: z
-    .number({ required_error: 'moisturePct is required' })
+    .number({ message: 'moisturePct is required' })
     .min(0, 'moisturePct must be between 0 and 100')
     .max(100, 'moisturePct must be between 0 and 100'),
   tempC: z
-    .number({ required_error: 'tempC is required' })
+    .number({ message: 'tempC is required' })
     .min(-10, 'tempC must be at least -10°C')
     .max(60, 'tempC cannot exceed 60°C'),
   timestamp: z

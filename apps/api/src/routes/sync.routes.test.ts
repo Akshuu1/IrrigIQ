@@ -6,6 +6,7 @@ import { createApp } from '../app.js';
 import { UserModel } from '../models/user.model.js';
 import { FieldModel } from '../models/field.model.js';
 import { IrrigationLogModel } from '../models/irrigation-log.model.js';
+import { WeatherDayModel } from '../models/weatherDay.model.js';
 import { SyncRecord } from '../models/sync-record.model.js';
 import { SyncMutation } from '@irrigiq/shared';
 
@@ -37,6 +38,19 @@ describe('Offline Sync Batch API Integration Tests (/sync)', () => {
     await FieldModel.deleteMany({});
     await IrrigationLogModel.deleteMany({});
     await SyncRecord.deleteMany({});
+    await WeatherDayModel.deleteMany({});
+
+    const today = new Date().toISOString().split('T')[0]!;
+    await WeatherDayModel.create({
+      cellKey: '26.9_75.8',
+      date: today,
+      tmaxC: 30,
+      tminC: 18,
+      rainMm: 0,
+      et0Mm: 4.5,
+      source: 'open-meteo',
+      fetchedAt: new Date(),
+    });
   });
 
   async function createTestUser(email = 'farmer@example.com') {

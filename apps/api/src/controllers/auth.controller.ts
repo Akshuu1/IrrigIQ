@@ -129,6 +129,24 @@ export class AuthController {
       next(err);
     }
   }
+
+  async deleteMe(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user) {
+        throw new AppError('Unauthorized', 401, 'UNAUTHORIZED');
+      }
+
+      const result = await authService.deleteAccount(req.user.id);
+      res.clearCookie('refreshToken', { path: '/auth' });
+      res.status(200).json({
+        status: 'success',
+        message: 'Account and all associated personal and operational data permanently deleted',
+        data: result,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const authController = new AuthController();

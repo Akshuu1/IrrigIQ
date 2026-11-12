@@ -19,16 +19,19 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test",
-    "e2e": "playwright test",
+    "test:e2e": "node scripts/run-e2e.mjs",
+    "e2e": "node scripts/run-e2e.mjs",
     "loadtest": "k6 run infra/loadtest/loadtest.js",
     "seed": "npm run seed -w @irrigiq/api",
     "simulate": "npm run simulate -w @irrigiq/simulator --",
     "i18n:report": "node scripts/i18n-report.mjs",
+    "registry:scan": "node scripts/generate-agronomy-registry.mjs",
+    "bench:perf": "node --import tsx apps/api/src/benchmark/perf-benchmark.ts",
+    "migrate:blind-index": "node --import tsx scripts/migrate-blind-index.ts",
     "prepare": "husky || true"
   },
   "dependencies": {
-    "zod": "^3.24.2"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
