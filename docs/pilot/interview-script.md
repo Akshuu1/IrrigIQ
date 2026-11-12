@@ -53,3 +53,4 @@ This guide provides structured interview questions for post-pilot evaluations. A
 7. **Impact Reporting**: "Did the automated bilingual PDF Impact Report and raw CSV telemetry export meet your requirements for executive review and external sustainability auditing?"
 8. **Handling Caveats**: "The report explicitly states what observational pilots do not prove (i.e. not an RCT, baseline is self-reported, weather differences between periods). How was this honesty received by your leadership and donors?"
 9. **Scaling Decision**: "What threshold of water savings or farmer satisfaction does your organization need to see before scaling this from the pilot cohort to your full membership (1,000+ farmers)?"
+

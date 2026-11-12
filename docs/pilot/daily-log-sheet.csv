@@ -10,3 +10,4 @@ date,farmer_name,village,field_name,rain_gauge_mm,advice_action,advice_pump_minu
 "2026-10-01","Dnyaneshwar Shinde","Baramati","Sugarcane East",0.0,"-",0,240,64.0,260.0,"baseline_routine","N/A","-","Flood irrigation traditional flood routine"
 "2026-10-15","Dnyaneshwar Shinde","Baramati","Sugarcane East",0.0,"irrigate",180,180,48.0,195.0,"followed","N/A","180","Followed recommended duration"
 "2026-10-25","Dnyaneshwar Shinde","Baramati","Sugarcane East",0.0,"irrigate",170,170,45.3,184.2,"followed","N/A","170","Farmer verified moisture depth at 30cm"
+

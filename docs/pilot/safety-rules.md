@@ -44,3 +44,4 @@ To ensure farmer safety, crop health, and equipment protection, the IrrigIQ reco
 > [!CAUTION]
 > **Human Primacy Principle**:  
 > In any instance of conflict between satellite/meteorological telemetry and visual in-field inspection (e.g. standing water, visible crop wilting, or localized hail damage), the farmer's and field agent's visual ground observation **always takes precedence** over algorithmic advisories.
+

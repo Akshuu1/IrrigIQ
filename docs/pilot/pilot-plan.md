@@ -87,3 +87,4 @@ flowchart LR
   - [ ] **Verify Caveats**: Ensure all reports prominently feature the "What This Does Not Prove" section and weather disparity notices.
   - [ ] **Conduct Interviews**: Execute the farmer and buyer questionnaire (`docs/pilot/interview-script.md`).
   - [ ] **Present Findings**: Deliver the completed results report (`docs/pilot/results-template.md`) to cooperative management and pilot sponsors.
+

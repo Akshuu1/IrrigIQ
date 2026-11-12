@@ -83,3 +83,4 @@
 ## 7. Raw Telemetry Audit Trail
 * Attach generated raw CSV export: `irrigiq-pilot-raw-data-[date].csv`.
 * Attach official bilingual PDF report: `irrigiq-pilot-report-[lang]-[date].pdf`.
+

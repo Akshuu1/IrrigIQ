@@ -4,3 +4,4 @@ farmer_name,phone,village,field_name,crop,sowing_date,soil_type,irrigation_metho
 "Balwant Singh","+919876543212","Nabha","Canal Gate Field","wheat","2026-10-20","loam","flood",4.0,12.5,50000,75.0,8,50.0,18.0,"Flood irrigation via brick lined channel"
 "Mukesh Patel","+919876543213","Anand","Potato Bed A","potato","2026-10-25","sandy","sprinkler",1.8,5.0,20000,35.0,4,30.0,9.0,"Sandy loam with overhead micro-sprinklers"
 "Srinivas Rao","+919876543214","Warangal","Cotton Plot B","cotton","2026-07-10","clay","drip",2.0,5.0,22000,38.0,6,35.0,8.5,"Subsurface drip irrigation with fertigation unit"
+

@@ -86,3 +86,4 @@ $$\text{Monthly Cost per Farmer} = \frac{\text{Total Monthly Cost}}{\text{Active
 * $C_{\text{storage}}$: **₹2.00** per GB-month database storage.
 * $C_{\text{req}}$: **₹0.10** per 1,000 backend API requests.
 * **Disclaimer**: All unit prices are configurable engineering assumptions and must be shown with assumptions notes in all exported reports.
+
